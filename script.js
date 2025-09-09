@@ -85,6 +85,7 @@ function displaySavedIngredients(ingredients) {
     listContainer.innerHTML = ingredientItems;
 }
 
+
 // Show success message when ingredients are saved
 function showSuccessMessage() {
     const originalText = saveButton.textContent;
