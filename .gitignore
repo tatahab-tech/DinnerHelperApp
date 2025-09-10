@@ -43,3 +43,10 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Jest
+.jest/
