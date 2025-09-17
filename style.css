@@ -52,9 +52,38 @@ main {
 .meal-suggestions-section h2 {
     color: #4a5568;
     margin-bottom: 20px;
-    font-size: 1.5rem;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+/* Ingredient category styles */
+.ingredient-category {
+    margin-bottom: 25px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.ingredient-category:hover {
+    border-color: #667eea;
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.category-title {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Table styles */
