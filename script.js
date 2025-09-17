@@ -4951,6 +4951,11 @@ function findMatchingMeals(availableIngredients) {
     });
 }
 
+// Global variable to store all meals for pagination
+let allSuggestedMeals = [];
+let currentlyDisplayedCount = 0;
+const INITIAL_DISPLAY_COUNT = 7;
+
 function displaySuggestedMeals(meals) {
     const suggestionsContainer = document.getElementById('mealSuggestions');
     
@@ -4970,7 +4975,20 @@ function displaySuggestedMeals(meals) {
         return;
     }
     
-    const mealsHTML = meals.map(meal => `
+    // Store all meals for pagination
+    allSuggestedMeals = meals;
+    currentlyDisplayedCount = 0;
+    
+    // Display initial set of meals
+    displayMealBatch(INITIAL_DISPLAY_COUNT);
+}
+
+function displayMealBatch(count) {
+    const suggestionsContainer = document.getElementById('mealSuggestions');
+    const mealsToShow = allSuggestedMeals.slice(0, currentlyDisplayedCount + count);
+    currentlyDisplayedCount = mealsToShow.length;
+    
+    const mealsHTML = mealsToShow.map(meal => `
         <div class="meal-card" data-meal-id="${meal.id}">
             <div class="meal-content">
                 <div class="meal-header">
@@ -5013,7 +5031,28 @@ function displaySuggestedMeals(meals) {
         </div>
     `).join('');
     
-    suggestionsContainer.innerHTML = mealsHTML;
+    // Add "Show More" button if there are more recipes to show
+    const showMoreButton = currentlyDisplayedCount < allSuggestedMeals.length ? `
+        <div class="show-more-container">
+            <button class="show-more-btn" onclick="showMoreRecipes()">
+                Show More Recipes (${allSuggestedMeals.length - currentlyDisplayedCount} remaining)
+            </button>
+        </div>
+    ` : '';
+    
+    suggestionsContainer.innerHTML = `
+        <div class="suggestions-header">
+            <h3>Top ${currentlyDisplayedCount} Recipe${currentlyDisplayedCount > 1 ? 's' : ''} for You</h3>
+            <p>Showing ${currentlyDisplayedCount} of ${allSuggestedMeals.length} matching recipes</p>
+        </div>
+        ${mealsHTML}
+        ${showMoreButton}
+    `;
+}
+
+// Function to show more recipes
+function showMoreRecipes() {
+    displayMealBatch(7); // Show 7 more recipes
 }
 
 function showNoIngredientsMessage() {
