@@ -17,8 +17,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Set up event listeners
 function setupEventListeners() {
-    saveButton.addEventListener('click', saveIngredients);
-    suggestMealsButton.addEventListener('click', suggestMeals);
+    console.log('Setting up event listeners...');
+    console.log('Save button found:', saveButton);
+    console.log('Suggest button found:', suggestMealsButton);
+    
+    if (saveButton) {
+        saveButton.addEventListener('click', saveIngredients);
+        console.log('Save button event listener added');
+    } else {
+        console.error('Save button not found!');
+    }
+    
+    if (suggestMealsButton) {
+        suggestMealsButton.addEventListener('click', suggestMeals);
+        console.log('Suggest button event listener added');
+    } else {
+        console.error('Suggest button not found!');
+    }
 }
 
 // Load saved ingredients from localStorage and update UI
@@ -45,16 +60,22 @@ function loadSavedIngredients() {
 
 // Save ingredients to localStorage and update display
 function saveIngredients() {
+    console.log('Save ingredients function called!');
     const checkedIngredients = [];
     
     // Collect all checked ingredients (get fresh checkbox list each time)
     const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    console.log('Found checkboxes:', allCheckboxes.length);
+    
     allCheckboxes.forEach(checkbox => {
+        console.log('Checkbox:', checkbox.id, 'Checked:', checkbox.checked, 'Data-ingredient:', checkbox.getAttribute('data-ingredient'));
         if (checkbox.checked) {
             const ingredient = checkbox.getAttribute('data-ingredient');
             checkedIngredients.push(ingredient);
         }
     });
+    
+    console.log('Checked ingredients found:', checkedIngredients);
     
     try {
         // Save to localStorage
