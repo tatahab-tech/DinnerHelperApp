@@ -5423,6 +5423,470 @@ function findMatchingMeals(availableIngredients) {
             "Serve hot over basmati rice."
         ]
     }
+
+    // MORE FISH RECIPES (continuing to 20 total)
+    "fish-teriyaki": {
+        name: "Fish Teriyaki",
+        ingredients: [
+            { name: "fish", quantity: "600g firm fish" },
+            { name: "soy-sauce", quantity: "4 tbsp" },
+            { name: "mirin", quantity: "3 tbsp" },
+            { name: "honey", quantity: "2 tbsp" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "garlic", quantity: "2 cloves" },
+            { name: "rice", quantity: "300g" },
+            { name: "sesame-seeds", quantity: "1 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Japanese",
+        description: "Sweet and savory glazed fish",
+        image: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut fish into serving portions.",
+            "Mix soy sauce, mirin, and honey for teriyaki sauce.",
+            "Heat oil in a large skillet over medium-high heat.",
+            "Cook fish for 3-4 minutes per side.",
+            "Add minced ginger and garlic, cook for 1 minute.",
+            "Pour teriyaki sauce over fish.",
+            "Simmer until sauce thickens and glazes fish.",
+            "Cook until fish is cooked through.",
+            "Sprinkle with sesame seeds.",
+            "Serve over steamed rice."
+        ]
+    },
+    "fish-chowder": {
+        name: "Fish Chowder",
+        ingredients: [
+            { name: "fish", quantity: "500g white fish" },
+            { name: "potatoes", quantity: "400g diced" },
+            { name: "onions", quantity: "1 large" },
+            { name: "celery", quantity: "2 stalks" },
+            { name: "milk", quantity: "500ml" },
+            { name: "butter", quantity: "50g" },
+            { name: "flour", quantity: "3 tbsp" },
+            { name: "herbs", quantity: "thyme & bay" }
+        ],
+        difficulty: "Medium",
+        time: "40 min",
+        cuisine: "American",
+        description: "Creamy fish chowder with potatoes",
+        image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut fish into bite-sized pieces.",
+            "Cook diced potatoes in salted water until tender.",
+            "In a large pot, melt butter over medium heat.",
+            "Sauté diced onions and celery until soft.",
+            "Sprinkle flour over vegetables and cook for 2 minutes.",
+            "Gradually add milk, stirring constantly.",
+            "Add cooked potatoes and herbs.",
+            "Simmer for 10 minutes until thickened.",
+            "Add fish pieces and cook for 5 minutes.",
+            "Season and serve hot with crackers."
+        ]
+    },
+    "fish-sandwich": {
+        name: "Fish Sandwich",
+        ingredients: [
+            { name: "fish", quantity: "4 fillets" },
+            { name: "bread", quantity: "8 slices" },
+            { name: "lettuce", quantity: "4 leaves" },
+            { name: "tomatoes", quantity: "2 medium" },
+            { name: "mayonnaise", quantity: "4 tbsp" },
+            { name: "lemon", quantity: "1 piece" },
+            { name: "herbs", quantity: "tartar sauce" },
+            { name: "oil", quantity: "for frying" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "American",
+        description: "Crispy fish sandwich with fresh toppings",
+        image: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Season fish fillets with salt and pepper.",
+            "Heat oil in a large skillet over medium-high heat.",
+            "Cook fish for 3-4 minutes per side until golden.",
+            "Toast bread slices until lightly golden.",
+            "Spread mayonnaise on one side of each bread slice.",
+            "Layer lettuce, tomato, and cooked fish.",
+            "Add tartar sauce and lemon juice.",
+            "Top with second bread slice.",
+            "Cut in half and serve immediately.",
+            "Serve with pickles and chips."
+        ]
+    },
+
+    // MORE PORK RECIPES (continuing to 20 total)
+    "pork-stir-fry": {
+        name: "Pork Stir Fry",
+        ingredients: [
+            { name: "pork", quantity: "500g strips" },
+            { name: "vegetables", quantity: "400g mixed" },
+            { name: "soy-sauce", quantity: "3 tbsp" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "rice", quantity: "300g" },
+            { name: "sesame-oil", quantity: "2 tbsp" },
+            { name: "onions", quantity: "1 medium" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Asian",
+        description: "Quick pork stir fry with vegetables",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut pork into thin strips and season.",
+            "Heat oil in a large wok over high heat.",
+            "Add pork and stir-fry for 2-3 minutes.",
+            "Remove pork and set aside.",
+            "Add vegetables to wok and stir-fry for 3 minutes.",
+            "Add garlic and ginger, cook for 1 minute.",
+            "Return pork to wok.",
+            "Add soy sauce and sesame oil.",
+            "Toss everything together for 2 minutes.",
+            "Serve immediately over steamed rice."
+        ]
+    },
+    "pork-curry": {
+        name: "Pork Curry",
+        ingredients: [
+            { name: "pork", quantity: "600g cubes" },
+            { name: "coconut-milk", quantity: "400ml" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "curry-powder", quantity: "2 tbsp" },
+            { name: "tomatoes", quantity: "300g" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Medium",
+        time: "50 min",
+        cuisine: "Indian",
+        description: "Spicy pork curry with coconut milk",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut pork into bite-sized cubes.",
+            "Heat oil in a large pot over medium-high heat.",
+            "Brown pork cubes on all sides.",
+            "Remove pork and set aside.",
+            "Add diced onions and cook until golden.",
+            "Add ginger-garlic paste and curry powder.",
+            "Cook for 2 minutes until fragrant.",
+            "Add tomatoes and cook until soft.",
+            "Return pork to pot with coconut milk.",
+            "Simmer for 30 minutes until tender."
+        ]
+    },
+
+    // MORE SALMON RECIPES (continuing to 20 total)
+    "salmon-pasta": {
+        name: "Salmon Pasta",
+        ingredients: [
+            { name: "salmon", quantity: "500g fillets" },
+            { name: "pasta", quantity: "400g penne" },
+            { name: "cream", quantity: "200ml" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "herbs", quantity: "dill & parsley" },
+            { name: "lemon", quantity: "1 piece" },
+            { name: "onions", quantity: "1 small" },
+            { name: "olive-oil", quantity: "3 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Italian",
+        description: "Creamy pasta with flaked salmon",
+        image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cook pasta according to package directions.",
+            "Season salmon with salt and pepper.",
+            "Heat olive oil in a large pan.",
+            "Cook salmon for 4 minutes per side.",
+            "Remove salmon and flake into chunks.",
+            "Add minced garlic and onion to same pan.",
+            "Cook for 2 minutes until fragrant.",
+            "Add cream and bring to simmer.",
+            "Add drained pasta and flaked salmon.",
+            "Toss with herbs and lemon juice."
+        ]
+    },
+    "salmon-salad": {
+        name: "Salmon Salad",
+        ingredients: [
+            { name: "salmon", quantity: "400g cooked" },
+            { name: "lettuce", quantity: "300g mixed greens" },
+            { name: "avocado", quantity: "2 pieces" },
+            { name: "tomatoes", quantity: "200g cherry" },
+            { name: "cucumber", quantity: "1 large" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "herbs", quantity: "dill & mint" }
+        ],
+        difficulty: "Easy",
+        time: "15 min",
+        cuisine: "Mediterranean",
+        description: "Fresh salmon salad with avocado and herbs",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Flake cooked salmon into bite-sized pieces.",
+            "Wash and prepare mixed greens.",
+            "Slice avocado, tomatoes, and cucumber.",
+            "Arrange greens on serving plates.",
+            "Top with salmon, avocado, and vegetables.",
+            "Make dressing with lemon juice and olive oil.",
+            "Add minced herbs to dressing.",
+            "Season dressing with salt and pepper.",
+            "Drizzle dressing over salad.",
+            "Serve immediately while fresh."
+        ]
+    }
+
+    // MORE FISH RECIPES (9 more to reach 20)
+    "fish-ceviche": {
+        name: "Fish Ceviche",
+        ingredients: [
+            { name: "fish", quantity: "500g white fish" },
+            { name: "lime", quantity: "8 pieces" },
+            { name: "onions", quantity: "1 red onion" },
+            { name: "tomatoes", quantity: "2 medium" },
+            { name: "cilantro", quantity: "1 bunch" },
+            { name: "chili", quantity: "2 jalapeños" },
+            { name: "avocado", quantity: "2 pieces" },
+            { name: "olive-oil", quantity: "2 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "30 min",
+        cuisine: "Peruvian",
+        description: "Fresh fish cured in lime juice",
+        image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut fish into small cubes.",
+            "Place fish in glass bowl.",
+            "Cover with fresh lime juice.",
+            "Let cure for 15-20 minutes until opaque.",
+            "Dice red onion, tomatoes, and jalapeños.",
+            "Drain excess lime juice from fish.",
+            "Mix fish with diced vegetables.",
+            "Add chopped cilantro and olive oil.",
+            "Season with salt and pepper.",
+            "Serve with sliced avocado and tortilla chips."
+        ]
+    },
+    "fish-paella": {
+        name: "Fish Paella",
+        ingredients: [
+            { name: "fish", quantity: "400g mixed seafood" },
+            { name: "rice", quantity: "300g bomba rice" },
+            { name: "saffron", quantity: "pinch" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "tomatoes", quantity: "2 medium" },
+            { name: "onions", quantity: "1 medium" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "fish-stock", quantity: "600ml" }
+        ],
+        difficulty: "Hard",
+        time: "45 min",
+        cuisine: "Spanish",
+        description: "Traditional Spanish seafood paella",
+        image: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat olive oil in a large paella pan.",
+            "Sauté diced onions until translucent.",
+            "Add minced garlic and grated tomatoes.",
+            "Cook until tomatoes reduce and darken.",
+            "Add rice and stir to coat with sofrito.",
+            "Add hot fish stock infused with saffron.",
+            "Simmer without stirring for 10 minutes.",
+            "Add fish pieces and cook for 8 minutes.",
+            "Let rest for 5 minutes before serving.",
+            "Garnish with lemon wedges and parsley."
+        ]
+    },
+
+    // SHRIMP RECIPES (12 more to reach 20 total)
+    "shrimp-scampi": {
+        name: "Shrimp Scampi",
+        ingredients: [
+            { name: "shrimp", quantity: "600g large" },
+            { name: "pasta", quantity: "400g linguine" },
+            { name: "garlic", quantity: "6 cloves" },
+            { name: "butter", quantity: "100g" },
+            { name: "wine", quantity: "150ml white" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "herbs", quantity: "parsley" },
+            { name: "olive-oil", quantity: "3 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Italian",
+        description: "Garlic butter shrimp with pasta",
+        image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cook pasta according to package directions.",
+            "Peel and devein shrimp, season with salt and pepper.",
+            "Heat olive oil and butter in large skillet.",
+            "Add minced garlic and cook for 1 minute.",
+            "Add shrimp and cook for 2 minutes per side.",
+            "Add white wine and lemon juice.",
+            "Simmer for 2 minutes until shrimp are pink.",
+            "Add drained pasta and toss to combine.",
+            "Add fresh parsley and toss again.",
+            "Serve immediately with lemon wedges."
+        ]
+    },
+    "shrimp-curry": {
+        name: "Shrimp Curry",
+        ingredients: [
+            { name: "shrimp", quantity: "600g large" },
+            { name: "coconut-milk", quantity: "400ml" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "curry-powder", quantity: "2 tbsp" },
+            { name: "tomatoes", quantity: "200g" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Medium",
+        time: "30 min",
+        cuisine: "Indian",
+        description: "Spicy shrimp curry with coconut milk",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Peel and devein shrimp, season with salt.",
+            "Heat oil in a large pan over medium heat.",
+            "Add diced onions and cook until golden.",
+            "Add ginger-garlic paste and curry powder.",
+            "Cook for 2 minutes until fragrant.",
+            "Add chopped tomatoes and cook until soft.",
+            "Pour in coconut milk and bring to simmer.",
+            "Add shrimp and cook for 5-6 minutes.",
+            "Season with salt and garnish with cilantro.",
+            "Serve hot over basmati rice."
+        ]
+    },
+
+    // TOFU RECIPES (15 more to reach 20 total)
+    "tofu-stir-fry": {
+        name: "Tofu Stir Fry",
+        ingredients: [
+            { name: "tofu", quantity: "400g firm" },
+            { name: "vegetables", quantity: "400g mixed" },
+            { name: "soy-sauce", quantity: "3 tbsp" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "rice", quantity: "300g" },
+            { name: "sesame-oil", quantity: "2 tbsp" },
+            { name: "onions", quantity: "1 medium" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Asian",
+        description: "Crispy tofu with fresh vegetables",
+        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Press tofu to remove excess water.",
+            "Cut tofu into cubes and season.",
+            "Heat oil in a large wok over high heat.",
+            "Add tofu and stir-fry until golden.",
+            "Remove tofu and set aside.",
+            "Add vegetables to wok and stir-fry for 3 minutes.",
+            "Add garlic and ginger, cook for 1 minute.",
+            "Return tofu to wok.",
+            "Add soy sauce and sesame oil.",
+            "Serve immediately over steamed rice."
+        ]
+    },
+    "tofu-curry": {
+        name: "Tofu Curry",
+        ingredients: [
+            { name: "tofu", quantity: "400g firm" },
+            { name: "coconut-milk", quantity: "400ml" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "curry-powder", quantity: "2 tbsp" },
+            { name: "tomatoes", quantity: "300g" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Medium",
+        time: "35 min",
+        cuisine: "Indian",
+        description: "Creamy tofu curry with aromatic spices",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Press and cube tofu, then pan-fry until golden.",
+            "Heat oil in a large pot over medium heat.",
+            "Add diced onions and cook until golden.",
+            "Add ginger-garlic paste and curry powder.",
+            "Cook for 2 minutes until fragrant.",
+            "Add chopped tomatoes and cook until soft.",
+            "Pour in coconut milk and bring to simmer.",
+            "Add fried tofu cubes.",
+            "Simmer for 15 minutes until flavors meld.",
+            "Serve hot over basmati rice."
+        ]
+    },
+
+    // BACON RECIPES (12 more to reach 20 total)
+    "bacon-carbonara": {
+        name: "Bacon Carbonara",
+        ingredients: [
+            { name: "bacon", quantity: "200g" },
+            { name: "pasta", quantity: "400g spaghetti" },
+            { name: "eggs", quantity: "4 large" },
+            { name: "cheese", quantity: "150g pecorino" },
+            { name: "garlic", quantity: "2 cloves" },
+            { name: "black-pepper", quantity: "freshly ground" },
+            { name: "olive-oil", quantity: "2 tbsp" },
+            { name: "parsley", quantity: "fresh" }
+        ],
+        difficulty: "Medium",
+        time: "20 min",
+        cuisine: "Italian",
+        description: "Classic Roman pasta with bacon and eggs",
+        image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cook pasta in salted boiling water until al dente.",
+            "Cut bacon into small pieces and cook until crispy.",
+            "Remove bacon, leaving fat in pan.",
+            "Add minced garlic to bacon fat.",
+            "Whisk eggs with grated cheese and black pepper.",
+            "Drain pasta, reserving 1 cup pasta water.",
+            "Add hot pasta to pan with bacon fat.",
+            "Remove from heat and quickly add egg mixture.",
+            "Toss rapidly, adding pasta water as needed.",
+            "Serve immediately with extra cheese and bacon."
+        ]
+    },
+    "bacon-quiche": {
+        name: "Bacon Quiche",
+        ingredients: [
+            { name: "bacon", quantity: "200g" },
+            { name: "eggs", quantity: "6 large" },
+            { name: "milk", quantity: "300ml" },
+            { name: "cheese", quantity: "150g gruyere" },
+            { name: "onions", quantity: "1 medium" },
+            { name: "pie-crust", quantity: "1 prepared" },
+            { name: "herbs", quantity: "chives" },
+            { name: "butter", quantity: "25g" }
+        ],
+        difficulty: "Medium",
+        time: "60 min",
+        cuisine: "French",
+        description: "Rich bacon and cheese quiche",
+        image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat oven to 375°F (190°C).",
+            "Cook bacon until crispy, then chop.",
+            "Sauté diced onions in bacon fat until soft.",
+            "Line pie dish with prepared crust.",
+            "Sprinkle bacon, onions, and cheese in crust.",
+            "Whisk eggs with milk and season.",
+            "Pour egg mixture over bacon and cheese.",
+            "Sprinkle with fresh chives.",
+            "Bake for 35-40 minutes until set.",
+            "Cool for 10 minutes before slicing."
+        ]
+    }
 };
     
     // Flatten all main ingredients into one array
