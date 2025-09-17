@@ -26,8 +26,9 @@ function loadSavedIngredients() {
     try {
         const savedIngredients = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         
-        // Check the corresponding checkboxes
-        checkboxes.forEach(checkbox => {
+        // Check the corresponding checkboxes (get fresh checkbox list each time)
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        allCheckboxes.forEach(checkbox => {
             const ingredient = checkbox.getAttribute('data-ingredient');
             if (savedIngredients.includes(ingredient)) {
                 checkbox.checked = true;
@@ -46,8 +47,9 @@ function loadSavedIngredients() {
 function saveIngredients() {
     const checkedIngredients = [];
     
-    // Collect all checked ingredients
-    checkboxes.forEach(checkbox => {
+    // Collect all checked ingredients (get fresh checkbox list each time)
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    allCheckboxes.forEach(checkbox => {
         if (checkbox.checked) {
             const ingredient = checkbox.getAttribute('data-ingredient');
             checkedIngredients.push(ingredient);
@@ -114,13 +116,15 @@ function showErrorMessage() {
 
 // Utility function to get all available ingredients (for future use)
 function getAllIngredients() {
-    return Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-ingredient'));
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    return Array.from(allCheckboxes).map(checkbox => checkbox.getAttribute('data-ingredient'));
 }
 
 // Utility function to clear all saved ingredients (for debugging/testing)
 function clearSavedIngredients() {
     localStorage.removeItem(STORAGE_KEY);
-    checkboxes.forEach(checkbox => checkbox.checked = false);
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    allCheckboxes.forEach(checkbox => checkbox.checked = false);
     displaySavedIngredients([]);
 }
 
