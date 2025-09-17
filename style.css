@@ -56,22 +56,6 @@ main {
     text-align: center;
 }
 
-/* Ingredient category styles - Compact Layout */
-.ingredient-category {
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px;
-    background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-
-.ingredient-category:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.12);
-    transform: translateY(-1px);
-}
 
 
 /* Table styles */
