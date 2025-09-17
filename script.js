@@ -199,7 +199,7 @@ function convertSpoonacularRecipe(spoonacularRecipe) {
     };
 }
 
-// Recipe Database - 155+ recipes across 7+ cuisines
+// Recipe Database - 172 recipes across 10 cuisines
 // This will be replaced with API calls
 const RECIPE_DATABASE = {
     // ITALIAN CUISINE (30 recipes)
@@ -4367,6 +4367,377 @@ const RECIPE_DATABASE = {
             "Add mushrooms in the last 30 minutes.",
             "Adjust seasoning and serve with mashed potatoes.",
             "Garnish with fresh parsley."
+        ]
+    },
+    "tandoori-chicken": {
+        name: "Tandoori Chicken",
+        ingredients: [
+            { name: "chicken", quantity: "1 whole" },
+            { name: "yogurt", quantity: "200ml" },
+            { name: "garlic", quantity: "6 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "tandoori-spices", quantity: "3 tbsp" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "onions", quantity: "1 large" },
+            { name: "cilantro", quantity: "fresh bunch" }
+        ],
+        difficulty: "Medium",
+        time: "60 min",
+        cuisine: "Indian",
+        description: "Marinated chicken roasted with aromatic spices",
+        image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut chicken into pieces and make deep cuts.",
+            "Mix yogurt, minced garlic, ginger, and tandoori spices.",
+            "Add lemon juice and salt to the marinade.",
+            "Coat chicken pieces thoroughly with marinade.",
+            "Marinate for at least 2 hours or overnight.",
+            "Preheat oven to 450°F (230°C).",
+            "Place marinated chicken on a baking tray.",
+            "Roast for 25-30 minutes until cooked through.",
+            "Garnish with sliced onions and cilantro.",
+            "Serve hot with naan bread and mint chutney."
+        ]
+    },
+    "palak-paneer": {
+        name: "Palak Paneer",
+        ingredients: [
+            { name: "spinach", quantity: "500g" },
+            { name: "paneer", quantity: "300g" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "tomatoes", quantity: "200g" },
+            { name: "cream", quantity: "100ml" },
+            { name: "spices", quantity: "garam masala" }
+        ],
+        difficulty: "Medium",
+        time: "40 min",
+        cuisine: "Indian",
+        description: "Cottage cheese in creamy spinach gravy",
+        image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Blanch spinach in boiling water for 2 minutes.",
+            "Drain and blend spinach to smooth puree.",
+            "Cut paneer into cubes and lightly fry.",
+            "Heat oil and sauté onions until golden.",
+            "Add ginger-garlic paste and cook for 2 minutes.",
+            "Add chopped tomatoes and cook until soft.",
+            "Add spinach puree and simmer for 10 minutes.",
+            "Add fried paneer cubes to the gravy.",
+            "Stir in cream and garam masala.",
+            "Serve hot with rice or Indian bread."
+        ]
+    },
+
+    // THAI CUISINE (5 recipes)
+    "pad-thai": {
+        name: "Pad Thai",
+        ingredients: [
+            { name: "noodles", quantity: "300g rice" },
+            { name: "shrimp", quantity: "300g" },
+            { name: "eggs", quantity: "2 large" },
+            { name: "bean-sprouts", quantity: "200g" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "fish-sauce", quantity: "3 tbsp" },
+            { name: "tamarind", quantity: "2 tbsp" },
+            { name: "peanuts", quantity: "100g crushed" }
+        ],
+        difficulty: "Medium",
+        time: "30 min",
+        cuisine: "Thai",
+        description: "Classic Thai stir-fried noodles with shrimp",
+        image: "https://images.unsplash.com/photo-1559314809-0f31657def5e?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Soak rice noodles in warm water until soft.",
+            "Heat oil in a large wok over high heat.",
+            "Add minced garlic and stir-fry for 30 seconds.",
+            "Add shrimp and cook until pink and cooked through.",
+            "Push ingredients to one side of wok.",
+            "Scramble eggs on empty side of wok.",
+            "Add drained noodles and toss everything together.",
+            "Add fish sauce and tamarind paste.",
+            "Add bean sprouts and stir-fry for 2 minutes.",
+            "Garnish with crushed peanuts and serve immediately."
+        ]
+    },
+    "green-curry": {
+        name: "Thai Green Curry",
+        ingredients: [
+            { name: "chicken", quantity: "500g" },
+            { name: "coconut-milk", quantity: "400ml" },
+            { name: "green-curry-paste", quantity: "3 tbsp" },
+            { name: "vegetables", quantity: "300g mixed" },
+            { name: "fish-sauce", quantity: "2 tbsp" },
+            { name: "basil", quantity: "fresh leaves" },
+            { name: "lime", quantity: "1 piece" },
+            { name: "rice", quantity: "300g jasmine" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Thai",
+        description: "Creamy coconut curry with green chilies",
+        image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat thick coconut milk in a large pot.",
+            "Add green curry paste and fry for 2 minutes.",
+            "Add chicken pieces and cook until sealed.",
+            "Add remaining coconut milk and bring to simmer.",
+            "Add vegetables and cook for 10 minutes.",
+            "Season with fish sauce and palm sugar.",
+            "Add fresh basil leaves and lime juice.",
+            "Simmer for 2 more minutes.",
+            "Taste and adjust seasoning.",
+            "Serve hot over jasmine rice."
+        ]
+    },
+
+    // JAPANESE CUISINE (5 recipes)
+    "chicken-teriyaki": {
+        name: "Chicken Teriyaki",
+        ingredients: [
+            { name: "chicken", quantity: "600g thighs" },
+            { name: "soy-sauce", quantity: "4 tbsp" },
+            { name: "mirin", quantity: "3 tbsp" },
+            { name: "sugar", quantity: "2 tbsp" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "garlic", quantity: "2 cloves" },
+            { name: "rice", quantity: "300g" },
+            { name: "sesame-seeds", quantity: "1 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Japanese",
+        description: "Sweet and savory glazed chicken",
+        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut chicken into bite-sized pieces.",
+            "Mix soy sauce, mirin, and sugar for teriyaki sauce.",
+            "Heat oil in a large skillet over medium-high heat.",
+            "Add chicken and cook until golden brown.",
+            "Add minced ginger and garlic, cook for 1 minute.",
+            "Pour teriyaki sauce over chicken.",
+            "Simmer until sauce thickens and glazes chicken.",
+            "Cook until chicken is cooked through.",
+            "Sprinkle with sesame seeds.",
+            "Serve over steamed rice."
+        ]
+    },
+    "salmon-teriyaki": {
+        name: "Salmon Teriyaki",
+        ingredients: [
+            { name: "salmon", quantity: "600g fillets" },
+            { name: "soy-sauce", quantity: "4 tbsp" },
+            { name: "mirin", quantity: "3 tbsp" },
+            { name: "honey", quantity: "2 tbsp" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "garlic", quantity: "2 cloves" },
+            { name: "rice", quantity: "300g" },
+            { name: "scallions", quantity: "2 pieces" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Japanese",
+        description: "Glazed salmon with sweet teriyaki sauce",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Pat salmon fillets dry and season with salt.",
+            "Mix soy sauce, mirin, and honey for glaze.",
+            "Heat oil in a large skillet over medium-high heat.",
+            "Cook salmon skin-side up for 4 minutes.",
+            "Flip salmon and cook for 3 more minutes.",
+            "Add minced ginger and garlic to pan.",
+            "Pour teriyaki glaze over salmon.",
+            "Cook until glaze thickens, about 2 minutes.",
+            "Garnish with sliced scallions.",
+            "Serve immediately over steamed rice."
+        ]
+    },
+
+    // MIDDLE EASTERN CUISINE (5 recipes)
+    "hummus": {
+        name: "Classic Hummus",
+        ingredients: [
+            { name: "chickpeas", quantity: "400g cooked" },
+            { name: "tahini", quantity: "3 tbsp" },
+            { name: "lemon", quantity: "2 pieces juiced" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "cumin", quantity: "1 tsp" },
+            { name: "paprika", quantity: "for garnish" },
+            { name: "parsley", quantity: "fresh" }
+        ],
+        difficulty: "Easy",
+        time: "15 min",
+        cuisine: "Middle Eastern",
+        description: "Creamy chickpea dip with tahini and lemon",
+        image: "https://images.unsplash.com/photo-1571197119282-7c4b999c9616?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Drain and rinse cooked chickpeas.",
+            "Add chickpeas to food processor.",
+            "Add tahini, lemon juice, and minced garlic.",
+            "Process until smooth and creamy.",
+            "Add cold water gradually while processing.",
+            "Season with salt and cumin.",
+            "Transfer to serving bowl.",
+            "Drizzle with olive oil.",
+            "Sprinkle with paprika and parsley.",
+            "Serve with pita bread or vegetables."
+        ]
+    },
+    "falafel": {
+        name: "Falafel",
+        ingredients: [
+            { name: "chickpeas", quantity: "400g dried" },
+            { name: "onions", quantity: "1 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "parsley", quantity: "1 cup fresh" },
+            { name: "cumin", quantity: "2 tsp" },
+            { name: "coriander", quantity: "1 tsp" },
+            { name: "flour", quantity: "2 tbsp" },
+            { name: "oil", quantity: "for frying" }
+        ],
+        difficulty: "Medium",
+        time: "45 min",
+        cuisine: "Middle Eastern",
+        description: "Deep-fried chickpea balls with herbs and spices",
+        image: "https://images.unsplash.com/photo-1593504049359-74330189a345?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Soak dried chickpeas overnight, then drain.",
+            "Add chickpeas to food processor and pulse.",
+            "Add onion, garlic, and parsley.",
+            "Add cumin, coriander, salt, and pepper.",
+            "Process until mixture is coarse, not smooth.",
+            "Add flour and mix well.",
+            "Refrigerate mixture for 1 hour.",
+            "Form mixture into small balls.",
+            "Heat oil to 350°F and fry falafel until golden.",
+            "Serve hot with tahini sauce and pita."
+        ]
+    },
+
+    // GERMAN CUISINE (5 recipes)
+    "schnitzel": {
+        name: "Wiener Schnitzel",
+        ingredients: [
+            { name: "veal", quantity: "4 cutlets" },
+            { name: "flour", quantity: "100g" },
+            { name: "eggs", quantity: "2 large" },
+            { name: "breadcrumbs", quantity: "200g" },
+            { name: "butter", quantity: "100g" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "parsley", quantity: "fresh" },
+            { name: "potatoes", quantity: "600g" }
+        ],
+        difficulty: "Medium",
+        time: "40 min",
+        cuisine: "German",
+        description: "Breaded and pan-fried veal cutlets",
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Pound veal cutlets to 1/4 inch thickness.",
+            "Season cutlets with salt and pepper.",
+            "Set up breading station: flour, beaten eggs, breadcrumbs.",
+            "Dredge each cutlet in flour, then egg, then breadcrumbs.",
+            "Heat butter in large skillet over medium-high heat.",
+            "Fry schnitzels for 2-3 minutes per side until golden.",
+            "Remove and drain on paper towels.",
+            "Serve immediately with lemon wedges.",
+            "Garnish with fresh parsley.",
+            "Traditionally served with boiled potatoes."
+        ]
+    },
+    "sauerbraten": {
+        name: "Sauerbraten",
+        ingredients: [
+            { name: "beef", quantity: "1.5kg roast" },
+            { name: "vinegar", quantity: "500ml" },
+            { name: "wine", quantity: "250ml red" },
+            { name: "onions", quantity: "2 large" },
+            { name: "carrots", quantity: "2 medium" },
+            { name: "bay-leaves", quantity: "3 pieces" },
+            { name: "juniper-berries", quantity: "10 pieces" },
+            { name: "gingersnaps", quantity: "6 cookies" }
+        ],
+        difficulty: "Hard",
+        time: "240 min",
+        cuisine: "German",
+        description: "Traditional German pot roast in sweet-sour sauce",
+        image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Marinate beef in vinegar, wine, and spices for 3 days.",
+            "Remove beef from marinade and pat dry.",
+            "Strain and reserve marinade.",
+            "Brown beef on all sides in a heavy pot.",
+            "Add strained marinade to pot.",
+            "Cover and braise in oven at 325°F for 3 hours.",
+            "Remove beef and strain cooking liquid.",
+            "Crush gingersnaps and add to liquid.",
+            "Simmer until sauce thickens.",
+            "Slice beef and serve with sauce.",
+            "Traditionally served with red cabbage and dumplings."
+        ]
+    },
+
+    // RUSSIAN CUISINE (5 recipes)
+    "beef-stroganoff": {
+        name: "Beef Stroganoff",
+        ingredients: [
+            { name: "beef", quantity: "600g strips" },
+            { name: "mushrooms", quantity: "300g" },
+            { name: "onions", quantity: "1 large" },
+            { name: "sour-cream", quantity: "200ml" },
+            { name: "flour", quantity: "2 tbsp" },
+            { name: "butter", quantity: "50g" },
+            { name: "beef-stock", quantity: "300ml" },
+            { name: "noodles", quantity: "400g egg" }
+        ],
+        difficulty: "Medium",
+        time: "35 min",
+        cuisine: "Russian",
+        description: "Tender beef in creamy mushroom sauce",
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut beef into thin strips and season with salt and pepper.",
+            "Heat butter in a large skillet over high heat.",
+            "Brown beef strips quickly and remove from pan.",
+            "Add sliced onions and mushrooms to same pan.",
+            "Cook until vegetables are softened.",
+            "Sprinkle flour over vegetables and stir.",
+            "Gradually add beef stock, stirring constantly.",
+            "Return beef to pan and simmer for 10 minutes.",
+            "Stir in sour cream and heat through.",
+            "Serve over cooked egg noodles."
+        ]
+    },
+    "borscht": {
+        name: "Borscht",
+        ingredients: [
+            { name: "beets", quantity: "4 large" },
+            { name: "cabbage", quantity: "300g" },
+            { name: "carrots", quantity: "2 medium" },
+            { name: "onions", quantity: "1 large" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "beef-stock", quantity: "1.5L" },
+            { name: "sour-cream", quantity: "200ml" },
+            { name: "dill", quantity: "fresh" }
+        ],
+        difficulty: "Medium",
+        time: "90 min",
+        cuisine: "Russian",
+        description: "Traditional beetroot soup with sour cream",
+        image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Peel and grate fresh beets.",
+            "Dice onions, carrots, and cabbage.",
+            "Heat oil in a large pot over medium heat.",
+            "Sauté onions until translucent.",
+            "Add carrots and cook for 5 minutes.",
+            "Add grated beets and cook for 10 minutes.",
+            "Add beef stock and bring to boil.",
+            "Add cabbage and simmer for 30 minutes.",
+            "Season with salt, pepper, and minced garlic.",
+            "Serve hot with a dollop of sour cream and fresh dill."
         ]
     }
 };
