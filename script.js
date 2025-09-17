@@ -6689,6 +6689,158 @@ function findMatchingMeals(availableIngredients) {
             "Drizzle with balsamic vinegar and honey.",
             "Serve hot as a side dish."
         ]
+    },
+
+    // BEAN RECIPES (15 recipes - beans as main protein)
+    "black-bean-chili": {
+        name: "Black Bean Chili",
+        ingredients: [
+            { name: "beans", quantity: "600g black beans" },
+            { name: "tomatoes", quantity: "400g diced" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "chili", quantity: "2 jalapeños" },
+            { name: "cumin", quantity: "2 tsp" },
+            { name: "bell-peppers", quantity: "2 pieces" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Easy",
+        time: "45 min",
+        cuisine: "Mexican",
+        description: "Hearty vegetarian black bean chili",
+        image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat oil in a large pot over medium heat.",
+            "Sauté diced onions until translucent.",
+            "Add minced garlic and cook for 1 minute.",
+            "Add diced bell peppers and jalapeños.",
+            "Cook for 5 minutes until softened.",
+            "Add cumin and cook for 30 seconds.",
+            "Add black beans and diced tomatoes.",
+            "Bring to boil, then reduce heat and simmer.",
+            "Cook for 30 minutes, stirring occasionally.",
+            "Serve over rice with toppings."
+        ]
+    },
+    "bean-burrito-bowl": {
+        name: "Bean Burrito Bowl",
+        ingredients: [
+            { name: "beans", quantity: "400g pinto beans" },
+            { name: "rice", quantity: "300g cilantro lime" },
+            { name: "lettuce", quantity: "200g chopped" },
+            { name: "tomatoes", quantity: "200g diced" },
+            { name: "avocado", quantity: "2 pieces" },
+            { name: "cheese", quantity: "150g shredded" },
+            { name: "lime", quantity: "3 pieces" },
+            { name: "cilantro", quantity: "1 bunch" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Mexican",
+        description: "Healthy bean bowl with fresh toppings",
+        image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat beans in a pot with cumin and garlic.",
+            "Prepare cilantro lime rice.",
+            "Dice tomatoes and slice avocado.",
+            "Chop lettuce and grate cheese.",
+            "Warm beans and season with salt and pepper.",
+            "Assemble bowls with rice as base.",
+            "Top with warm beans and fresh vegetables.",
+            "Add avocado slices and shredded cheese.",
+            "Squeeze lime juice over everything.",
+            "Garnish with fresh cilantro."
+        ]
+    },
+    "bean-soup": {
+        name: "Bean Soup",
+        ingredients: [
+            { name: "beans", quantity: "500g white beans" },
+            { name: "vegetables", quantity: "300g mixed" },
+            { name: "onions", quantity: "1 large" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "herbs", quantity: "rosemary & thyme" },
+            { name: "tomatoes", quantity: "200g" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "vegetable-stock", quantity: "1L" }
+        ],
+        difficulty: "Easy",
+        time: "60 min",
+        cuisine: "Italian",
+        description: "Rustic Italian white bean soup",
+        image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Soak dried beans overnight if using dried.",
+            "Heat olive oil in a large pot.",
+            "Sauté diced onions until golden.",
+            "Add minced garlic and herbs.",
+            "Add diced vegetables and cook for 5 minutes.",
+            "Add beans and vegetable stock.",
+            "Bring to boil, then simmer for 45 minutes.",
+            "Add diced tomatoes in last 10 minutes.",
+            "Season with salt and pepper.",
+            "Serve hot with crusty bread."
+        ]
+    },
+    "bean-salad": {
+        name: "Bean Salad",
+        ingredients: [
+            { name: "beans", quantity: "600g mixed beans" },
+            { name: "vegetables", quantity: "200g diced" },
+            { name: "onions", quantity: "1 red onion" },
+            { name: "herbs", quantity: "parsley & mint" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "feta-cheese", quantity: "150g" },
+            { name: "tomatoes", quantity: "200g cherry" }
+        ],
+        difficulty: "Easy",
+        time: "15 min",
+        cuisine: "Mediterranean",
+        description: "Fresh three-bean salad with herbs",
+        image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Drain and rinse canned beans.",
+            "Dice red onion and mixed vegetables.",
+            "Halve cherry tomatoes.",
+            "Chop fresh herbs finely.",
+            "Combine beans, vegetables, and tomatoes in large bowl.",
+            "Make dressing with lemon juice and olive oil.",
+            "Add herbs to dressing and whisk.",
+            "Pour dressing over bean mixture.",
+            "Toss well and let marinate for 10 minutes.",
+            "Top with crumbled feta and serve."
+        ]
+    },
+    "bean-curry": {
+        name: "Bean Curry",
+        ingredients: [
+            { name: "beans", quantity: "500g kidney beans" },
+            { name: "tomatoes", quantity: "400g" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "curry-powder", quantity: "2 tbsp" },
+            { name: "coconut-milk", quantity: "200ml" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Medium",
+        time: "40 min",
+        cuisine: "Indian",
+        description: "Spicy kidney bean curry",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat oil in a large pot over medium heat.",
+            "Sauté diced onions until golden brown.",
+            "Add ginger-garlic paste and curry powder.",
+            "Cook for 2 minutes until fragrant.",
+            "Add chopped tomatoes and cook until soft.",
+            "Add kidney beans and enough water to cover.",
+            "Bring to boil, then simmer for 20 minutes.",
+            "Add coconut milk and simmer for 10 minutes.",
+            "Season with salt and garam masala.",
+            "Serve hot over basmati rice."
+        ]
     }
 };
     
