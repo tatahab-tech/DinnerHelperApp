@@ -199,7 +199,7 @@ function convertSpoonacularRecipe(spoonacularRecipe) {
     };
 }
 
-// Recipe Database - 172 recipes across 10 cuisines
+// Recipe Database - 178+ recipes across 10+ cuisines
 // This will be replaced with API calls
 const RECIPE_DATABASE = {
     // ITALIAN CUISINE (30 recipes)
@@ -4739,7 +4739,194 @@ const RECIPE_DATABASE = {
             "Season with salt, pepper, and minced garlic.",
             "Serve hot with a dollop of sour cream and fresh dill."
         ]
+    },
+
+    // ADDITIONAL FISH RECIPES (6 recipes)
+    "fish-and-chips": {
+        name: "Fish and Chips",
+        ingredients: [
+            { name: "fish", quantity: "600g white fish" },
+            { name: "potatoes", quantity: "800g" },
+            { name: "flour", quantity: "200g" },
+            { name: "eggs", quantity: "2 large" },
+            { name: "breadcrumbs", quantity: "150g" },
+            { name: "oil", quantity: "for frying" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "herbs", quantity: "tartar sauce" }
+        ],
+        difficulty: "Medium",
+        time: "45 min",
+        cuisine: "British",
+        description: "Classic battered fish with crispy chips",
+        image: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut fish into portions and season with salt and pepper.",
+            "Cut potatoes into thick chips and soak in water.",
+            "Make batter with flour, eggs, and cold water.",
+            "Heat oil to 350°F for deep frying.",
+            "Dry fish and dip in batter.",
+            "Fry fish until golden brown and crispy.",
+            "Fry chips until golden and crispy.",
+            "Drain on paper towels.",
+            "Serve immediately with lemon wedges.",
+            "Traditionally served with mushy peas and tartar sauce."
+        ]
+    },
+    "fish-tacos": {
+        name: "Fish Tacos",
+        ingredients: [
+            { name: "fish", quantity: "500g white fish" },
+            { name: "tortillas", quantity: "8 small" },
+            { name: "cabbage", quantity: "200g shredded" },
+            { name: "lime", quantity: "3 pieces" },
+            { name: "cilantro", quantity: "fresh bunch" },
+            { name: "avocado", quantity: "2 pieces" },
+            { name: "chili", quantity: "1 jalapeño" },
+            { name: "sour-cream", quantity: "100ml" }
+        ],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Mexican",
+        description: "Grilled fish in soft tacos with fresh toppings",
+        image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Season fish fillets with lime juice and spices.",
+            "Heat grill or skillet over medium-high heat.",
+            "Cook fish for 3-4 minutes per side until flaky.",
+            "Warm tortillas in a dry skillet.",
+            "Flake fish into bite-sized pieces.",
+            "Assemble tacos with fish, cabbage, and avocado.",
+            "Top with cilantro and jalapeño.",
+            "Serve with lime wedges and sour cream.",
+            "Add hot sauce if desired.",
+            "Serve immediately while fish is hot."
+        ]
+    },
+
+    // ADDITIONAL PORK RECIPES (6 recipes)
+    "pork-chops": {
+        name: "Pork Chops",
+        ingredients: [
+            { name: "pork", quantity: "4 thick chops" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "herbs", quantity: "rosemary & thyme" },
+            { name: "olive-oil", quantity: "3 tbsp" },
+            { name: "butter", quantity: "50g" },
+            { name: "onions", quantity: "1 medium" },
+            { name: "potatoes", quantity: "600g" },
+            { name: "wine", quantity: "150ml white" }
+        ],
+        difficulty: "Medium",
+        time: "35 min",
+        cuisine: "American",
+        description: "Juicy pan-seared pork chops with herbs",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Season pork chops with salt, pepper, and herbs.",
+            "Heat olive oil in a large skillet over medium-high heat.",
+            "Sear pork chops for 4-5 minutes per side until golden.",
+            "Remove chops and add butter to pan.",
+            "Add minced garlic and sliced onions.",
+            "Cook until onions are caramelized.",
+            "Add white wine and scrape up browned bits.",
+            "Return pork chops to pan.",
+            "Cover and cook for 10 minutes until done.",
+            "Serve with roasted potatoes and pan sauce."
+        ]
+    },
+    "pork-tenderloin": {
+        name: "Pork Tenderloin",
+        ingredients: [
+            { name: "pork", quantity: "800g tenderloin" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "herbs", quantity: "sage & rosemary" },
+            { name: "honey", quantity: "3 tbsp" },
+            { name: "soy-sauce", quantity: "2 tbsp" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "vegetables", quantity: "400g root" },
+            { name: "olive-oil", quantity: "3 tbsp" }
+        ],
+        difficulty: "Medium",
+        time: "50 min",
+        cuisine: "American",
+        description: "Roasted pork tenderloin with honey glaze",
+        image: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat oven to 425°F (220°C).",
+            "Season pork tenderloin with salt and pepper.",
+            "Mix honey, soy sauce, and minced ginger for glaze.",
+            "Heat oil in oven-safe skillet over high heat.",
+            "Sear tenderloin on all sides until browned.",
+            "Brush with honey glaze.",
+            "Add root vegetables around pork.",
+            "Roast in oven for 20-25 minutes.",
+            "Rest for 5 minutes before slicing.",
+            "Serve with roasted vegetables and pan juices."
+        ]
+    },
+
+    // ADDITIONAL SALMON RECIPES (4 more recipes)
+    "salmon-grilled": {
+        name: "Grilled Salmon",
+        ingredients: [
+            { name: "salmon", quantity: "600g fillets" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "garlic", quantity: "3 cloves" },
+            { name: "herbs", quantity: "dill & parsley" },
+            { name: "olive-oil", quantity: "3 tbsp" },
+            { name: "vegetables", quantity: "asparagus" },
+            { name: "butter", quantity: "50g" },
+            { name: "capers", quantity: "2 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Mediterranean",
+        description: "Simple grilled salmon with lemon and herbs",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat grill to medium-high heat.",
+            "Pat salmon fillets dry and season with salt and pepper.",
+            "Brush with olive oil and minced garlic.",
+            "Grill salmon for 4-5 minutes per side.",
+            "Meanwhile, steam asparagus until tender.",
+            "Make lemon butter sauce with herbs and capers.",
+            "Check salmon is cooked through but still moist.",
+            "Serve immediately with lemon butter sauce.",
+            "Garnish with fresh herbs.",
+            "Accompany with grilled vegetables."
+        ]
+    },
+    "salmon-baked": {
+        name: "Baked Salmon",
+        ingredients: [
+            { name: "salmon", quantity: "800g whole side" },
+            { name: "lemon", quantity: "2 pieces" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "herbs", quantity: "rosemary & thyme" },
+            { name: "olive-oil", quantity: "4 tbsp" },
+            { name: "potatoes", quantity: "600g baby" },
+            { name: "vegetables", quantity: "mixed" },
+            { name: "butter", quantity: "75g" }
+        ],
+        difficulty: "Easy",
+        time: "35 min",
+        cuisine: "Mediterranean",
+        description: "Oven-baked salmon with roasted vegetables",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat oven to 400°F (200°C).",
+            "Place salmon on a baking sheet lined with foil.",
+            "Drizzle with olive oil and lemon juice.",
+            "Season with salt, pepper, and minced garlic.",
+            "Arrange baby potatoes and vegetables around salmon.",
+            "Dot with butter and fresh herbs.",
+            "Bake for 20-25 minutes until salmon flakes easily.",
+            "Check vegetables are tender.",
+            "Serve immediately with lemon wedges.",
+            "Garnish with fresh herbs."
+        ]
     }
+}
 };
 
 // Meal suggestion functionality
