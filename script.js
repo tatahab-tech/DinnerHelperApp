@@ -199,7 +199,7 @@ function convertSpoonacularRecipe(spoonacularRecipe) {
     };
 }
 
-// Recipe Database - 150 recipes across 5 cuisines (30 each)
+// Recipe Database - 155+ recipes across 7+ cuisines
 // This will be replaced with API calls
 const RECIPE_DATABASE = {
     // ITALIAN CUISINE (30 recipes)
@@ -4207,6 +4207,166 @@ const RECIPE_DATABASE = {
             "Cook until ingredients are properly heated through.",
             "Serve immediately while hot.",
             "Garnish with fresh herbs if desired."
+        ]
+    },
+
+    // INDIAN CUISINE (20 recipes)
+    "chicken-curry": {
+        name: "Chicken Curry",
+        ingredients: [
+            { name: "chicken", quantity: "500g" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "tomatoes", quantity: "400g" },
+            { name: "coconut-milk", quantity: "400ml" },
+            { name: "curry-powder", quantity: "2 tbsp" },
+            { name: "rice", quantity: "300g" }
+        ],
+        difficulty: "Medium",
+        time: "45 min",
+        cuisine: "Indian",
+        description: "Aromatic chicken curry with coconut milk and spices",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat oil in a large pot over medium heat.",
+            "Add diced onions and cook until softened, about 5 minutes.",
+            "Add minced garlic and ginger, cook for 1 minute until fragrant.",
+            "Add curry powder and cook for 30 seconds until aromatic.",
+            "Add diced tomatoes and cook until they break down, about 8 minutes.",
+            "Add chicken pieces and cook until browned on all sides.",
+            "Pour in coconut milk and bring to a simmer.",
+            "Reduce heat and simmer for 20-25 minutes until chicken is cooked through.",
+            "Season with salt and pepper to taste.",
+            "Serve over cooked rice with fresh cilantro."
+        ]
+    },
+    "vegetable-biryani": {
+        name: "Vegetable Biryani",
+        ingredients: [
+            { name: "rice", quantity: "400g basmati" },
+            { name: "vegetables", quantity: "500g mixed" },
+            { name: "onions", quantity: "2 large" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "2 tbsp" },
+            { name: "yogurt", quantity: "200ml" },
+            { name: "biryani-spices", quantity: "2 tbsp" },
+            { name: "saffron", quantity: "pinch" }
+        ],
+        difficulty: "Hard",
+        time: "90 min",
+        cuisine: "Indian",
+        description: "Fragrant rice dish with mixed vegetables and aromatic spices",
+        image: "https://images.unsplash.com/photo-1563379091339-03246963d96a?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Soak basmati rice for 30 minutes, then drain.",
+            "Heat oil in a heavy-bottomed pot over medium heat.",
+            "Add sliced onions and fry until golden brown and crispy.",
+            "Remove half the onions and set aside for garnish.",
+            "Add ginger-garlic paste to remaining onions, cook for 2 minutes.",
+            "Add mixed vegetables and cook for 5 minutes.",
+            "Add yogurt and biryani spice mix, cook for 3 minutes.",
+            "Layer the partially cooked rice over the vegetables.",
+            "Sprinkle saffron soaked in warm milk over rice.",
+            "Cover and cook on low heat for 45 minutes.",
+            "Let it rest for 10 minutes before serving.",
+            "Garnish with reserved fried onions and fresh mint."
+        ]
+    },
+    "dal-tadka": {
+        name: "Dal Tadka",
+        ingredients: [
+            { name: "lentils", quantity: "300g" },
+            { name: "onions", quantity: "1 medium" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "ginger", quantity: "1 tbsp" },
+            { name: "tomatoes", quantity: "200g" },
+            { name: "cumin-seeds", quantity: "1 tsp" },
+            { name: "turmeric", quantity: "1/2 tsp" },
+            { name: "ghee", quantity: "2 tbsp" }
+        ],
+        difficulty: "Easy",
+        time: "35 min",
+        cuisine: "Indian",
+        description: "Comforting lentil curry with aromatic tempering",
+        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Rinse lentils and cook with water and turmeric until soft.",
+            "Heat ghee in a pan over medium heat.",
+            "Add cumin seeds and let them splutter.",
+            "Add minced garlic and ginger, cook for 1 minute.",
+            "Add diced onions and cook until golden.",
+            "Add chopped tomatoes and cook until mushy.",
+            "Pour this tempering over the cooked lentils.",
+            "Simmer for 10 minutes, stirring occasionally.",
+            "Season with salt and garnish with cilantro.",
+            "Serve hot with rice or Indian bread."
+        ]
+    },
+
+    // FRENCH CUISINE (20 recipes)
+    "coq-au-vin": {
+        name: "Coq au Vin",
+        ingredients: [
+            { name: "chicken", quantity: "1 whole" },
+            { name: "wine", quantity: "750ml red" },
+            { name: "bacon", quantity: "200g" },
+            { name: "mushrooms", quantity: "300g" },
+            { name: "onions", quantity: "12 pearl" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "herbs", quantity: "bouquet garni" },
+            { name: "butter", quantity: "50g" }
+        ],
+        difficulty: "Hard",
+        time: "120 min",
+        cuisine: "French",
+        description: "Classic French braised chicken in red wine",
+        image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut chicken into pieces and season with salt and pepper.",
+            "Cook bacon in a large pot until crispy, remove and set aside.",
+            "Brown chicken pieces in the bacon fat until golden.",
+            "Remove chicken and add pearl onions, cook until browned.",
+            "Add garlic and cook for 1 minute.",
+            "Return chicken and bacon to pot.",
+            "Add red wine and bouquet garni.",
+            "Bring to a boil, then simmer covered for 1 hour.",
+            "Add mushrooms and cook for 30 minutes more.",
+            "Thicken sauce with butter if desired.",
+            "Remove bouquet garni and serve hot.",
+            "Traditionally served with crusty bread or potatoes."
+        ]
+    },
+    "beef-bourguignon": {
+        name: "Beef Bourguignon",
+        ingredients: [
+            { name: "beef", quantity: "1kg chuck" },
+            { name: "wine", quantity: "750ml red" },
+            { name: "bacon", quantity: "200g" },
+            { name: "carrots", quantity: "3 large" },
+            { name: "onions", quantity: "2 medium" },
+            { name: "mushrooms", quantity: "300g" },
+            { name: "garlic", quantity: "4 cloves" },
+            { name: "flour", quantity: "3 tbsp" }
+        ],
+        difficulty: "Hard",
+        time: "150 min",
+        cuisine: "French",
+        description: "Slow-braised beef in red wine with vegetables",
+        image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut beef into large cubes and season with salt and pepper.",
+            "Cook bacon until crispy, remove and set aside.",
+            "Brown beef cubes in batches in the bacon fat.",
+            "Remove beef and add diced onions and carrots.",
+            "Cook vegetables until softened, about 5 minutes.",
+            "Sprinkle flour over vegetables and cook for 2 minutes.",
+            "Add red wine and scrape up browned bits.",
+            "Return beef and bacon to pot with herbs.",
+            "Cover and braise in oven at 325°F for 2 hours.",
+            "Add mushrooms in the last 30 minutes.",
+            "Adjust seasoning and serve with mashed potatoes.",
+            "Garnish with fresh parsley."
         ]
     }
 };
