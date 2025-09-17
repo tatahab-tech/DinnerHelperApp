@@ -4801,6 +4801,25 @@ async function suggestMeals() {
 function findMatchingMeals(availableIngredients) {
     const suggestions = [];
     
+    // MAIN INGREDIENT CATEGORIES - recipes only shown if user has at least one from these categories
+    const MAIN_INGREDIENT_CATEGORIES = {
+        // Proteins
+        proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'veal', 'paneer'],
+        
+        // Carbs & Grains
+        carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
+        
+        // Vegetables
+        vegetables: ['potatoes', 'tomatoes', 'onions', 'garlic', 'carrots', 'bell-peppers', 'mushrooms', 'spinach', 'broccoli', 'lettuce', 'avocado', 'vegetables', 'eggplant', 'beets', 'cabbage']
+    };
+    
+    // Flatten all main ingredients into one array
+    const allMainIngredients = [
+        ...MAIN_INGREDIENT_CATEGORIES.proteins,
+        ...MAIN_INGREDIENT_CATEGORIES.carbs,
+        ...MAIN_INGREDIENT_CATEGORIES.vegetables
+    ];
+    
     Object.keys(RECIPE_DATABASE).forEach(recipeId => {
         const recipe = RECIPE_DATABASE[recipeId];
         
@@ -4812,17 +4831,38 @@ function findMatchingMeals(availableIngredients) {
             return ingredient; // fallback for old string format
         });
         
+        // MAIN INGREDIENT PRIORITY SYSTEM
+        // Check if recipe contains any main ingredients (proteins, carbs, or vegetables)
+        const recipeMainIngredients = recipeIngredientNames.filter(ingredient => 
+            allMainIngredients.includes(ingredient)
+        );
+        
+        // Check if user has at least one main ingredient that's in this recipe
+        const hasMainIngredient = recipeMainIngredients.some(ingredient => 
+            availableIngredients.includes(ingredient)
+        );
+        
+        // Only proceed if user has at least one main ingredient from this recipe
+        if (!hasMainIngredient) {
+            return; // Skip this recipe - user doesn't have any main ingredients needed
+        }
+        
+        // Calculate overall ingredient matching
         const matchingIngredients = recipeIngredientNames.filter(ingredientName => 
             availableIngredients.includes(ingredientName)
         );
         
         const matchPercentage = (matchingIngredients.length / recipeIngredientNames.length) * 100;
         
-        if (matchPercentage >= 50) { // Suggest if at least 50% of ingredients match
+        // Suggest if at least 50% of ingredients match AND user has main ingredient
+        if (matchPercentage >= 50) {
             suggestions.push({
                 id: recipeId,
                 ...recipe,
                 matchPercentage: Math.round(matchPercentage),
+                mainIngredientsAvailable: recipeMainIngredients.filter(ingredient => 
+                    availableIngredients.includes(ingredient)
+                ),
                 missingIngredients: recipeIngredientNames.filter(ingredientName => 
                     !availableIngredients.includes(ingredientName)
                 )
@@ -4841,7 +4881,13 @@ function displaySuggestedMeals(meals) {
         suggestionsContainer.innerHTML = `
             <div class="no-suggestions">
                 <h3>No meal suggestions available</h3>
-                <p>Try adding more ingredients to get better suggestions!</p>
+                <p>To get recipe suggestions, you need at least one <strong>main ingredient</strong>:</p>
+                <ul style="text-align: left; margin: 10px 0;">
+                    <li><strong>Proteins:</strong> Chicken, Beef, Fish, Tofu, etc.</li>
+                    <li><strong>Carbs:</strong> Rice, Pasta, Bread, Noodles, etc.</li>
+                    <li><strong>Vegetables:</strong> Potatoes, Tomatoes, Onions, etc.</li>
+                </ul>
+                <p>Plus at least 50% of the recipe's total ingredients!</p>
             </div>
         `;
         return;
