@@ -104,10 +104,10 @@ main {
 
 .ingredients-table th,
 .ingredients-table td {
-    padding: 8px 12px;
+    padding: 8px 8px;
     text-align: left;
     border-bottom: 1px solid #e2e8f0;
-    width: 25%;
+    width: 16.66%;
 }
 
 .ingredients-table th {
@@ -131,14 +131,16 @@ main {
 
 /* Style for ingredient name columns */
 .ingredients-table td:nth-child(1),
-.ingredients-table td:nth-child(3) {
+.ingredients-table td:nth-child(3),
+.ingredients-table td:nth-child(5) {
     font-weight: 500;
     color: #2d3748;
 }
 
 /* Style for checkbox columns */
 .ingredients-table td:nth-child(2),
-.ingredients-table td:nth-child(4) {
+.ingredients-table td:nth-child(4),
+.ingredients-table td:nth-child(6) {
     text-align: center;
 }
 
