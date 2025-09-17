@@ -4831,20 +4831,41 @@ function findMatchingMeals(availableIngredients) {
             return ingredient; // fallback for old string format
         });
         
-        // MAIN INGREDIENT PRIORITY SYSTEM
+        // DOMINANT INGREDIENT PRIORITY SYSTEM
         // Check if recipe contains any main ingredients (proteins, carbs, or vegetables)
         const recipeMainIngredients = recipeIngredientNames.filter(ingredient => 
             allMainIngredients.includes(ingredient)
         );
         
-        // Check if user has at least one main ingredient that's in this recipe
-        const hasMainIngredient = recipeMainIngredients.some(ingredient => 
+        // Find which main ingredients the user has that match this recipe
+        const userMainIngredients = recipeMainIngredients.filter(ingredient => 
             availableIngredients.includes(ingredient)
         );
         
         // Only proceed if user has at least one main ingredient from this recipe
-        if (!hasMainIngredient) {
+        if (userMainIngredients.length === 0) {
             return; // Skip this recipe - user doesn't have any main ingredients needed
+        }
+        
+        // NEW: DOMINANT INGREDIENT MATCHING
+        // Prioritize recipes where the user's selected ingredient is the PRIMARY ingredient
+        // The first ingredient in a recipe is typically the main/dominant ingredient
+        const recipePrimaryIngredient = recipeIngredientNames[0]; // First ingredient = primary
+        const userHasPrimaryIngredient = availableIngredients.includes(recipePrimaryIngredient);
+        
+        // If user doesn't have the primary ingredient, check if they have a protein that matches the recipe name
+        let isDominantMatch = userHasPrimaryIngredient;
+        
+        if (!isDominantMatch) {
+            // Check if recipe name contains the user's protein ingredients
+            const userProteins = availableIngredients.filter(ingredient => 
+                MAIN_INGREDIENT_CATEGORIES.proteins.includes(ingredient)
+            );
+            
+            isDominantMatch = userProteins.some(protein => 
+                recipe.name.toLowerCase().includes(protein) || 
+                recipeId.includes(protein)
+            );
         }
         
         // Calculate overall ingredient matching
@@ -4852,14 +4873,21 @@ function findMatchingMeals(availableIngredients) {
             availableIngredients.includes(ingredientName)
         );
         
-        const matchPercentage = (matchingIngredients.length / recipeIngredientNames.length) * 100;
+        let matchPercentage = (matchingIngredients.length / recipeIngredientNames.length) * 100;
+        
+        // BOOST score for dominant ingredient matches
+        if (isDominantMatch) {
+            matchPercentage += 15; // Give 15% bonus for dominant ingredient match
+        }
         
         // Suggest if at least 50% of ingredients match AND user has main ingredient
         if (matchPercentage >= 50) {
             suggestions.push({
                 id: recipeId,
                 ...recipe,
-                matchPercentage: Math.round(matchPercentage),
+                matchPercentage: Math.round(Math.min(matchPercentage, 100)), // Cap at 100%
+                isDominantMatch: isDominantMatch,
+                primaryIngredient: recipePrimaryIngredient,
                 mainIngredientsAvailable: recipeMainIngredients.filter(ingredient => 
                     availableIngredients.includes(ingredient)
                 ),
@@ -4870,8 +4898,15 @@ function findMatchingMeals(availableIngredients) {
         }
     });
     
-    // Sort by match percentage (highest first)
-    return suggestions.sort((a, b) => b.matchPercentage - a.matchPercentage);
+    // Sort by dominant match first, then by match percentage
+    return suggestions.sort((a, b) => {
+        // First priority: dominant ingredient matches
+        if (a.isDominantMatch && !b.isDominantMatch) return -1;
+        if (!a.isDominantMatch && b.isDominantMatch) return 1;
+        
+        // Second priority: match percentage (highest first)
+        return b.matchPercentage - a.matchPercentage;
+    });
 }
 
 function displaySuggestedMeals(meals) {
