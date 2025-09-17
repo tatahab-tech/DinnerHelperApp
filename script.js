@@ -4798,6 +4798,35 @@ async function suggestMeals() {
     }
 }
 
+// Helper function to handle ingredient name variations for dominant matching
+function getIngredientVariations(ingredient) {
+    const variations = [ingredient.toLowerCase()];
+    
+    // Add common variations
+    const variationMap = {
+        'beef': ['beef', 'steak'],
+        'chicken': ['chicken', 'poultry'],
+        'fish': ['fish', 'salmon', 'tuna', 'cod'],
+        'shrimp': ['shrimp', 'prawns'],
+        'pasta': ['pasta', 'spaghetti', 'penne', 'linguine', 'fettuccine'],
+        'rice': ['rice', 'risotto', 'pilaf'],
+        'potatoes': ['potato', 'potatoes'],
+        'tomatoes': ['tomato', 'tomatoes'],
+        'mushrooms': ['mushroom', 'mushrooms'],
+        'onions': ['onion', 'onions'],
+        'bell-peppers': ['pepper', 'peppers'],
+        'noodles': ['noodle', 'noodles', 'ramen', 'udon'],
+        'bread': ['bread', 'toast', 'sandwich'],
+        'eggs': ['egg', 'eggs', 'omelette', 'frittata']
+    };
+    
+    if (variationMap[ingredient]) {
+        return variationMap[ingredient];
+    }
+    
+    return variations;
+}
+
 function findMatchingMeals(availableIngredients) {
     const suggestions = [];
     
@@ -4853,20 +4882,33 @@ function findMatchingMeals(availableIngredients) {
         const recipePrimaryIngredient = recipeIngredientNames[0]; // First ingredient = primary
         const userHasPrimaryIngredient = availableIngredients.includes(recipePrimaryIngredient);
         
-        // If user doesn't have the primary ingredient, check if they have a protein that matches the recipe name
+        // EXPANDED: Check if user has ANY main ingredient that matches recipe name/ID (not just proteins)
         let isDominantMatch = userHasPrimaryIngredient;
         
         if (!isDominantMatch) {
-            // Check if recipe name contains the user's protein ingredients
-            const userProteins = availableIngredients.filter(ingredient => 
-                MAIN_INGREDIENT_CATEGORIES.proteins.includes(ingredient)
+            // Check if recipe name or ID contains ANY of the user's main ingredients
+            const userMainIngredientsAll = availableIngredients.filter(ingredient => 
+                allMainIngredients.includes(ingredient)
             );
             
-            isDominantMatch = userProteins.some(protein => 
-                recipe.name.toLowerCase().includes(protein) || 
-                recipeId.includes(protein)
-            );
+            isDominantMatch = userMainIngredientsAll.some(ingredient => {
+                const recipeName = recipe.name.toLowerCase();
+                const recipeKey = recipeId.toLowerCase();
+                const ingredientName = ingredient.toLowerCase();
+                
+                // Direct name matching
+                if (recipeName.includes(ingredientName) || recipeKey.includes(ingredientName)) {
+                    return true;
+                }
+                
+                // Handle special cases and variations
+                const ingredientVariations = getIngredientVariations(ingredient);
+                return ingredientVariations.some(variation => 
+                    recipeName.includes(variation) || recipeKey.includes(variation)
+                );
+            });
         }
+        
         
         // Calculate overall ingredient matching
         const matchingIngredients = recipeIngredientNames.filter(ingredientName => 
