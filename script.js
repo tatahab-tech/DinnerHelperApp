@@ -205,11 +205,19 @@ const RECIPE_DATABASE = {
     // ITALIAN CUISINE (30 recipes)
     "pasta-carbonara": {
         name: "Pasta Carbonara",
-        ingredients: ["pasta", "eggs", "cheese", "bacon", "garlic", "olive-oil"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "bacon", quantity: "150g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Italian",
         description: "Classic Italian pasta with eggs, cheese, and bacon",
+        image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
             "While pasta cooks, cut bacon into small pieces and cook in a large skillet over medium heat until crispy.",
@@ -227,7 +235,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-pasta": {
         name: "Vegetarian Pasta",
-        ingredients: ["pasta", "tomatoes", "cheese", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Italian",
@@ -246,7 +261,14 @@ const RECIPE_DATABASE = {
     },
     "pasta-alfredo": {
         name: "Pasta Alfredo",
-        ingredients: ["pasta", "cheese", "butter", "garlic", "milk", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "milk", quantity: "300ml" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
@@ -266,7 +288,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-pizza": {
         name: "Vegetarian Pizza",
-        ingredients: ["bread", "cheese", "tomatoes", "vegetables", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "bread", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Italian",
@@ -286,11 +315,20 @@ const RECIPE_DATABASE = {
     },
     "spaghetti-bolognese": {
         name: "Spaghetti Bolognese",
-        ingredients: ["pasta", "beef", "tomatoes", "onions", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "beef", quantity: "500g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Italian",
         description: "Rich meat sauce with spaghetti and fresh herbs",
+        image: "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Heat olive oil in a large pot over medium heat.",
             "Add diced onions and cook for 5 minutes until softened.",
@@ -306,7 +344,14 @@ const RECIPE_DATABASE = {
     },
     "margherita-pizza": {
         name: "Margherita Pizza",
-        ingredients: ["bread", "cheese", "tomatoes", "olive-oil", "herbs", "garlic"],
+        ingredients: [
+        { name: "bread", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Italian",
@@ -326,7 +371,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-parmesan": {
         name: "Chicken Parmesan",
-        ingredients: ["chicken", "cheese", "bread", "tomatoes", "olive-oil", "garlic", "herbs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "bread", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Italian",
@@ -346,7 +399,15 @@ const RECIPE_DATABASE = {
     },
     "risotto-mushroom": {
         name: "Mushroom Risotto",
-        ingredients: ["rice", "mushrooms", "cheese", "onions", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "rice", quantity: "300g" },
+        { name: "mushrooms", quantity: "300g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "35 min",
         cuisine: "Italian",
@@ -366,7 +427,15 @@ const RECIPE_DATABASE = {
     },
     "lasagna": {
         name: "Lasagna",
-        ingredients: ["pasta", "beef", "cheese", "tomatoes", "onions", "garlic", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "beef", quantity: "500g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "60 min",
         cuisine: "Italian",
@@ -384,7 +453,15 @@ const RECIPE_DATABASE = {
     },
     "fettuccine-alfredo": {
         name: "Fettuccine Alfredo",
-        ingredients: ["pasta", "cheese", "butter", "garlic", "milk", "herbs", "olive-oil"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "milk", quantity: "300ml" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
@@ -401,7 +478,14 @@ const RECIPE_DATABASE = {
     },
     "bruschetta": {
         name: "Bruschetta",
-        ingredients: ["bread", "tomatoes", "garlic", "olive-oil", "herbs", "onions"],
+        ingredients: [
+        { name: "bread", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "onions", quantity: "2 medium" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Italian",
@@ -418,7 +502,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-marsala": {
         name: "Chicken Marsala",
-        ingredients: ["chicken", "mushrooms", "wine", "butter", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "mushrooms", quantity: "300g" },
+        { name: "wine", quantity: "150ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Italian",
@@ -435,7 +527,15 @@ const RECIPE_DATABASE = {
     },
     "penne-arrabbiata": {
         name: "Penne Arrabbiata",
-        ingredients: ["pasta", "tomatoes", "garlic", "olive-oil", "herbs", "chili", "onions"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "chili", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
@@ -452,7 +552,15 @@ const RECIPE_DATABASE = {
     },
     "eggplant-parmesan": {
         name: "Eggplant Parmesan",
-        ingredients: ["eggplant", "cheese", "tomatoes", "bread", "olive-oil", "garlic", "herbs"],
+        ingredients: [
+        { name: "eggplant", quantity: "1 large" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Italian",
@@ -468,7 +576,15 @@ const RECIPE_DATABASE = {
     },
     "osso-buco": {
         name: "Osso Buco",
-        ingredients: ["beef", "wine", "tomatoes", "onions", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "wine", quantity: "150ml" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "Italian",
@@ -484,7 +600,15 @@ const RECIPE_DATABASE = {
     },
     "gnocchi": {
         name: "Gnocchi",
-        ingredients: ["potatoes", "flour", "cheese", "tomatoes", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "potatoes", quantity: "1kg" },
+        { name: "flour", quantity: "200g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "50 min",
         cuisine: "Italian",
@@ -500,7 +624,13 @@ const RECIPE_DATABASE = {
     },
     "cacio-e-pepe": {
         name: "Cacio e Pepe",
-        ingredients: ["pasta", "cheese", "pepper", "olive-oil", "butter"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "pepper", quantity: "1/2 tsp" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "butter", quantity: "100g" }
+    ],
         difficulty: "Medium",
         time: "15 min",
         cuisine: "Italian",
@@ -516,7 +646,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-piccata": {
         name: "Chicken Piccata",
-        ingredients: ["chicken", "lemon", "capers", "butter", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "lemon", quantity: "to taste" },
+        { name: "capers", quantity: "to taste" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Italian",
@@ -533,7 +671,16 @@ const RECIPE_DATABASE = {
     },
     "minestrone": {
         name: "Minestrone Soup",
-        ingredients: ["vegetables", "tomatoes", "beans", "pasta", "onions", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "beans", quantity: "to taste" },
+        { name: "pasta", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "40 min",
         cuisine: "Italian",
@@ -551,7 +698,14 @@ const RECIPE_DATABASE = {
     },
     "tiramisu": {
         name: "Tiramisu",
-        ingredients: ["eggs", "cheese", "coffee", "cocoa", "sugar", "ladyfingers"],
+        ingredients: [
+        { name: "eggs", quantity: "3 large" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "coffee", quantity: "to taste" },
+        { name: "cocoa", quantity: "to taste" },
+        { name: "sugar", quantity: "2 tbsp" },
+        { name: "ladyfingers", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "120 min",
         cuisine: "Italian",
@@ -570,7 +724,15 @@ const RECIPE_DATABASE = {
     },
     "pasta-puttanesca": {
         name: "Pasta Puttanesca",
-        ingredients: ["pasta", "tomatoes", "olives", "capers", "garlic", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "olives", quantity: "to taste" },
+        { name: "capers", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
@@ -587,7 +749,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-saltimbocca": {
         name: "Chicken Saltimbocca",
-        ingredients: ["chicken", "prosciutto", "sage", "cheese", "wine", "butter", "olive-oil"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "prosciutto", quantity: "to taste" },
+        { name: "sage", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "wine", quantity: "150ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Italian",
@@ -604,7 +774,15 @@ const RECIPE_DATABASE = {
     },
     "risotto-milanese": {
         name: "Risotto Milanese",
-        ingredients: ["rice", "saffron", "cheese", "onions", "butter", "wine", "olive-oil"],
+        ingredients: [
+        { name: "rice", quantity: "300g" },
+        { name: "saffron", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "butter", quantity: "100g" },
+        { name: "wine", quantity: "150ml" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Hard",
         time: "30 min",
         cuisine: "Italian",
@@ -624,7 +802,15 @@ const RECIPE_DATABASE = {
     },
     "pasta-primavera": {
         name: "Pasta Primavera",
-        ingredients: ["pasta", "vegetables", "cheese", "garlic", "olive-oil", "herbs", "cream"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Italian",
@@ -641,7 +827,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-cacciatore": {
         name: "Chicken Cacciatore",
-        ingredients: ["chicken", "tomatoes", "mushrooms", "onions", "garlic", "olive-oil", "herbs", "wine"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "mushrooms", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "wine", quantity: "150ml" }
+    ],
         difficulty: "Medium",
         time: "50 min",
         cuisine: "Italian",
@@ -658,7 +853,14 @@ const RECIPE_DATABASE = {
     },
     "pasta-aglio-olio": {
         name: "Pasta Aglio e Olio",
-        ingredients: ["pasta", "garlic", "olive-oil", "chili", "herbs", "parsley"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "chili", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "parsley", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Italian",
@@ -675,7 +877,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-francese": {
         name: "Chicken Francese",
-        ingredients: ["chicken", "lemon", "wine", "butter", "garlic", "olive-oil", "herbs", "eggs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "lemon", quantity: "to taste" },
+        { name: "wine", quantity: "150ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "eggs", quantity: "3 large" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Italian",
@@ -692,7 +903,15 @@ const RECIPE_DATABASE = {
     },
     "pasta-vongole": {
         name: "Pasta Vongole",
-        ingredients: ["pasta", "clams", "garlic", "olive-oil", "white-wine", "herbs", "chili"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "clams", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "white-wine", quantity: "150ml" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "chili", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Italian",
@@ -709,7 +928,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-scarpariello": {
         name: "Chicken Scarpariello",
-        ingredients: ["chicken", "sausage", "peppers", "onions", "garlic", "olive-oil", "herbs", "wine"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "sausage", quantity: "300g" },
+        { name: "peppers", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "wine", quantity: "150ml" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Italian",
@@ -726,7 +954,14 @@ const RECIPE_DATABASE = {
     },
     "pasta-pesto": {
         name: "Pasta Pesto",
-        ingredients: ["pasta", "basil", "cheese", "garlic", "olive-oil", "pine-nuts"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "basil", quantity: "1/4 cup" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "pine-nuts", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
@@ -743,7 +978,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-milanese": {
         name: "Chicken Milanese",
-        ingredients: ["chicken", "bread", "cheese", "eggs", "olive-oil", "lemon", "arugula"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "lemon", quantity: "to taste" },
+        { name: "arugula", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Italian",
@@ -762,7 +1005,14 @@ const RECIPE_DATABASE = {
     // ASIAN CUISINE (30 recipes)
     "chicken-stir-fry": {
         name: "Chicken Stir Fry",
-        ingredients: ["chicken", "rice", "vegetables", "soy-sauce", "garlic", "olive-oil"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -782,7 +1032,14 @@ const RECIPE_DATABASE = {
     },
     "salmon-teriyaki": {
         name: "Salmon Teriyaki",
-        ingredients: ["salmon", "rice", "soy-sauce", "garlic", "ginger", "honey"],
+        ingredients: [
+        { name: "salmon", quantity: "600g" },
+        { name: "rice", quantity: "300g" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "honey", quantity: "2 tbsp" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Asian",
@@ -798,7 +1055,14 @@ const RECIPE_DATABASE = {
     },
     "beef-stir-fry": {
         name: "Beef Stir Fry",
-        ingredients: ["beef", "rice", "vegetables", "soy-sauce", "garlic", "ginger"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Asian",
@@ -814,7 +1078,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-fried-rice": {
         name: "Chicken Fried Rice",
-        ingredients: ["chicken", "rice", "eggs", "vegetables", "soy-sauce", "garlic", "ginger", "olive-oil"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -830,7 +1103,15 @@ const RECIPE_DATABASE = {
     },
     "beef-broccoli": {
         name: "Beef and Broccoli",
-        ingredients: ["beef", "broccoli", "rice", "soy-sauce", "garlic", "ginger", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "broccoli", quantity: "300g" },
+        { name: "rice", quantity: "300g" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Asian",
@@ -846,7 +1127,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-ramen": {
         name: "Chicken Ramen",
-        ingredients: ["chicken", "noodles", "eggs", "vegetables", "soy-sauce", "garlic", "ginger"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Asian",
@@ -862,7 +1151,15 @@ const RECIPE_DATABASE = {
     },
     "vegetable-stir-fry": {
         name: "Vegetable Stir Fry",
-        ingredients: ["vegetables", "rice", "soy-sauce", "garlic", "ginger", "olive-oil", "tofu"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "tofu", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Asian",
@@ -878,7 +1175,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-kung-pao": {
         name: "Chicken Kung Pao",
-        ingredients: ["chicken", "peanuts", "vegetables", "soy-sauce", "garlic", "ginger", "chili", "rice"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "peanuts", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "chili", quantity: "to taste" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Asian",
@@ -894,7 +1200,15 @@ const RECIPE_DATABASE = {
     },
     "beef-lo-mein": {
         name: "Beef Lo Mein",
-        ingredients: ["beef", "noodles", "vegetables", "soy-sauce", "garlic", "ginger", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -910,7 +1224,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-dumplings": {
         name: "Chicken Dumplings",
-        ingredients: ["chicken", "wonton-wrappers", "vegetables", "soy-sauce", "garlic", "ginger", "sesame-oil"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "wonton-wrappers", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "sesame-oil", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "45 min",
         cuisine: "Asian",
@@ -926,7 +1248,16 @@ const RECIPE_DATABASE = {
     },
     "beef-bulgogi": {
         name: "Beef Bulgogi",
-        ingredients: ["beef", "rice", "soy-sauce", "garlic", "ginger", "honey", "sesame-oil", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "honey", quantity: "2 tbsp" },
+        { name: "sesame-oil", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Asian",
@@ -942,7 +1273,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-pad-thai": {
         name: "Chicken Pad Thai",
-        ingredients: ["chicken", "noodles", "eggs", "vegetables", "soy-sauce", "garlic", "lime", "peanuts"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "lime", quantity: "to taste" },
+        { name: "peanuts", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Asian",
@@ -958,7 +1298,15 @@ const RECIPE_DATABASE = {
     },
     "vegetable-spring-rolls": {
         name: "Vegetable Spring Rolls",
-        ingredients: ["vegetables", "rice-paper", "soy-sauce", "garlic", "ginger", "mint", "cilantro"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "rice-paper", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "mint", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Asian",
@@ -974,7 +1322,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-biryani": {
         name: "Chicken Biryani",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "yogurt", "spices", "saffron"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "saffron", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "60 min",
         cuisine: "Asian",
@@ -990,7 +1347,16 @@ const RECIPE_DATABASE = {
     },
     "beef-pho": {
         name: "Beef Pho",
-        ingredients: ["beef", "noodles", "onions", "garlic", "ginger", "cinnamon", "star-anise", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "cinnamon", quantity: "to taste" },
+        { name: "star-anise", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "Asian",
@@ -1006,7 +1372,17 @@ const RECIPE_DATABASE = {
     },
     "chicken-tikka-masala": {
         name: "Chicken Tikka Masala",
-        ingredients: ["chicken", "rice", "tomatoes", "onions", "garlic", "ginger", "yogurt", "spices", "cream"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Asian",
@@ -1022,7 +1398,14 @@ const RECIPE_DATABASE = {
     },
     "vegetable-curry": {
         name: "Vegetable Curry",
-        ingredients: ["rice", "vegetables", "coconut-milk", "curry-powder", "onions", "garlic"],
+        ingredients: [
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "coconut-milk", quantity: "to taste" },
+        { name: "curry-powder", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Asian",
@@ -1039,7 +1422,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-sushi": {
         name: "Chicken Sushi",
-        ingredients: ["chicken", "rice", "nori", "vegetables", "soy-sauce", "ginger", "wasabi"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "nori", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "wasabi", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "50 min",
         cuisine: "Asian",
@@ -1056,7 +1447,16 @@ const RECIPE_DATABASE = {
     },
     "beef-mongolian": {
         name: "Beef Mongolian",
-        ingredients: ["beef", "rice", "vegetables", "soy-sauce", "garlic", "ginger", "honey", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "honey", quantity: "2 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -1072,7 +1472,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-hot-pot": {
         name: "Chicken Hot Pot",
-        ingredients: ["chicken", "vegetables", "tofu", "noodles", "soy-sauce", "garlic", "ginger", "mushrooms"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "tofu", quantity: "to taste" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "mushrooms", quantity: "300g" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Asian",
@@ -1088,7 +1497,16 @@ const RECIPE_DATABASE = {
     },
     "beef-sukiyaki": {
         name: "Beef Sukiyaki",
-        ingredients: ["beef", "vegetables", "tofu", "noodles", "soy-sauce", "sugar", "mirin", "mushrooms"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "tofu", quantity: "to taste" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "sugar", quantity: "2 tbsp" },
+        { name: "mirin", quantity: "to taste" },
+        { name: "mushrooms", quantity: "300g" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Asian",
@@ -1104,7 +1522,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-miso-soup": {
         name: "Chicken Miso Soup",
-        ingredients: ["chicken", "miso-paste", "tofu", "vegetables", "garlic", "ginger", "seaweed"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "miso-paste", quantity: "to taste" },
+        { name: "tofu", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "seaweed", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -1120,7 +1546,16 @@ const RECIPE_DATABASE = {
     },
     "beef-ramen": {
         name: "Beef Ramen",
-        ingredients: ["beef", "noodles", "eggs", "vegetables", "soy-sauce", "garlic", "ginger", "miso-paste"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "miso-paste", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Asian",
@@ -1136,7 +1571,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-general-tsos": {
         name: "Chicken General Tso's",
-        ingredients: ["chicken", "rice", "vegetables", "soy-sauce", "garlic", "ginger", "chili", "honey"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "chili", quantity: "to taste" },
+        { name: "honey", quantity: "2 tbsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Asian",
@@ -1152,7 +1596,16 @@ const RECIPE_DATABASE = {
     },
     "vegetable-fried-rice": {
         name: "Vegetable Fried Rice",
-        ingredients: ["vegetables", "rice", "eggs", "soy-sauce", "garlic", "ginger", "olive-oil", "tofu"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "tofu", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Asian",
@@ -1168,7 +1621,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-satay": {
         name: "Chicken Satay",
-        ingredients: ["chicken", "peanut-butter", "soy-sauce", "garlic", "ginger", "lime", "coconut-milk", "rice"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "peanut-butter", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "lime", quantity: "to taste" },
+        { name: "coconut-milk", quantity: "to taste" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Asian",
@@ -1184,7 +1646,16 @@ const RECIPE_DATABASE = {
     },
     "beef-udon": {
         name: "Beef Udon",
-        ingredients: ["beef", "udon-noodles", "vegetables", "soy-sauce", "garlic", "ginger", "mushrooms", "dashi"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "udon-noodles", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "mushrooms", quantity: "300g" },
+        { name: "dashi", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Asian",
@@ -1200,7 +1671,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-bibimbap": {
         name: "Chicken Bibimbap",
-        ingredients: ["chicken", "rice", "vegetables", "eggs", "soy-sauce", "garlic", "sesame-oil", "gochujang"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "sesame-oil", quantity: "to taste" },
+        { name: "gochujang", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Asian",
@@ -1216,7 +1696,15 @@ const RECIPE_DATABASE = {
     },
     "vegetable-tempura": {
         name: "Vegetable Tempura",
-        ingredients: ["vegetables", "flour", "eggs", "soy-sauce", "ginger", "rice", "tempura-batter"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "flour", quantity: "200g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "rice", quantity: "300g" },
+        { name: "tempura-batter", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Asian",
@@ -1232,7 +1720,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-kao-pad": {
         name: "Chicken Kao Pad",
-        ingredients: ["chicken", "rice", "eggs", "vegetables", "soy-sauce", "garlic", "fish-sauce", "lime"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "fish-sauce", quantity: "to taste" },
+        { name: "lime", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -1248,7 +1745,16 @@ const RECIPE_DATABASE = {
     },
     "beef-chow-mein": {
         name: "Beef Chow Mein",
-        ingredients: ["beef", "noodles", "vegetables", "soy-sauce", "garlic", "ginger", "oyster-sauce", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "oyster-sauce", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Asian",
@@ -1264,7 +1770,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-miso-ramen": {
         name: "Chicken Miso Ramen",
-        ingredients: ["chicken", "noodles", "miso-paste", "vegetables", "garlic", "ginger", "eggs", "seaweed"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "noodles", quantity: "to taste" },
+        { name: "miso-paste", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "seaweed", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Asian",
@@ -1280,7 +1795,16 @@ const RECIPE_DATABASE = {
     },
     "vegetable-sushi-bowl": {
         name: "Vegetable Sushi Bowl",
-        ingredients: ["vegetables", "rice", "nori", "soy-sauce", "ginger", "wasabi", "sesame-seeds", "avocado"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "nori", quantity: "to taste" },
+        { name: "soy-sauce", quantity: "3 tbsp" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "wasabi", quantity: "to taste" },
+        { name: "sesame-seeds", quantity: "to taste" },
+        { name: "avocado", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Asian",
@@ -1299,7 +1823,14 @@ const RECIPE_DATABASE = {
     // MEXICAN CUISINE (30 recipes)
     "beef-tacos": {
         name: "Beef Tacos",
-        ingredients: ["beef", "tortillas", "cheese", "tomatoes", "lettuce", "onions"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Mexican",
@@ -1319,7 +1850,14 @@ const RECIPE_DATABASE = {
     },
     "chicken-quesadillas": {
         name: "Chicken Quesadillas",
-        ingredients: ["chicken", "tortillas", "cheese", "vegetables", "olive-oil", "garlic"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Mexican",
@@ -1335,7 +1873,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-burritos": {
         name: "Vegetarian Burritos",
-        ingredients: ["tortillas", "beans", "rice", "cheese", "vegetables", "onions", "garlic"],
+        ingredients: [
+        { name: "tortillas", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1352,7 +1898,15 @@ const RECIPE_DATABASE = {
     },
     "beef-enchiladas": {
         name: "Beef Enchiladas",
-        ingredients: ["beef", "tortillas", "cheese", "tomatoes", "onions", "garlic", "chili"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Mexican",
@@ -1370,7 +1924,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-fajitas": {
         name: "Chicken Fajitas",
-        ingredients: ["chicken", "tortillas", "vegetables", "onions", "garlic", "olive-oil", "lime"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "lime", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1386,7 +1948,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-nachos": {
         name: "Vegetarian Nachos",
-        ingredients: ["tortilla-chips", "cheese", "beans", "tomatoes", "onions", "jalapenos", "olive-oil"],
+        ingredients: [
+        { name: "tortilla-chips", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "beans", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "jalapenos", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Mexican",
@@ -1402,7 +1972,15 @@ const RECIPE_DATABASE = {
     },
     "beef-chimichangas": {
         name: "Beef Chimichangas",
-        ingredients: ["beef", "tortillas", "cheese", "beans", "onions", "garlic", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "beans", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Mexican",
@@ -1418,7 +1996,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-tostadas": {
         name: "Chicken Tostadas",
-        ingredients: ["chicken", "tortillas", "beans", "lettuce", "tomatoes", "cheese", "onions"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Mexican",
@@ -1434,7 +2020,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-tamales": {
         name: "Vegetarian Tamales",
-        ingredients: ["corn-husks", "masa", "vegetables", "cheese", "onions", "garlic", "chili"],
+        ingredients: [
+        { name: "corn-husks", quantity: "to taste" },
+        { name: "masa", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "Mexican",
@@ -1450,7 +2044,16 @@ const RECIPE_DATABASE = {
     },
     "beef-burrito-bowl": {
         name: "Beef Burrito Bowl",
-        ingredients: ["beef", "rice", "beans", "lettuce", "tomatoes", "cheese", "onions", "avocado"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "beans", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "avocado", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1467,7 +2070,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-posole": {
         name: "Chicken Posole",
-        ingredients: ["chicken", "hominy", "vegetables", "onions", "garlic", "chili", "lime"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "hominy", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" },
+        { name: "lime", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Mexican",
@@ -1483,7 +2094,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-chiles-rellenos": {
         name: "Vegetarian Chiles Rellenos",
-        ingredients: ["poblano-peppers", "cheese", "eggs", "flour", "tomatoes", "onions", "garlic"],
+        ingredients: [
+        { name: "poblano-peppers", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "flour", quantity: "200g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Hard",
         time: "60 min",
         cuisine: "Mexican",
@@ -1499,7 +2118,15 @@ const RECIPE_DATABASE = {
     },
     "beef-carnitas": {
         name: "Beef Carnitas",
-        ingredients: ["beef", "tortillas", "onions", "garlic", "lime", "orange", "cinnamon"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "lime", quantity: "to taste" },
+        { name: "orange", quantity: "to taste" },
+        { name: "cinnamon", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "120 min",
         cuisine: "Mexican",
@@ -1515,7 +2142,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-mole": {
         name: "Chicken Mole",
-        ingredients: ["chicken", "chocolate", "chili", "onions", "garlic", "almonds", "cinnamon", "rice"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "chocolate", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "almonds", quantity: "to taste" },
+        { name: "cinnamon", quantity: "to taste" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "Mexican",
@@ -1531,7 +2167,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-huevos-rancheros": {
         name: "Vegetarian Huevos Rancheros",
-        ingredients: ["eggs", "tortillas", "beans", "tomatoes", "onions", "garlic", "chili", "cheese"],
+        ingredients: [
+        { name: "eggs", quantity: "3 large" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Mexican",
@@ -1547,7 +2192,16 @@ const RECIPE_DATABASE = {
     },
     "beef-barbacoa": {
         name: "Beef Barbacoa",
-        ingredients: ["beef", "tortillas", "onions", "garlic", "lime", "cinnamon", "cloves", "rice"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "lime", quantity: "to taste" },
+        { name: "cinnamon", quantity: "to taste" },
+        { name: "cloves", quantity: "to taste" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Medium",
         time: "180 min",
         cuisine: "Mexican",
@@ -1563,7 +2217,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-sopes": {
         name: "Chicken Sopes",
-        ingredients: ["chicken", "masa", "beans", "lettuce", "tomatoes", "cheese", "onions", "olive-oil"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "masa", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Mexican",
@@ -1579,7 +2242,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-flautas": {
         name: "Vegetarian Flautas",
-        ingredients: ["tortillas", "beans", "cheese", "vegetables", "onions", "garlic", "olive-oil"],
+        ingredients: [
+        { name: "tortillas", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Mexican",
@@ -1595,7 +2266,15 @@ const RECIPE_DATABASE = {
     },
     "beef-machaca": {
         name: "Beef Machaca",
-        ingredients: ["beef", "eggs", "onions", "garlic", "tomatoes", "chili", "tortillas"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "chili", quantity: "to taste" },
+        { name: "tortillas", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1611,7 +2290,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-cochinita-pibil": {
         name: "Chicken Cochinita Pibil",
-        ingredients: ["chicken", "orange-juice", "lime", "achiote", "onions", "garlic", "tortillas"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "orange-juice", quantity: "to taste" },
+        { name: "lime", quantity: "to taste" },
+        { name: "achiote", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "tortillas", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "240 min",
         cuisine: "Mexican",
@@ -1627,7 +2314,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-papusas": {
         name: "Vegetarian Papusas",
-        ingredients: ["masa", "beans", "cheese", "vegetables", "onions", "garlic", "olive-oil"],
+        ingredients: [
+        { name: "masa", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Mexican",
@@ -1643,7 +2338,16 @@ const RECIPE_DATABASE = {
     },
     "beef-torta": {
         name: "Beef Torta",
-        ingredients: ["beef", "bread", "lettuce", "tomatoes", "onions", "cheese", "avocado", "mayo"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "avocado", quantity: "to taste" },
+        { name: "mayo", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Mexican",
@@ -1659,7 +2363,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-elote": {
         name: "Chicken Elote",
-        ingredients: ["chicken", "corn", "cheese", "chili", "lime", "mayo", "cilantro", "tortillas"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "corn", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "chili", quantity: "to taste" },
+        { name: "lime", quantity: "to taste" },
+        { name: "mayo", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "tortillas", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1675,7 +2388,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-guacamole": {
         name: "Vegetarian Guacamole",
-        ingredients: ["avocado", "tomatoes", "onions", "lime", "garlic", "cilantro", "chili", "tortilla-chips"],
+        ingredients: [
+        { name: "avocado", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "lime", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "chili", quantity: "to taste" },
+        { name: "tortilla-chips", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Mexican",
@@ -1691,7 +2413,16 @@ const RECIPE_DATABASE = {
     },
     "beef-chorizo": {
         name: "Beef Chorizo",
-        ingredients: ["beef", "chili", "garlic", "vinegar", "paprika", "tortillas", "eggs", "onions"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "chili", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "vinegar", quantity: "2 tbsp" },
+        { name: "paprika", quantity: "1 tsp" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "onions", quantity: "2 medium" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Mexican",
@@ -1707,7 +2438,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-pollo-asado": {
         name: "Chicken Pollo Asado",
-        ingredients: ["chicken", "lime", "garlic", "onions", "chili", "olive-oil", "rice", "vegetables"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "lime", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "chili", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "35 min",
         cuisine: "Mexican",
@@ -1723,7 +2463,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-frijoles": {
         name: "Vegetarian Frijoles",
-        ingredients: ["beans", "onions", "garlic", "chili", "olive-oil", "cilantro", "lime", "rice"],
+        ingredients: [
+        { name: "beans", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "lime", quantity: "to taste" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Mexican",
@@ -1739,7 +2488,16 @@ const RECIPE_DATABASE = {
     },
     "beef-carne-asada": {
         name: "Beef Carne Asada",
-        ingredients: ["beef", "lime", "garlic", "onions", "chili", "olive-oil", "tortillas", "cilantro"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "lime", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "chili", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "tortillas", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Mexican",
@@ -1755,7 +2513,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-pescado-veracruz": {
         name: "Chicken Pescado Veracruz",
-        ingredients: ["chicken", "tomatoes", "olives", "capers", "onions", "garlic", "olive-oil", "rice"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "olives", quantity: "to taste" },
+        { name: "capers", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "rice", quantity: "300g" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Mexican",
@@ -1771,7 +2538,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-salsa-verde": {
         name: "Vegetarian Salsa Verde",
-        ingredients: ["tomatillos", "chili", "onions", "garlic", "cilantro", "lime", "tortilla-chips"],
+        ingredients: [
+        { name: "tomatillos", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "lime", quantity: "to taste" },
+        { name: "tortilla-chips", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Mexican",
@@ -1787,7 +2562,16 @@ const RECIPE_DATABASE = {
     },
     "beef-menudo": {
         name: "Beef Menudo",
-        ingredients: ["beef", "hominy", "onions", "garlic", "chili", "lime", "cilantro", "tortillas"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "hominy", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" },
+        { name: "lime", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "tortillas", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "180 min",
         cuisine: "Mexican",
@@ -1803,7 +2587,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-chiles-en-nogada": {
         name: "Chicken Chiles en Nogada",
-        ingredients: ["chicken", "poblano-peppers", "walnuts", "cheese", "pomegranate", "onions", "garlic"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "poblano-peppers", quantity: "to taste" },
+        { name: "walnuts", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "pomegranate", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Hard",
         time: "120 min",
         cuisine: "Mexican",
@@ -1819,7 +2611,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-mexican-rice": {
         name: "Vegetarian Mexican Rice",
-        ingredients: ["rice", "tomatoes", "onions", "garlic", "olive-oil", "chili", "cilantro", "vegetables"],
+        ingredients: [
+        { name: "rice", quantity: "300g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "chili", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Mexican",
@@ -1837,7 +2638,14 @@ const RECIPE_DATABASE = {
     // INDIAN CUISINE (30 recipes)
     "vegetable-curry": {
         name: "Vegetable Curry",
-        ingredients: ["rice", "vegetables", "coconut-milk", "curry-powder", "onions", "garlic"],
+        ingredients: [
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "coconut-milk", quantity: "to taste" },
+        { name: "curry-powder", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Indian",
@@ -1853,7 +2661,17 @@ const RECIPE_DATABASE = {
     },
     "chicken-tikka-masala": {
         name: "Chicken Tikka Masala",
-        ingredients: ["chicken", "rice", "tomatoes", "onions", "garlic", "ginger", "yogurt", "spices", "cream"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Indian",
@@ -1869,7 +2687,16 @@ const RECIPE_DATABASE = {
     },
     "beef-biryani": {
         name: "Beef Biryani",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "yogurt", "spices", "saffron"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "saffron", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "60 min",
         cuisine: "Indian",
@@ -1885,7 +2712,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-dal": {
         name: "Vegetarian Dal",
-        ingredients: ["lentils", "rice", "onions", "garlic", "ginger", "spices", "tomatoes", "cilantro"],
+        ingredients: [
+        { name: "lentils", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Indian",
@@ -1901,7 +2737,17 @@ const RECIPE_DATABASE = {
     },
     "chicken-butter-chicken": {
         name: "Chicken Butter Chicken",
-        ingredients: ["chicken", "rice", "tomatoes", "onions", "garlic", "ginger", "yogurt", "spices", "cream"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Indian",
@@ -1917,7 +2763,17 @@ const RECIPE_DATABASE = {
     },
     "beef-vindaloo": {
         name: "Beef Vindaloo",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "vinegar", "spices", "chili", "potatoes"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "vinegar", quantity: "2 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "potatoes", quantity: "1kg" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "Indian",
@@ -1933,7 +2789,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-samosa": {
         name: "Vegetarian Samosa",
-        ingredients: ["potatoes", "flour", "vegetables", "onions", "garlic", "ginger", "spices", "oil"],
+        ingredients: [
+        { name: "potatoes", quantity: "1kg" },
+        { name: "flour", quantity: "200g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "oil", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Indian",
@@ -1949,7 +2814,17 @@ const RECIPE_DATABASE = {
     },
     "chicken-korma": {
         name: "Chicken Korma",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "yogurt", "spices", "cream", "almonds"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" },
+        { name: "almonds", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "50 min",
         cuisine: "Indian",
@@ -1965,7 +2840,16 @@ const RECIPE_DATABASE = {
     },
     "beef-keema": {
         name: "Beef Keema",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "peas"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "peas", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "35 min",
         cuisine: "Indian",
@@ -1981,7 +2865,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-palak-paneer": {
         name: "Vegetarian Palak Paneer",
-        ingredients: ["paneer", "spinach", "rice", "onions", "garlic", "ginger", "spices", "cream"],
+        ingredients: [
+        { name: "paneer", quantity: "to taste" },
+        { name: "spinach", quantity: "200g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Indian",
@@ -1997,7 +2890,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-rogan-josh": {
         name: "Chicken Rogan Josh",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "yogurt", "spices", "tomatoes"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" }
+    ],
         difficulty: "Medium",
         time: "55 min",
         cuisine: "Indian",
@@ -2013,7 +2915,16 @@ const RECIPE_DATABASE = {
     },
     "beef-madras": {
         name: "Beef Madras",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "spices", "chili", "coconut-milk"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "coconut-milk", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "75 min",
         cuisine: "Indian",
@@ -2029,7 +2940,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-chana-masala": {
         name: "Vegetarian Chana Masala",
-        ingredients: ["chickpeas", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "cilantro"],
+        ingredients: [
+        { name: "chickpeas", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Indian",
@@ -2045,7 +2965,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-jalfrezi": {
         name: "Chicken Jalfrezi",
-        ingredients: ["chicken", "rice", "vegetables", "onions", "garlic", "ginger", "spices", "tomatoes"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Indian",
@@ -2061,7 +2990,16 @@ const RECIPE_DATABASE = {
     },
     "beef-dhansak": {
         name: "Beef Dhansak",
-        ingredients: ["beef", "rice", "lentils", "vegetables", "onions", "garlic", "ginger", "spices"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "lentils", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "120 min",
         cuisine: "Indian",
@@ -2077,7 +3015,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-baingan-bharta": {
         name: "Vegetarian Baingan Bharta",
-        ingredients: ["eggplant", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "cilantro"],
+        ingredients: [
+        { name: "eggplant", quantity: "1 large" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Indian",
@@ -2093,7 +3040,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-saag": {
         name: "Chicken Saag",
-        ingredients: ["chicken", "spinach", "rice", "onions", "garlic", "ginger", "spices", "cream"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "spinach", quantity: "200g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Indian",
@@ -2109,7 +3065,16 @@ const RECIPE_DATABASE = {
     },
     "beef-phall": {
         name: "Beef Phall",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "spices", "chili", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "60 min",
         cuisine: "Indian",
@@ -2125,7 +3090,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-aloo-gobi": {
         name: "Vegetarian Aloo Gobi",
-        ingredients: ["potatoes", "cauliflower", "rice", "onions", "garlic", "ginger", "spices", "cilantro"],
+        ingredients: [
+        { name: "potatoes", quantity: "1kg" },
+        { name: "cauliflower", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Indian",
@@ -2141,7 +3115,17 @@ const RECIPE_DATABASE = {
     },
     "chicken-makhani": {
         name: "Chicken Makhani",
-        ingredients: ["chicken", "rice", "tomatoes", "onions", "garlic", "ginger", "spices", "butter", "cream"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "butter", quantity: "100g" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Indian",
@@ -2157,7 +3141,17 @@ const RECIPE_DATABASE = {
     },
     "beef-karahi": {
         name: "Beef Karahi",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "chili", "cilantro"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "chili", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Indian",
@@ -2173,7 +3167,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-rajma": {
         name: "Vegetarian Rajma",
-        ingredients: ["kidney-beans", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "cilantro"],
+        ingredients: [
+        { name: "kidney-beans", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "35 min",
         cuisine: "Indian",
@@ -2189,7 +3192,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-chettinad": {
         name: "Chicken Chettinad",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "spices", "coconut", "curry-leaves"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "coconut", quantity: "to taste" },
+        { name: "curry-leaves", quantity: "to taste" }
+    ],
         difficulty: "Hard",
         time: "65 min",
         cuisine: "Indian",
@@ -2205,7 +3217,17 @@ const RECIPE_DATABASE = {
     },
     "beef-korma": {
         name: "Beef Korma",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "yogurt", "spices", "cream", "cashews"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "yogurt", quantity: "200ml" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" },
+        { name: "cashews", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "55 min",
         cuisine: "Indian",
@@ -2221,7 +3243,17 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-matar-paneer": {
         name: "Vegetarian Matar Paneer",
-        ingredients: ["paneer", "peas", "rice", "onions", "garlic", "ginger", "tomatoes", "spices", "cream"],
+        ingredients: [
+        { name: "paneer", quantity: "to taste" },
+        { name: "peas", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "Indian",
@@ -2237,7 +3269,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-dopiaza": {
         name: "Chicken Dopiaza",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "spices", "tomatoes", "cilantro"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "Indian",
@@ -2253,7 +3294,17 @@ const RECIPE_DATABASE = {
     },
     "beef-malai": {
         name: "Beef Malai",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "spices", "cream", "cashews", "coconut"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" },
+        { name: "cashews", quantity: "to taste" },
+        { name: "coconut", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "50 min",
         cuisine: "Indian",
@@ -2269,7 +3320,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-dal-makhani": {
         name: "Vegetarian Dal Makhani",
-        ingredients: ["black-lentils", "rice", "onions", "garlic", "ginger", "spices", "cream", "butter"],
+        ingredients: [
+        { name: "black-lentils", quantity: "to taste" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "cream", quantity: "to taste" },
+        { name: "butter", quantity: "100g" }
+    ],
         difficulty: "Hard",
         time: "120 min",
         cuisine: "Indian",
@@ -2285,7 +3345,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-achari": {
         name: "Chicken Achari",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "pickle-spices", "tomatoes", "cilantro"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "pickle-spices", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "Indian",
@@ -2301,7 +3370,16 @@ const RECIPE_DATABASE = {
     },
     "beef-nihari": {
         name: "Beef Nihari",
-        ingredients: ["beef", "rice", "onions", "garlic", "ginger", "spices", "wheat-flour", "cilantro"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "wheat-flour", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Hard",
         time: "180 min",
         cuisine: "Indian",
@@ -2317,7 +3395,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-kadhi": {
         name: "Vegetarian Kadhi",
-        ingredients: ["yogurt", "rice", "onions", "garlic", "ginger", "spices", "chickpea-flour", "cilantro"],
+        ingredients: [
+        { name: "yogurt", quantity: "200ml" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "chickpea-flour", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "Indian",
@@ -2333,7 +3420,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-methi": {
         name: "Chicken Methi",
-        ingredients: ["chicken", "rice", "onions", "garlic", "ginger", "spices", "fenugreek-leaves", "tomatoes"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "fenugreek-leaves", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "Indian",
@@ -2349,7 +3445,16 @@ const RECIPE_DATABASE = {
     },
     "beef-khichdi": {
         name: "Beef Khichdi",
-        ingredients: ["beef", "rice", "lentils", "onions", "garlic", "ginger", "spices", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "lentils", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "40 min",
         cuisine: "Indian",
@@ -2365,7 +3470,16 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-rasam": {
         name: "Vegetarian Rasam",
-        ingredients: ["tomatoes", "rice", "onions", "garlic", "ginger", "spices", "tamarind", "cilantro"],
+        ingredients: [
+        { name: "tomatoes", quantity: "400g" },
+        { name: "rice", quantity: "300g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ginger", quantity: "1 tbsp" },
+        { name: "spices", quantity: "to taste" },
+        { name: "tamarind", quantity: "to taste" },
+        { name: "cilantro", quantity: "1/4 cup" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Indian",
@@ -2383,7 +3497,14 @@ const RECIPE_DATABASE = {
     // AMERICAN CUISINE (30 recipes)
     "chicken-salad": {
         name: "Chicken Salad",
-        ingredients: ["chicken", "lettuce", "tomatoes", "cheese", "olive-oil", "lemon"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "lemon", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "American",
@@ -2400,7 +3521,15 @@ const RECIPE_DATABASE = {
     },
     "beef-burger": {
         name: "Beef Burger",
-        ingredients: ["beef", "bread", "lettuce", "tomatoes", "onions", "cheese", "pickles"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "pickles", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "American",
@@ -2416,7 +3545,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-caesar-salad": {
         name: "Vegetarian Caesar Salad",
-        ingredients: ["lettuce", "cheese", "bread", "olive-oil", "lemon", "garlic", "parmesan"],
+        ingredients: [
+        { name: "lettuce", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "bread", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "lemon", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "parmesan", quantity: "100g grated" }
+    ],
         difficulty: "Easy",
         time: "15 min",
         cuisine: "American",
@@ -2433,7 +3570,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-fried-chicken": {
         name: "Chicken Fried Chicken",
-        ingredients: ["chicken", "flour", "eggs", "bread", "vegetables", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "flour", quantity: "200g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "bread", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "American",
@@ -2449,7 +3594,15 @@ const RECIPE_DATABASE = {
     },
     "beef-meatloaf": {
         name: "Beef Meatloaf",
-        ingredients: ["beef", "eggs", "bread", "onions", "garlic", "ketchup", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "bread", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ketchup", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "60 min",
         cuisine: "American",
@@ -2465,7 +3618,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-mac-and-cheese": {
         name: "Vegetarian Mac and Cheese",
-        ingredients: ["pasta", "cheese", "milk", "butter", "flour", "bread", "herbs"],
+        ingredients: [
+        { name: "pasta", quantity: "400g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "milk", quantity: "300ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "flour", quantity: "200g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "American",
@@ -2481,7 +3642,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-pot-pie": {
         name: "Chicken Pot Pie",
-        ingredients: ["chicken", "vegetables", "flour", "butter", "milk", "onions", "garlic", "herbs"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "flour", quantity: "200g" },
+        { name: "butter", quantity: "100g" },
+        { name: "milk", quantity: "300ml" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "75 min",
         cuisine: "American",
@@ -2497,7 +3667,16 @@ const RECIPE_DATABASE = {
     },
     "beef-chili": {
         name: "Beef Chili",
-        ingredients: ["beef", "beans", "tomatoes", "onions", "garlic", "chili", "cheese", "bread"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "beans", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "chili", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "bread", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "45 min",
         cuisine: "American",
@@ -2513,7 +3692,13 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-grilled-cheese": {
         name: "Vegetarian Grilled Cheese",
-        ingredients: ["bread", "cheese", "butter", "tomatoes", "herbs"],
+        ingredients: [
+        { name: "bread", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "butter", quantity: "100g" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "10 min",
         cuisine: "American",
@@ -2529,7 +3714,14 @@ const RECIPE_DATABASE = {
     },
     "chicken-wings": {
         name: "Chicken Wings",
-        ingredients: ["chicken", "butter", "hot-sauce", "garlic", "vegetables", "blue-cheese"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "butter", quantity: "100g" },
+        { name: "hot-sauce", quantity: "to taste" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "blue-cheese", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "40 min",
         cuisine: "American",
@@ -2545,7 +3737,15 @@ const RECIPE_DATABASE = {
     },
     "beef-steak": {
         name: "Beef Steak",
-        ingredients: ["beef", "butter", "garlic", "herbs", "vegetables", "olive-oil", "potatoes"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "butter", quantity: "100g" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "potatoes", quantity: "1kg" }
+    ],
         difficulty: "Medium",
         time: "25 min",
         cuisine: "American",
@@ -2561,7 +3761,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-veggie-burger": {
         name: "Vegetarian Veggie Burger",
-        ingredients: ["vegetables", "beans", "bread", "lettuce", "tomatoes", "onions", "cheese"],
+        ingredients: [
+        { name: "vegetables", quantity: "to taste" },
+        { name: "beans", quantity: "to taste" },
+        { name: "bread", quantity: "to taste" },
+        { name: "lettuce", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "cheese", quantity: "200g grated" }
+    ],
         difficulty: "Medium",
         time: "35 min",
         cuisine: "American",
@@ -2577,7 +3785,14 @@ const RECIPE_DATABASE = {
     },
     "chicken-nuggets": {
         name: "Chicken Nuggets",
-        ingredients: ["chicken", "flour", "eggs", "bread", "olive-oil", "vegetables"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "flour", quantity: "200g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "bread", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "American",
@@ -2593,7 +3808,15 @@ const RECIPE_DATABASE = {
     },
     "beef-sloppy-joes": {
         name: "Beef Sloppy Joes",
-        ingredients: ["beef", "bread", "tomatoes", "onions", "garlic", "ketchup", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "ketchup", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "American",
@@ -2609,7 +3832,15 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-cobb-salad": {
         name: "Vegetarian Cobb Salad",
-        ingredients: ["lettuce", "cheese", "eggs", "tomatoes", "avocado", "onions", "olive-oil"],
+        ingredients: [
+        { name: "lettuce", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "avocado", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "American",
@@ -2626,7 +3857,14 @@ const RECIPE_DATABASE = {
     },
     "chicken-biscuits": {
         name: "Chicken Biscuits",
-        ingredients: ["chicken", "flour", "butter", "milk", "herbs", "vegetables"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "flour", quantity: "200g" },
+        { name: "butter", quantity: "100g" },
+        { name: "milk", quantity: "300ml" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "American",
@@ -2642,7 +3880,14 @@ const RECIPE_DATABASE = {
     },
     "beef-brisket": {
         name: "Beef Brisket",
-        ingredients: ["beef", "onions", "garlic", "barbecue-sauce", "vegetables", "herbs"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "barbecue-sauce", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Hard",
         time: "240 min",
         cuisine: "American",
@@ -2658,7 +3903,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-fried-green-tomatoes": {
         name: "Vegetarian Fried Green Tomatoes",
-        ingredients: ["tomatoes", "flour", "eggs", "bread", "olive-oil", "herbs"],
+        ingredients: [
+        { name: "tomatoes", quantity: "400g" },
+        { name: "flour", quantity: "200g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "bread", quantity: "to taste" },
+        { name: "olive-oil", quantity: "3 tbsp" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Medium",
         time: "30 min",
         cuisine: "American",
@@ -2674,7 +3926,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-gumbo": {
         name: "Chicken Gumbo",
-        ingredients: ["chicken", "rice", "vegetables", "onions", "garlic", "okra", "herbs", "flour"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "okra", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "flour", quantity: "200g" }
+    ],
         difficulty: "Hard",
         time: "90 min",
         cuisine: "American",
@@ -2690,7 +3951,14 @@ const RECIPE_DATABASE = {
     },
     "beef-pulled-pork": {
         name: "Beef Pulled Beef",
-        ingredients: ["beef", "barbecue-sauce", "bread", "onions", "garlic", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "barbecue-sauce", quantity: "to taste" },
+        { name: "bread", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "180 min",
         cuisine: "American",
@@ -2706,7 +3974,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-cornbread": {
         name: "Vegetarian Cornbread",
-        ingredients: ["cornmeal", "flour", "eggs", "milk", "butter", "vegetables"],
+        ingredients: [
+        { name: "cornmeal", quantity: "to taste" },
+        { name: "flour", quantity: "200g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "milk", quantity: "300ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "American",
@@ -2722,7 +3997,15 @@ const RECIPE_DATABASE = {
     },
     "chicken-jambalaya": {
         name: "Chicken Jambalaya",
-        ingredients: ["chicken", "rice", "vegetables", "onions", "garlic", "herbs", "tomatoes"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "rice", quantity: "300g" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "tomatoes", quantity: "400g" }
+    ],
         difficulty: "Medium",
         time: "50 min",
         cuisine: "American",
@@ -2738,7 +4021,15 @@ const RECIPE_DATABASE = {
     },
     "beef-philly-cheesesteak": {
         name: "Beef Philly Cheesesteak",
-        ingredients: ["beef", "bread", "cheese", "onions", "peppers", "mushrooms", "olive-oil"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "bread", quantity: "to taste" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "peppers", quantity: "to taste" },
+        { name: "mushrooms", quantity: "300g" },
+        { name: "olive-oil", quantity: "3 tbsp" }
+    ],
         difficulty: "Easy",
         time: "20 min",
         cuisine: "American",
@@ -2754,7 +4045,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-ranch-dip": {
         name: "Vegetarian Ranch Dip",
-        ingredients: ["sour-cream", "herbs", "garlic", "onions", "vegetables", "chips"],
+        ingredients: [
+        { name: "sour-cream", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "vegetables", quantity: "to taste" },
+        { name: "chips", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "10 min",
         cuisine: "American",
@@ -2770,7 +4068,14 @@ const RECIPE_DATABASE = {
     },
     "chicken-buffalo-dip": {
         name: "Chicken Buffalo Dip",
-        ingredients: ["chicken", "cheese", "hot-sauce", "cream-cheese", "bread", "vegetables"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "cheese", quantity: "200g grated" },
+        { name: "hot-sauce", quantity: "to taste" },
+        { name: "cream-cheese", quantity: "to taste" },
+        { name: "bread", quantity: "to taste" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "25 min",
         cuisine: "American",
@@ -2786,7 +4091,15 @@ const RECIPE_DATABASE = {
     },
     "beef-corned-beef": {
         name: "Beef Corned Beef",
-        ingredients: ["beef", "cabbage", "potatoes", "onions", "garlic", "herbs", "vegetables"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "cabbage", quantity: "to taste" },
+        { name: "potatoes", quantity: "1kg" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "180 min",
         cuisine: "American",
@@ -2802,7 +4115,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-deviled-eggs": {
         name: "Vegetarian Deviled Eggs",
-        ingredients: ["eggs", "mayo", "mustard", "herbs", "paprika", "vegetables"],
+        ingredients: [
+        { name: "eggs", quantity: "3 large" },
+        { name: "mayo", quantity: "to taste" },
+        { name: "mustard", quantity: "to taste" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "paprika", quantity: "1 tsp" },
+        { name: "vegetables", quantity: "to taste" }
+    ],
         difficulty: "Easy",
         time: "30 min",
         cuisine: "American",
@@ -2818,7 +4138,16 @@ const RECIPE_DATABASE = {
     },
     "chicken-clam-chowder": {
         name: "Chicken Clam Chowder",
-        ingredients: ["chicken", "potatoes", "onions", "garlic", "milk", "butter", "herbs", "bread"],
+        ingredients: [
+        { name: "chicken", quantity: "500g" },
+        { name: "potatoes", quantity: "1kg" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "milk", quantity: "300ml" },
+        { name: "butter", quantity: "100g" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "bread", quantity: "to taste" }
+    ],
         difficulty: "Medium",
         time: "45 min",
         cuisine: "American",
@@ -2834,7 +4163,16 @@ const RECIPE_DATABASE = {
     },
     "beef-meatballs": {
         name: "Beef Meatballs",
-        ingredients: ["beef", "eggs", "bread", "onions", "garlic", "herbs", "tomatoes", "pasta"],
+        ingredients: [
+        { name: "beef", quantity: "500g" },
+        { name: "eggs", quantity: "3 large" },
+        { name: "bread", quantity: "to taste" },
+        { name: "onions", quantity: "2 medium" },
+        { name: "garlic", quantity: "3 cloves" },
+        { name: "herbs", quantity: "2 tsp" },
+        { name: "tomatoes", quantity: "400g" },
+        { name: "pasta", quantity: "400g" }
+    ],
         difficulty: "Medium",
         time: "40 min",
         cuisine: "American",
@@ -2850,7 +4188,14 @@ const RECIPE_DATABASE = {
     },
     "vegetarian-sweet-potato-casserole": {
         name: "Vegetarian Sweet Potato Casserole",
-        ingredients: ["sweet-potatoes", "marshmallows", "brown-sugar", "butter", "nuts", "herbs"],
+        ingredients: [
+        { name: "sweet-potatoes", quantity: "to taste" },
+        { name: "marshmallows", quantity: "to taste" },
+        { name: "brown-sugar", quantity: "to taste" },
+        { name: "butter", quantity: "100g" },
+        { name: "nuts", quantity: "100g" },
+        { name: "herbs", quantity: "2 tsp" }
+    ],
         difficulty: "Easy",
         time: "60 min",
         cuisine: "American",
@@ -2927,19 +4272,28 @@ function findMatchingMeals(availableIngredients) {
     
     Object.keys(RECIPE_DATABASE).forEach(recipeId => {
         const recipe = RECIPE_DATABASE[recipeId];
-        const matchingIngredients = recipe.ingredients.filter(ingredient => 
-            availableIngredients.includes(ingredient)
+        
+        // Extract ingredient names from the new object structure
+        const recipeIngredientNames = recipe.ingredients.map(ingredient => {
+            if (typeof ingredient === 'object' && ingredient.name) {
+                return ingredient.name;
+            }
+            return ingredient; // fallback for old string format
+        });
+        
+        const matchingIngredients = recipeIngredientNames.filter(ingredientName => 
+            availableIngredients.includes(ingredientName)
         );
         
-        const matchPercentage = (matchingIngredients.length / recipe.ingredients.length) * 100;
+        const matchPercentage = (matchingIngredients.length / recipeIngredientNames.length) * 100;
         
         if (matchPercentage >= 50) { // Suggest if at least 50% of ingredients match
             suggestions.push({
                 id: recipeId,
                 ...recipe,
                 matchPercentage: Math.round(matchPercentage),
-                missingIngredients: recipe.ingredients.filter(ingredient => 
-                    !availableIngredients.includes(ingredient)
+                missingIngredients: recipeIngredientNames.filter(ingredientName => 
+                    !availableIngredients.includes(ingredientName)
                 )
             });
         }
@@ -2966,7 +4320,10 @@ function displaySuggestedMeals(meals) {
         <div class="meal-card" data-meal-id="${meal.id}">
             <div class="meal-content">
                 <div class="meal-header">
-                    <h3 class="meal-name">${meal.name}</h3>
+                    <div class="meal-name-container">
+                        ${meal.image ? `<img src="${meal.image}" alt="${meal.name}" class="meal-image" onerror="this.style.display='none'">` : ''}
+                        <h3 class="meal-name">${meal.name}</h3>
+                    </div>
                     <div class="meal-match">${meal.matchPercentage}% match</div>
                 </div>
                 <div class="meal-details">
@@ -2980,8 +4337,10 @@ function displaySuggestedMeals(meals) {
                         <h4>Ingredients needed:</h4>
                         <div class="ingredients-list">
                             ${meal.ingredients.map(ingredient => {
-                                const isAvailable = !meal.missingIngredients.includes(ingredient);
-                                return `<span class="ingredient-tag ${isAvailable ? 'available' : 'missing'}">${ingredient.replace('-', ' ')}</span>`;
+                                // Handle both object and string ingredient formats
+                                const ingredientName = typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient;
+                                const isAvailable = !meal.missingIngredients.includes(ingredientName);
+                                return `<span class="ingredient-tag ${isAvailable ? 'available' : 'missing'}">${ingredientName.replace(/-/g, ' ')}</span>`;
                             }).join('')}
                         </div>
                     </div>
@@ -3014,28 +4373,35 @@ function showNoIngredientsMessage() {
 }
 
 function selectMeal(mealId) {
+    console.log('selectMeal called with ID:', mealId);
     let mealName = '';
     
     // Check if it's an API recipe (numeric ID) or static recipe (string ID)
     if (!isNaN(mealId)) {
+        console.log('Processing API recipe');
         // API recipe - get name from converted recipe
         // We need to find the meal name from the displayed meals
         const mealCards = document.querySelectorAll('.meal-card');
+        console.log('Found meal cards:', mealCards.length);
         for (let card of mealCards) {
             if (card.getAttribute('data-meal-id') === mealId.toString()) {
                 const nameElement = card.querySelector('.meal-name');
                 if (nameElement) {
                     mealName = nameElement.textContent;
+                    console.log('Found meal name from card:', mealName);
                     break;
                 }
             }
         }
     } else {
+        console.log('Processing static recipe');
         // Static recipe - get name from database
         const meal = RECIPE_DATABASE[mealId];
         if (meal) {
             mealName = meal.name;
+            console.log('Found meal name from database:', mealName);
         } else {
+            console.log('Recipe not found in database for ID:', mealId);
             showErrorMessage('Recipe not found.');
             return;
         }
@@ -3045,8 +4411,10 @@ function selectMeal(mealId) {
         // Create Google search URL with recipe name + "recipe"
         const searchQuery = encodeURIComponent(`${mealName} recipe`);
         const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+        console.log('Opening URL:', googleSearchUrl);
         window.open(googleSearchUrl, '_blank');
     } else {
+        console.log('No meal name found');
         showErrorMessage('Unable to get recipe name.');
     }
 }
@@ -3084,7 +4452,10 @@ function showRecipeModal(meal) {
     modalOverlay.innerHTML = `
         <div class="recipe-modal">
             <div class="recipe-modal-header">
-                <h2>${meal.name}</h2>
+                <div class="recipe-title-container">
+                    ${meal.image ? `<img src="${meal.image}" alt="${meal.name}" class="recipe-image" onerror="this.style.display='none'">` : ''}
+                    <h2>${meal.name}</h2>
+                </div>
                 <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
             </div>
             <div class="recipe-modal-content">
@@ -3102,27 +4473,27 @@ function showRecipeModal(meal) {
                 <div class="recipe-section">
                     <h3>Ingredients</h3>
                     <ul class="ingredients-list">
-                        ${meal.ingredients.map(ingredient => `<li>${ingredient.replace(/-/g, ' ')}</li>`).join('')}
+                        ${meal.ingredients.map(ingredient => {
+                            if (typeof ingredient === 'object' && ingredient.name && ingredient.quantity) {
+                                return `<li><span class="ingredient-quantity">${ingredient.quantity}</span> <span class="ingredient-name">${ingredient.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></li>`;
+                            } else {
+                                return `<li><span class="ingredient-name">${ingredient.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></li>`;
+                            }
+                        }).join('')}
                     </ul>
                 </div>
                 
-                ${meal.instructions ? `
                 <div class="recipe-section">
-                    <h3>Cooking Instructions</h3>
+                    <h3>Instructions</h3>
                     <ol class="instructions-list">
-                        ${meal.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                        ${meal.instructions ? meal.instructions.map(instruction => `<li>${instruction}</li>`).join('') : '<li>No instructions available</li>'}
                     </ol>
                 </div>
-                ` : `
-                <div class="recipe-section">
-                    <h3>Cooking Instructions</h3>
-                    <p class="no-instructions">Detailed cooking instructions coming soon! This recipe uses standard cooking techniques for ${meal.cuisine} cuisine.</p>
-                </div>
-                `}
                 
                 <div class="recipe-actions">
-                    <button class="select-meal-btn" onclick="selectMeal('${meal.name.replace(/'/g, "\\'")}'); closeRecipeModal();">Select This Recipe</button>
+                    <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Select This Meal</button>
                     <button class="close-modal-btn" onclick="closeRecipeModal()">Close</button>
+                </div>
                 </div>
             </div>
         </div>
