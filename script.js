@@ -5094,7 +5094,8 @@ function getIngredientVariations(ingredient) {
         'bell-peppers': ['pepper', 'peppers'],
         'noodles': ['noodle', 'noodles', 'ramen', 'udon'],
         'bread': ['bread', 'toast', 'sandwich'],
-        'eggs': ['egg', 'eggs', 'omelette', 'frittata']
+        'eggs': ['egg', 'eggs', 'omelette', 'frittata'],
+        'beans': ['bean', 'beans', 'legumes', 'chickpeas', 'lentils']
     };
     
     if (variationMap[ingredient]) {
@@ -5110,7 +5111,7 @@ function findMatchingMeals(availableIngredients) {
     // MAIN INGREDIENT CATEGORIES - recipes only shown if user has at least one from these categories
     const MAIN_INGREDIENT_CATEGORIES = {
         // Proteins
-        proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'veal', 'paneer'],
+        proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'beans', 'veal', 'paneer'],
         
         // Carbs & Grains
         carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
