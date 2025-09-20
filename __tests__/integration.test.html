@@ -63,7 +63,7 @@
             <li>Verify ingredients appear in the saved list</li>
             <li>Click "Get Meal Suggestions" to test meal suggestion functionality</li>
             <li>Verify meal cards are displayed with match percentages</li>
-            <li>Test "Select This Meal" and "View Details" buttons</li>
+        <li>Test "Find Similar Recipes" and "View Details" buttons</li>
             <li>Refresh the page and verify ingredients are remembered</li>
             <li>Uncheck some ingredients and save again</li>
             <li>Verify the list updates correctly</li>
@@ -370,7 +370,7 @@
                         </div>
                     ` : ''}
                     <div style="display: flex; gap: 10px;">
-                        <button onclick="selectMeal('${meal.id}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Select This Meal</button>
+                        <button onclick="selectMeal('${meal.id}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Find Similar Recipes</button>
                         <button onclick="viewMealDetails('${meal.id}')" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">View Details</button>
                     </div>
                 </div>
@@ -412,4 +412,3 @@
     </script>
 </body>
 </html>
-

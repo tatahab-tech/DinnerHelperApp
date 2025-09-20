@@ -102,7 +102,7 @@ function displaySuggestedMeals(meals) {
         </div>
       </div>
       <div class="meal-actions">
-        <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Select This Meal</button>
+        <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Find Similar Recipes</button>
         <button class="view-details-btn" onclick="viewMealDetails('${meal.id}')">View Details</button>
       </div>
     </div>
@@ -114,7 +114,7 @@ function displaySuggestedMeals(meals) {
 
 function selectMeal(mealId) {
   const meal = { id: mealId, name: 'Test Meal' };
-  window.alert(`Great choice! You selected ${meal.name}. This feature will be expanded in future updates.`);
+  window.alert(`Opening similar recipes for ${meal.name}.`);
   return { success: true, mealId };
 }
 
@@ -304,7 +304,7 @@ describe('UI Interactions', () => {
       expect(result.success).toBe(true);
       expect(result.mealId).toBe('test-meal-1');
       expect(window.alert).toHaveBeenCalledWith(
-        'Great choice! You selected Test Meal. This feature will be expanded in future updates.'
+        'Opening similar recipes for Test Meal.'
       );
     });
   });

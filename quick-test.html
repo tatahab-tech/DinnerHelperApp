@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Save Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .save-btn { background: #28a745; color: white; }
+        .test-btn { background: #007bff; color: white; }
+        .clear-btn { background: #dc3545; color: white; }
+        .ingredient-box { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        label { display: block; margin: 5px 0; cursor: pointer; }
+        input[type="checkbox"] { margin-right: 8px; }
+        .saved-list { min-height: 50px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 2px dashed #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Save Button Quick Test</h1>
+        
+        <div id="status" class="status info">
+            Ready to test the save ingredients functionality...
+        </div>
+        
+        <div class="ingredient-box">
+            <h3>Test Ingredients:</h3>
+            <label><input type="checkbox" id="chicken" data-ingredient="chicken"> 🐔 Chicken</label>
+            <label><input type="checkbox" id="rice" data-ingredient="rice"> 🍚 Rice</label>
+            <label><input type="checkbox" id="cheese" data-ingredient="cheese"> 🧀 Cheese</label>
+            <label><input type="checkbox" id="garlic" data-ingredient="garlic"> 🧄 Garlic</label>
+            <label><input type="checkbox" id="tomatoes" data-ingredient="tomatoes"> 🍅 Tomatoes</label>
+        </div>
+        
+        <div>
+            <button id="saveBtn" class="save-btn">Save My Ingredients</button>
+            <button onclick="runTest()" class="test-btn">Run Auto Test</button>
+            <button onclick="clearStorage()" class="clear-btn">Clear Storage</button>
+        </div>
+        
+        <div class="ingredient-box">
+            <h3>Saved Ingredients:</h3>
+            <div id="savedIngredientsList" class="saved-list">
+                <p>No ingredients saved yet.</p>
+            </div>
+        </div>
+        
+        <div class="ingredient-box">
+            <h3>Console Output:</h3>
+            <div id="console" style="background: #000; color: #0f0; padding: 10px; font-family: monospace; min-height: 100px; border-radius: 5px;">
+                Console logs will appear here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Override console.log to show in page
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleDiv = document.getElementById('console');
+        
+        function addToConsole(message, type = 'log') {
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f00' : '#0f0';
+            consoleDiv.innerHTML += `<div style="color: ${color};">[${time}] ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+
+        // Copy the exact functionality from your main script
+        let saveButton;
+        let savedIngredientsList;
+        const STORAGE_KEY = 'dinnerHelperIngredients';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            saveButton = document.getElementById('saveBtn');
+            savedIngredientsList = document.getElementById('savedIngredientsList');
+            
+            loadSavedIngredients();
+            setupEventListeners();
+            
+            updateStatus('✅ App initialized successfully!', 'success');
+        });
+
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            console.log('Save button found:', saveButton);
+            
+            if (saveButton) {
+                saveButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Save button clicked!');
+                    saveIngredients();
+                });
+                console.log('Save button event listener added');
+            } else {
+                console.error('Save button not found!');
+            }
+        }
+
+        function loadSavedIngredients() {
+            try {
+                const savedIngredients = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                
+                const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                allCheckboxes.forEach(checkbox => {
+                    const ingredient = checkbox.getAttribute('data-ingredient');
+                    if (savedIngredients.includes(ingredient)) {
+                        checkbox.checked = true;
+                    }
+                });
+                
+                displaySavedIngredients(savedIngredients);
+            } catch (error) {
+                console.error('Error loading saved ingredients:', error);
+                displaySavedIngredients([]);
+            }
+        }
+
+        function saveIngredients() {
+            console.log('Save ingredients function called!');
+            const checkedIngredients = [];
+            
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            console.log('Found checkboxes:', allCheckboxes.length);
+            
+            allCheckboxes.forEach(checkbox => {
+                console.log('Checkbox:', checkbox.id, 'Checked:', checkbox.checked, 'Data-ingredient:', checkbox.getAttribute('data-ingredient'));
+                if (checkbox.checked) {
+                    const ingredient = checkbox.getAttribute('data-ingredient');
+                    checkedIngredients.push(ingredient);
+                }
+            });
+            
+            console.log('Checked ingredients found:', checkedIngredients);
+            
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedIngredients));
+                displaySavedIngredients(checkedIngredients);
+                showSuccessMessage();
+                updateStatus(`✅ Successfully saved ${checkedIngredients.length} ingredients!`, 'success');
+            } catch (error) {
+                console.error('Error saving ingredients:', error);
+                showErrorMessage();
+                updateStatus('❌ Error saving ingredients: ' + error.message, 'error');
+            }
+        }
+
+        function displaySavedIngredients(ingredients) {
+            const listContainer = savedIngredientsList;
+            
+            if (ingredients.length === 0) {
+                listContainer.innerHTML = '<p style="color: #666; font-style: italic;">No ingredients saved yet.</p>';
+                return;
+            }
+            
+            const ingredientItems = ingredients.map(ingredient => {
+                const displayName = ingredient.charAt(0).toUpperCase() + ingredient.slice(1).replace('-', ' ');
+                return `<span style="display: inline-block; background: #e7f3ff; padding: 5px 10px; margin: 2px; border-radius: 15px; border-left: 3px solid #007bff;">${displayName}</span>`;
+            }).join('');
+            
+            listContainer.innerHTML = ingredientItems;
+        }
+
+        function showSuccessMessage() {
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Saved! ✓';
+            saveButton.style.background = '#28a745';
+            
+            setTimeout(() => {
+                saveButton.textContent = originalText;
+                saveButton.style.background = '#28a745';
+            }, 2000);
+        }
+
+        function showErrorMessage() {
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Error! Try again';
+            saveButton.style.background = '#dc3545';
+            
+            setTimeout(() => {
+                saveButton.textContent = originalText;
+                saveButton.style.background = '#28a745';
+            }, 3000);
+        }
+
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function runTest() {
+            updateStatus('🧪 Running automated test...', 'info');
+            
+            // Clear all checkboxes first
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Select some ingredients
+            document.getElementById('chicken').checked = true;
+            document.getElementById('rice').checked = true;
+            document.getElementById('garlic').checked = true;
+            
+            console.log('Auto-test: Selected chicken, rice, and garlic');
+            
+            // Save ingredients
+            setTimeout(() => {
+                saveIngredients();
+                
+                // Verify the save worked
+                setTimeout(() => {
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                    if (saved.length === 3 && saved.includes('chicken') && saved.includes('rice') && saved.includes('garlic')) {
+                        updateStatus('🎉 Auto-test PASSED! Save functionality works correctly.', 'success');
+                        console.log('Auto-test: SUCCESS - All ingredients saved correctly');
+                    } else {
+                        updateStatus('❌ Auto-test FAILED! Expected 3 ingredients, got: ' + saved.length, 'error');
+                        console.error('Auto-test: FAILED - Expected [chicken, rice, garlic], got:', saved);
+                    }
+                }, 500);
+            }, 500);
+        }
+
+        function clearStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            displaySavedIngredients([]);
+            updateStatus('🗑️ Storage cleared and checkboxes reset.', 'info');
+            console.log('Storage cleared');
+        }
+    </script>
+</body>
+</html>

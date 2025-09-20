@@ -1,0 +1,126 @@
+/* Modern Category Grid Layout */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.category-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
+    border-color: #667eea;
+}
+
+.category-header {
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    padding: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.ingredient-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    gap: 8px;
+}
+
+.ingredient-item:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+.ingredient-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #667eea;
+    margin: 0;
+}
+
+.ingredient-item input[type="checkbox"]:checked {
+    accent-color: #48bb78;
+}
+
+.ingredient-item input[type="checkbox"]:checked + span {
+    color: #2d5a2d;
+    font-weight: 600;
+}
+
+.ingredient-item span {
+    color: #4a5568;
+    font-weight: 500;
+    user-select: none;
+}
+
+/* Responsive design for categories */
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .category-card {
+        padding: 12px;
+    }
+    
+    .ingredients-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 6px;
+    }
+    
+    .ingredient-item {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .category-header {
+        font-size: 1rem;
+        padding: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ingredients-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .ingredient-item {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+    
+    .ingredient-item input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+    }
+}

@@ -1,24 +1,51 @@
 // Dinner Helper App JavaScript
 
-// DOM elements
-const saveButton = document.getElementById('saveBtn');
-const savedIngredientsList = document.getElementById('savedIngredientsList');
-const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-const suggestMealsButton = document.getElementById('suggestMealsBtn');
+// DOM elements - will be initialized after DOM loads
+let saveButton;
+let savedIngredientsList;
+let suggestMealsButton;
 
 // Storage key for localStorage
 const STORAGE_KEY = 'dinnerHelperIngredients';
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DOM elements after DOM is loaded
+    saveButton = document.getElementById('saveBtn');
+    savedIngredientsList = document.getElementById('savedIngredientsList');
+    suggestMealsButton = document.getElementById('suggestMealsBtn');
+    
     loadSavedIngredients();
     setupEventListeners();
 });
 
 // Set up event listeners
 function setupEventListeners() {
-    saveButton.addEventListener('click', saveIngredients);
-    suggestMealsButton.addEventListener('click', suggestMeals);
+    console.log('Setting up event listeners...');
+    console.log('Save button found:', saveButton);
+    console.log('Suggest button found:', suggestMealsButton);
+    
+    if (saveButton) {
+        saveButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Save button clicked!');
+            saveIngredients();
+        });
+        console.log('Save button event listener added');
+    } else {
+        console.error('Save button not found!');
+    }
+    
+    if (suggestMealsButton) {
+        suggestMealsButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Suggest meals button clicked!');
+            suggestMeals();
+        });
+        console.log('Suggest button event listener added');
+    } else {
+        console.error('Suggest button not found!');
+    }
 }
 
 // Load saved ingredients from localStorage and update UI
@@ -26,8 +53,9 @@ function loadSavedIngredients() {
     try {
         const savedIngredients = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         
-        // Check the corresponding checkboxes
-        checkboxes.forEach(checkbox => {
+        // Check the corresponding checkboxes (get fresh checkbox list each time)
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        allCheckboxes.forEach(checkbox => {
             const ingredient = checkbox.getAttribute('data-ingredient');
             if (savedIngredients.includes(ingredient)) {
                 checkbox.checked = true;
@@ -44,15 +72,22 @@ function loadSavedIngredients() {
 
 // Save ingredients to localStorage and update display
 function saveIngredients() {
+    console.log('Save ingredients function called!');
     const checkedIngredients = [];
     
-    // Collect all checked ingredients
-    checkboxes.forEach(checkbox => {
+    // Collect all checked ingredients (get fresh checkbox list each time)
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    console.log('Found checkboxes:', allCheckboxes.length);
+    
+    allCheckboxes.forEach(checkbox => {
+        console.log('Checkbox:', checkbox.id, 'Checked:', checkbox.checked, 'Data-ingredient:', checkbox.getAttribute('data-ingredient'));
         if (checkbox.checked) {
             const ingredient = checkbox.getAttribute('data-ingredient');
             checkedIngredients.push(ingredient);
         }
     });
+    
+    console.log('Checked ingredients found:', checkedIngredients);
     
     try {
         // Save to localStorage
@@ -114,4633 +149,230 @@ function showErrorMessage() {
 
 // Utility function to get all available ingredients (for future use)
 function getAllIngredients() {
-    return Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-ingredient'));
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    return Array.from(allCheckboxes).map(checkbox => checkbox.getAttribute('data-ingredient'));
 }
 
 // Utility function to clear all saved ingredients (for debugging/testing)
 function clearSavedIngredients() {
     localStorage.removeItem(STORAGE_KEY);
-    checkboxes.forEach(checkbox => checkbox.checked = false);
+    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    allCheckboxes.forEach(checkbox => checkbox.checked = false);
     displaySavedIngredients([]);
 }
 
-// Spoonacular API Configuration
-const SPOONACULAR_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
-const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com/recipes';
+// Meal API Configuration (TheMealDB)
+const THEMEALDB_BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
-// API Functions
-async function searchRecipesByIngredients(ingredients, cuisine = '', diet = '', number = 10) {
-    try {
-        const ingredientsString = ingredients.join(',+');
-        const url = `${SPOONACULAR_BASE_URL}/findByIngredients?apiKey=${SPOONACULAR_API_KEY}&ingredients=${ingredientsString}&number=${number}&cuisine=${cuisine}&diet=${diet}`;
-        
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching recipes:', error);
-        return [];
+// UI pagination defaults for meal suggestions
+const INITIAL_DISPLAY_COUNT = 3;
+let allSuggestedMeals = [];
+let currentlyDisplayedCount = 0;
+let usedMealImages = new Set();
+
+async function fetchMealDbByIngredient(ingredient) {
+    const formattedIngredient = ingredient.replace(/-/g, ' ');
+    const url = `${THEMEALDB_BASE_URL}/filter.php?i=${encodeURIComponent(formattedIngredient)}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`TheMealDB ingredient request failed: ${response.status}`);
     }
+
+    const data = await response.json();
+    return Array.isArray(data?.meals) ? data.meals : [];
 }
 
-async function getRecipeDetails(recipeId) {
-    try {
-        const url = `${SPOONACULAR_BASE_URL}/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`;
-        
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching recipe details:', error);
+async function fetchMealDbDetails(mealId) {
+    const url = `${THEMEALDB_BASE_URL}/lookup.php?i=${encodeURIComponent(mealId)}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`TheMealDB details request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!Array.isArray(data?.meals) || data.meals.length === 0) {
         return null;
     }
+
+    return data.meals[0];
 }
 
-async function searchRecipes(query, cuisine = '', diet = '', number = 10) {
-    try {
-        const url = `${SPOONACULAR_BASE_URL}/search?apiKey=${SPOONACULAR_API_KEY}&query=${query}&cuisine=${cuisine}&diet=${diet}&number=${number}`;
-        
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.results || [];
-    } catch (error) {
-        console.error('Error searching recipes:', error);
-        return [];
+function convertMealDbRecipe(meal) {
+    if (!meal) {
+        return null;
     }
-}
 
-// Convert Spoonacular recipe to our format
-function convertSpoonacularRecipe(spoonacularRecipe) {
+    const normalizeName = (value) => {
+        if (!value) return '';
+        return value.toString().toLowerCase().trim().replace(/\s+/g, '-');
+    };
+
+    const ingredients = [];
+    for (let i = 1; i <= 20; i += 1) {
+        const name = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+        if (name && name.trim()) {
+            ingredients.push({
+                name: normalizeName(name),
+                quantity: measure ? measure.trim() : '',
+                displayName: name.trim()
+            });
+        }
+    }
+
+    const instructions = (() => {
+        if (meal.strInstructions) {
+            return meal.strInstructions
+                .split(/\r?\n+/)
+                .map(line => line.trim())
+                .filter(Boolean);
+        }
+        return [];
+    })();
+
+    const description = meal.strCategory || meal.strTags || instructions[0] || 'Tasty recipe from TheMealDB.';
+
     return {
-        id: spoonacularRecipe.id.toString(),
-        name: spoonacularRecipe.title,
-        cuisine: spoonacularRecipe.cuisines ? spoonacularRecipe.cuisines[0] : 'Unknown',
-        difficulty: 'Medium', // Spoonacular doesn't provide difficulty
-        time: spoonacularRecipe.readyInMinutes ? `${spoonacularRecipe.readyInMinutes} min` : 'Unknown',
-        description: spoonacularRecipe.summary ? spoonacularRecipe.summary.replace(/<[^>]*>/g, '') : 'Delicious recipe',
-        ingredients: spoonacularRecipe.usedIngredients ? 
-            spoonacularRecipe.usedIngredients.map(ing => ing.name.toLowerCase().replace(/\s+/g, '-')) : [],
-        missingIngredients: spoonacularRecipe.missedIngredients ? 
-            spoonacularRecipe.missedIngredients.map(ing => ing.name.toLowerCase().replace(/\s+/g, '-')) : [],
-        instructions: spoonacularRecipe.analyzedInstructions ? 
-            spoonacularRecipe.analyzedInstructions[0]?.steps?.map(step => step.step) : []
+        id: meal.idMeal ? meal.idMeal.toString() : '',
+        name: meal.strMeal || 'Delicious Recipe',
+        cuisine: meal.strArea || 'Unknown',
+        difficulty: 'Medium',
+        time: 'Unknown',
+        description,
+        ingredients,
+        missingIngredients: [],
+        instructions,
+        image: meal.strMealThumb || '',
+        sourceUrl: meal.strSource || meal.strYoutube || null
     };
 }
 
-// Recipe Database - 172 recipes across 10 cuisines
-// This will be replaced with API calls
-const RECIPE_DATABASE = {
-    // ITALIAN CUISINE (30 recipes)
-    "pasta-carbonara": {
-        name: "Pasta Carbonara",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "bacon", quantity: "150g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Italian",
-        description: "Classic Italian pasta with eggs, cheese, and bacon",
-        image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, cut bacon into small pieces and cook in a large skillet over medium heat until crispy.",
-            "Remove bacon from skillet and set aside, leaving the fat in the pan.",
-            "Add minced garlic to the bacon fat and cook for 1 minute until fragrant.",
-            "In a bowl, whisk together eggs and grated cheese until well combined.",
-            "Drain pasta, reserving 1 cup of pasta water.",
-            "Add hot pasta to the skillet with garlic and bacon fat, tossing to combine.",
-            "Remove skillet from heat and quickly add the egg-cheese mixture, tossing constantly.",
-            "Add reserved pasta water gradually while tossing until sauce is creamy.",
-            "Add cooked bacon back to the pasta and toss to combine.",
-            "Season with salt and black pepper to taste.",
-            "Serve immediately with extra grated cheese on top."
-        ]
-    },
-    "vegetarian-pasta": {
-        name: "Vegetarian Pasta",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Italian",
-        description: "Simple vegetarian pasta with fresh tomatoes and herbs",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, heat olive oil in a large skillet over medium heat.",
-            "Add minced garlic and cook for 1 minute until fragrant.",
-            "Add diced tomatoes and cook for 3-4 minutes until they start to break down.",
-            "Season with salt, pepper, and dried herbs.",
-            "Drain pasta and add to the skillet with tomato mixture.",
-            "Toss everything together and add grated cheese.",
-            "Cook for 1-2 minutes until cheese melts and pasta is well coated.",
-            "Garnish with fresh herbs and serve immediately."
-        ]
-    },
-    "pasta-alfredo": {
-        name: "Pasta Alfredo",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "milk", quantity: "300ml" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Italian",
-        description: "Creamy pasta with parmesan cheese sauce",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, melt butter in a large skillet over medium heat.",
-            "Add minced garlic and cook for 1 minute until fragrant.",
-            "Add milk and bring to a gentle simmer.",
-            "Gradually add grated cheese, stirring constantly until melted and smooth.",
-            "Season with salt, pepper, and herbs.",
-            "Drain pasta and add to the sauce.",
-            "Toss pasta with sauce until well coated.",
-            "Cook for 1-2 minutes until sauce thickens slightly.",
-            "Serve immediately with extra cheese and herbs on top."
-        ]
-    },
-    "vegetarian-pizza": {
-        name: "Vegetarian Pizza",
-        ingredients: [
-        { name: "bread", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Homemade pizza with fresh vegetables and herbs",
-        instructions: [
-            "Preheat oven to 450°F (230°C).",
-            "Roll out pizza dough on a floured surface to desired thickness.",
-            "Place dough on a greased baking sheet or pizza stone.",
-            "Brush dough with olive oil and spread tomato sauce evenly.",
-            "Sprinkle grated cheese over the sauce.",
-            "Add sliced vegetables (bell peppers, mushrooms, onions, etc.) on top.",
-            "Season with salt, pepper, and dried herbs.",
-            "Bake for 12-15 minutes until crust is golden and cheese is bubbly.",
-            "Remove from oven and let cool for 2-3 minutes.",
-            "Garnish with fresh herbs, slice, and serve hot."
-        ]
-    },
-    "spaghetti-bolognese": {
-        name: "Spaghetti Bolognese",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "beef", quantity: "500g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Italian",
-        description: "Rich meat sauce with spaghetti and fresh herbs",
-        image: "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Heat olive oil in a large pot over medium heat.",
-            "Add diced onions and cook for 5 minutes until softened.",
-            "Add minced garlic and cook for 1 minute until fragrant.",
-            "Add ground beef and cook, breaking it up, until browned.",
-            "Add canned tomatoes, breaking them up with a spoon.",
-            "Season with salt, pepper, and dried herbs.",
-            "Simmer sauce for 30-40 minutes, stirring occasionally.",
-            "Meanwhile, cook spaghetti according to package directions.",
-            "Drain pasta and serve with bolognese sauce on top.",
-            "Garnish with fresh herbs and grated cheese."
-        ]
-    },
-    "margherita-pizza": {
-        name: "Margherita Pizza",
-        ingredients: [
-        { name: "bread", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Italian",
-        description: "Classic pizza with tomato, mozzarella, and basil",
-        instructions: [
-            "Preheat oven to 475°F (245°C).",
-            "Roll out pizza dough and place on a greased baking sheet.",
-            "Brush dough with olive oil and minced garlic.",
-            "Spread tomato sauce evenly over the dough.",
-            "Tear fresh mozzarella into pieces and distribute over sauce.",
-            "Add sliced tomatoes and fresh basil leaves.",
-            "Drizzle with olive oil and season with salt and pepper.",
-            "Bake for 10-12 minutes until crust is golden and cheese is melted.",
-            "Remove from oven and let cool for 2 minutes.",
-            "Slice and serve immediately."
-        ]
-    },
-    "chicken-parmesan": {
-        name: "Chicken Parmesan",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "bread", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Italian",
-        description: "Breaded chicken with marinara sauce and melted cheese",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Pound chicken breasts to even thickness.",
-            "Season chicken with salt and pepper.",
-            "Dredge chicken in flour, then beaten eggs, then breadcrumbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Place chicken in a baking dish.",
-            "Top with marinara sauce and grated cheese.",
-            "Bake for 15-20 minutes until cheese is melted and bubbly.",
-            "Garnish with fresh herbs and serve over pasta."
-        ]
-    },
-    "risotto-mushroom": {
-        name: "Mushroom Risotto",
-        ingredients: [
-        { name: "rice", quantity: "300g" },
-        { name: "mushrooms", quantity: "300g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "35 min",
-        cuisine: "Italian",
-        description: "Creamy rice dish with wild mushrooms and parmesan",
-        instructions: [
-            "Heat vegetable or chicken broth in a saucepan and keep warm.",
-            "Heat olive oil in a large skillet over medium heat.",
-            "Add diced onions and cook for 5 minutes until softened.",
-            "Add minced garlic and sliced mushrooms, cook for 5 minutes.",
-            "Add arborio rice and stir for 2 minutes until lightly toasted.",
-            "Add wine and stir until absorbed.",
-            "Add warm broth one ladle at a time, stirring constantly.",
-            "Continue adding broth and stirring for 18-20 minutes.",
-            "Stir in grated cheese and herbs.",
-            "Season with salt and pepper, serve immediately."
-        ]
-    },
-    "lasagna": {
-        name: "Lasagna",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "beef", quantity: "500g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "60 min",
-        cuisine: "Italian",
-        description: "Layered pasta dish with meat sauce and cheese",
-        instructions: [
-            "Preheat oven to 375°F (190°C).",
-            "Cook lasagna noodles according to package directions until al dente.",
-            "Prepare your meat sauce and cheese mixture.",
-            "In a baking dish, layer noodles, sauce, and cheese.",
-            "Repeat layers, ending with cheese on top.",
-            "Cover with foil and bake for 25 minutes.",
-            "Remove foil and bake for another 25 minutes until bubbly.",
-            "Let rest for 10 minutes before serving."
-        ]
-    },
-    "fettuccine-alfredo": {
-        name: "Fettuccine Alfredo",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "milk", quantity: "300ml" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Italian",
-        description: "Wide pasta with creamy alfredo sauce",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "bruschetta": {
-        name: "Bruschetta",
-        ingredients: [
-        { name: "bread", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "onions", quantity: "2 medium" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Italian",
-        description: "Toasted bread with fresh tomato and herb topping",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Slice bread and brush with olive oil.",
-            "Toast bread in oven for 5-7 minutes until golden.",
-            "Mix diced tomatoes with garlic, herbs, and olive oil.",
-            "Season with salt and pepper.",
-            "Top toasted bread with tomato mixture.",
-            "Drizzle with balsamic vinegar and serve immediately."
-        ]
-    },
-    "chicken-marsala": {
-        name: "Chicken Marsala",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "mushrooms", quantity: "300g" },
-        { name: "wine", quantity: "150ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Chicken in marsala wine sauce with mushrooms",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "penne-arrabbiata": {
-        name: "Penne Arrabbiata",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "chili", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Italian",
-        description: "Spicy pasta with tomato and chili sauce",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "eggplant-parmesan": {
-        name: "Eggplant Parmesan",
-        ingredients: [
-        { name: "eggplant", quantity: "1 large" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Italian",
-        description: "Breaded eggplant with marinara and cheese",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "osso-buco": {
-        name: "Osso Buco",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "wine", quantity: "150ml" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Italian",
-        description: "Braised veal shanks with vegetables and wine",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "gnocchi": {
-        name: "Gnocchi",
-        ingredients: [
-        { name: "potatoes", quantity: "1kg" },
-        { name: "flour", quantity: "200g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "50 min",
-        cuisine: "Italian",
-        description: "Potato dumplings with tomato sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "cacio-e-pepe": {
-        name: "Cacio e Pepe",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "pepper", quantity: "1/2 tsp" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "butter", quantity: "100g" }
-    ],
-        difficulty: "Medium",
-        time: "15 min",
-        cuisine: "Italian",
-        description: "Simple pasta with cheese and black pepper",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-piccata": {
-        name: "Chicken Piccata",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "lemon", quantity: "to taste" },
-        { name: "capers", quantity: "to taste" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Italian",
-        description: "Chicken in lemon and caper sauce",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "minestrone": {
-        name: "Minestrone Soup",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "beans", quantity: "to taste" },
-        { name: "pasta", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "40 min",
-        cuisine: "Italian",
-        description: "Hearty vegetable soup with pasta and beans",
-        instructions: [
-            "Heat olive oil in a large pot over medium heat.",
-            "Add onions and cook until softened.",
-            "Add garlic and cook for 1 minute until fragrant.",
-            "Add vegetables and cook for 5 minutes.",
-            "Add broth and bring to a boil.",
-            "Reduce heat and simmer for 20-30 minutes.",
-            "Season with salt, pepper, and herbs.",
-            "Serve hot with grated cheese on top."
-        ]
-    },
-    "tiramisu": {
-        name: "Tiramisu",
-        ingredients: [
-        { name: "eggs", quantity: "3 large" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "coffee", quantity: "to taste" },
-        { name: "cocoa", quantity: "to taste" },
-        { name: "sugar", quantity: "2 tbsp" },
-        { name: "ladyfingers", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "120 min",
-        cuisine: "Italian",
-        description: "Classic Italian dessert with coffee and mascarpone",
-        instructions: [
-            "Brew strong coffee and let cool.",
-            "Separate eggs and beat yolks with sugar until pale.",
-            "Add mascarpone cheese and mix until smooth.",
-            "Beat egg whites until stiff peaks form.",
-            "Fold egg whites into mascarpone mixture.",
-            "Dip ladyfingers in coffee and layer in dish.",
-            "Spread half the mascarpone mixture over ladyfingers.",
-            "Repeat layers and dust with cocoa powder.",
-            "Refrigerate for at least 4 hours before serving."
-        ]
-    },
-    "pasta-puttanesca": {
-        name: "Pasta Puttanesca",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "olives", quantity: "to taste" },
-        { name: "capers", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Italian",
-        description: "Spicy pasta with olives, capers, and anchovies",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "chicken-saltimbocca": {
-        name: "Chicken Saltimbocca",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "prosciutto", quantity: "to taste" },
-        { name: "sage", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "wine", quantity: "150ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Chicken wrapped with prosciutto and sage",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "risotto-milanese": {
-        name: "Risotto Milanese",
-        ingredients: [
-        { name: "rice", quantity: "300g" },
-        { name: "saffron", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "butter", quantity: "100g" },
-        { name: "wine", quantity: "150ml" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Hard",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Saffron risotto from Milan",
-        instructions: [
-            "Heat vegetable or chicken broth in a saucepan and keep warm.",
-            "Heat olive oil in a large skillet over medium heat.",
-            "Add diced onions and cook for 5 minutes until softened.",
-            "Add minced garlic and cook for 1 minute until fragrant.",
-            "Add arborio rice and stir for 2 minutes until lightly toasted.",
-            "Add wine and stir until absorbed.",
-            "Add warm broth one ladle at a time, stirring constantly.",
-            "Continue adding broth and stirring for 18-20 minutes.",
-            "Stir in grated cheese and herbs.",
-            "Season with salt and pepper, serve immediately."
-        ]
-    },
-    "pasta-primavera": {
-        name: "Pasta Primavera",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Italian",
-        description: "Pasta with spring vegetables",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "chicken-cacciatore": {
-        name: "Chicken Cacciatore",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "mushrooms", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "wine", quantity: "150ml" }
-    ],
-        difficulty: "Medium",
-        time: "50 min",
-        cuisine: "Italian",
-        description: "Hunter-style chicken with vegetables",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "pasta-aglio-olio": {
-        name: "Pasta Aglio e Olio",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "chili", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "parsley", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Italian",
-        description: "Simple pasta with garlic and oil",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "chicken-francese": {
-        name: "Chicken Francese",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "lemon", quantity: "to taste" },
-        { name: "wine", quantity: "150ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "eggs", quantity: "3 large" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Chicken in lemon and white wine sauce",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "pasta-vongole": {
-        name: "Pasta Vongole",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "clams", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "white-wine", quantity: "150ml" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "chili", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Italian",
-        description: "Pasta with clams in white wine sauce",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "chicken-scarpariello": {
-        name: "Chicken Scarpariello",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "sausage", quantity: "300g" },
-        { name: "peppers", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "wine", quantity: "150ml" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Italian",
-        description: "Chicken and sausage with peppers",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-    "pasta-pesto": {
-        name: "Pasta Pesto",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "basil", quantity: "1/4 cup" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "pine-nuts", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Italian",
-        description: "Pasta with fresh basil pesto sauce",
-        instructions: [
-            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
-            "While pasta cooks, prepare the sauce in a large skillet over medium heat.",
-            "Add your main ingredients and cook until heated through.",
-            "Season with salt, pepper, and herbs to taste.",
-            "Drain pasta and add to the skillet with sauce.",
-            "Toss everything together until well combined.",
-            "Serve immediately with grated cheese on top."
-        ]
-    },
-    "chicken-milanese": {
-        name: "Chicken Milanese",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "lemon", quantity: "to taste" },
-        { name: "arugula", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Italian",
-        description: "Breaded chicken cutlet with arugula salad",
-        instructions: [
-            "Preheat oven to 400°F (200°C).",
-            "Season chicken with salt, pepper, and herbs.",
-            "Heat olive oil in a large skillet over medium-high heat.",
-            "Cook chicken for 3-4 minutes per side until golden brown.",
-            "Transfer to a baking dish and add sauce.",
-            "Bake for 15-20 minutes until chicken is cooked through.",
-            "Garnish with fresh herbs and serve."
-        ]
-    },
-
-    // ASIAN CUISINE (30 recipes)
-    "chicken-stir-fry": {
-        name: "Chicken Stir Fry",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Quick and healthy chicken with vegetables over rice",
-        instructions: [
-            "Cut chicken into bite-sized pieces and season with salt and pepper.",
-            "Heat oil in a large wok or skillet over high heat.",
-            "Add chicken and cook for 3-4 minutes until golden and cooked through.",
-            "Remove chicken from pan and set aside.",
-            "Add more oil to the pan and add minced garlic, cooking for 30 seconds.",
-            "Add mixed vegetables and stir-fry for 3-4 minutes until crisp-tender.",
-            "Return chicken to the pan with vegetables.",
-            "Add soy sauce and toss everything together for 1-2 minutes.",
-            "Serve immediately over cooked rice.",
-            "Garnish with sesame seeds or green onions if desired."
-        ]
-    },
-    "salmon-teriyaki": {
-        name: "Salmon Teriyaki",
-        ingredients: [
-        { name: "salmon", quantity: "600g" },
-        { name: "rice", quantity: "300g" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "honey", quantity: "2 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "undefined",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-stir-fry": {
-        name: "Beef Stir Fry",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Tender beef strips with mixed vegetables over rice",
-        instructions: [
-            "Heat oil in a large wok or skillet over high heat.",
-            "Add protein and cook until almost done, then remove from pan.",
-            "Add vegetables and stir-fry for 2-3 minutes until crisp-tender.",
-            "Add sauce and return protein to the pan.",
-            "Toss everything together and cook for 1-2 minutes.",
-            "Serve immediately over rice or noodles."
-        ]
-    },
-    "chicken-fried-rice": {
-        name: "Chicken Fried Rice",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Classic fried rice with chicken and vegetables",
-        instructions: [
-            "Heat oil in a large wok or skillet over high heat.",
-            "Add protein and cook until almost done, then remove from pan.",
-            "Add vegetables and stir-fry for 2-3 minutes until crisp-tender.",
-            "Add sauce and return protein to the pan.",
-            "Toss everything together and cook for 1-2 minutes.",
-            "Serve immediately over rice or noodles."
-        ]
-    },
-    "beef-broccoli": {
-        name: "Beef and Broccoli",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "broccoli", quantity: "300g" },
-        { name: "rice", quantity: "300g" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Tender beef with fresh broccoli in savory sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-ramen": {
-        name: "Chicken Ramen",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Rich chicken broth with noodles and vegetables",
-        instructions: [
-            "Bring broth to a boil in a large pot.",
-            "Add protein and cook until done.",
-            "Add vegetables and cook for 2-3 minutes.",
-            "Add noodles and cook according to package directions.",
-            "Season with soy sauce and other seasonings.",
-            "Serve hot with garnishes."
-        ]
-    },
-    "vegetable-stir-fry": {
-        name: "Vegetable Stir Fry",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "tofu", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Asian",
-        description: "Fresh vegetables stir-fried with tofu",
-        instructions: [
-            "Heat oil in a large wok or skillet over high heat.",
-            "Add protein and cook until almost done, then remove from pan.",
-            "Add vegetables and stir-fry for 2-3 minutes until crisp-tender.",
-            "Add sauce and return protein to the pan.",
-            "Toss everything together and cook for 1-2 minutes.",
-            "Serve immediately over rice or noodles."
-        ]
-    },
-    "chicken-kung-pao": {
-        name: "Chicken Kung Pao",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "peanuts", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "chili", quantity: "to taste" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Spicy chicken with peanuts and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-lo-mein": {
-        name: "Beef Lo Mein",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Soft noodles with beef and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-dumplings": {
-        name: "Chicken Dumplings",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "wonton-wrappers", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "sesame-oil", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "45 min",
-        cuisine: "Asian",
-        description: "Handmade dumplings with chicken filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-bulgogi": {
-        name: "Beef Bulgogi",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "honey", quantity: "2 tbsp" },
-        { name: "sesame-oil", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Korean marinated beef with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-pad-thai": {
-        name: "Chicken Pad Thai",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "lime", quantity: "to taste" },
-        { name: "peanuts", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Thai stir-fried noodles with chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetable-spring-rolls": {
-        name: "Vegetable Spring Rolls",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "rice-paper", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "mint", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Asian",
-        description: "Fresh spring rolls with vegetables and herbs",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-biryani": {
-        name: "Chicken Biryani",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "saffron", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "60 min",
-        cuisine: "Asian",
-        description: "Fragrant spiced rice with chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-pho": {
-        name: "Beef Pho",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "cinnamon", quantity: "to taste" },
-        { name: "star-anise", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Asian",
-        description: "Vietnamese beef noodle soup",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-tikka-masala": {
-        name: "Chicken Tikka Masala",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Asian",
-        description: "Creamy spiced chicken with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetable-curry": {
-        name: "Vegetable Curry",
-        ingredients: [
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "coconut-milk", quantity: "to taste" },
-        { name: "curry-powder", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Asian",
-        description: "Creamy vegetable curry with aromatic spices",
-        instructions: [
-            "Heat oil in a large pot over medium heat.",
-            "Add onions and cook until softened.",
-            "Add garlic, ginger, and curry spices, cook for 1 minute.",
-            "Add protein and cook until browned.",
-            "Add coconut milk and bring to a simmer.",
-            "Add vegetables and simmer for 15-20 minutes.",
-            "Season with salt and serve over rice."
-        ]
-    },
-    "chicken-sushi": {
-        name: "Chicken Sushi",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "nori", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "wasabi", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "50 min",
-        cuisine: "Asian",
-        description: "Hand-rolled sushi with chicken",
-        instructions: [
-            "Cook sushi rice according to package directions.",
-            "Season rice with rice vinegar, sugar, and salt.",
-            "Let rice cool to room temperature.",
-            "Prepare your fillings and slice thinly.",
-            "Place nori on bamboo mat and spread rice evenly.",
-            "Add fillings and roll tightly.",
-            "Slice into pieces and serve with soy sauce."
-        ]
-    },
-    "beef-mongolian": {
-        name: "Beef Mongolian",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "honey", quantity: "2 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Sweet and savory beef with vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-hot-pot": {
-        name: "Chicken Hot Pot",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "tofu", quantity: "to taste" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "mushrooms", quantity: "300g" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Hearty soup with chicken and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-sukiyaki": {
-        name: "Beef Sukiyaki",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "tofu", quantity: "to taste" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "sugar", quantity: "2 tbsp" },
-        { name: "mirin", quantity: "to taste" },
-        { name: "mushrooms", quantity: "300g" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Japanese hot pot with beef and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-miso-soup": {
-        name: "Chicken Miso Soup",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "miso-paste", quantity: "to taste" },
-        { name: "tofu", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "seaweed", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Traditional Japanese soup with chicken",
-        instructions: [
-            "Bring broth to a boil in a large pot.",
-            "Add protein and cook until done.",
-            "Add vegetables and cook for 2-3 minutes.",
-            "Add noodles and cook according to package directions.",
-            "Season with soy sauce and other seasonings.",
-            "Serve hot with garnishes."
-        ]
-    },
-    "beef-ramen": {
-        name: "Beef Ramen",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "miso-paste", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Asian",
-        description: "Rich beef broth with ramen noodles",
-        instructions: [
-            "Bring broth to a boil in a large pot.",
-            "Add protein and cook until done.",
-            "Add vegetables and cook for 2-3 minutes.",
-            "Add noodles and cook according to package directions.",
-            "Season with soy sauce and other seasonings.",
-            "Serve hot with garnishes."
-        ]
-    },
-    "chicken-general-tsos": {
-        name: "Chicken General Tso's",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "chili", quantity: "to taste" },
-        { name: "honey", quantity: "2 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Sweet and spicy chicken with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetable-fried-rice": {
-        name: "Vegetable Fried Rice",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "tofu", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Asian",
-        description: "Classic fried rice with mixed vegetables",
-        instructions: [
-            "Heat oil in a large wok or skillet over high heat.",
-            "Add protein and cook until almost done, then remove from pan.",
-            "Add vegetables and stir-fry for 2-3 minutes until crisp-tender.",
-            "Add sauce and return protein to the pan.",
-            "Toss everything together and cook for 1-2 minutes.",
-            "Serve immediately over rice or noodles."
-        ]
-    },
-    "chicken-satay": {
-        name: "Chicken Satay",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "peanut-butter", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "lime", quantity: "to taste" },
-        { name: "coconut-milk", quantity: "to taste" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Asian",
-        description: "Grilled chicken skewers with peanut sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-udon": {
-        name: "Beef Udon",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "udon-noodles", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "mushrooms", quantity: "300g" },
-        { name: "dashi", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Thick noodles with beef and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-bibimbap": {
-        name: "Chicken Bibimbap",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "sesame-oil", quantity: "to taste" },
-        { name: "gochujang", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Korean mixed rice bowl with chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetable-tempura": {
-        name: "Vegetable Tempura",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "flour", quantity: "200g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "rice", quantity: "300g" },
-        { name: "tempura-batter", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Asian",
-        description: "Light and crispy battered vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-kao-pad": {
-        name: "Chicken Kao Pad",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "fish-sauce", quantity: "to taste" },
-        { name: "lime", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Thai fried rice with chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-chow-mein": {
-        name: "Beef Chow Mein",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "oyster-sauce", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Asian",
-        description: "Stir-fried noodles with beef and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-miso-ramen": {
-        name: "Chicken Miso Ramen",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "noodles", quantity: "to taste" },
-        { name: "miso-paste", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "seaweed", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Asian",
-        description: "Rich miso ramen with chicken",
-        instructions: [
-            "Bring broth to a boil in a large pot.",
-            "Add protein and cook until done.",
-            "Add vegetables and cook for 2-3 minutes.",
-            "Add noodles and cook according to package directions.",
-            "Season with soy sauce and other seasonings.",
-            "Serve hot with garnishes."
-        ]
-    },
-    "vegetable-sushi-bowl": {
-        name: "Vegetable Sushi Bowl",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "nori", quantity: "to taste" },
-        { name: "soy-sauce", quantity: "3 tbsp" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "wasabi", quantity: "to taste" },
-        { name: "sesame-seeds", quantity: "to taste" },
-        { name: "avocado", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Asian",
-        description: "Deconstructed sushi with fresh vegetables",
-        instructions: [
-            "Cook sushi rice according to package directions.",
-            "Season rice with rice vinegar, sugar, and salt.",
-            "Let rice cool to room temperature.",
-            "Prepare your fillings and slice thinly.",
-            "Place nori on bamboo mat and spread rice evenly.",
-            "Add fillings and roll tightly.",
-            "Slice into pieces and serve with soy sauce."
-        ]
-    },
-
-    // MEXICAN CUISINE (30 recipes)
-    "beef-tacos": {
-        name: "Beef Tacos",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Mexican",
-        description: "Spicy ground beef tacos with fresh toppings",
-        instructions: [
-            "Heat a large skillet over medium-high heat.",
-            "Add ground beef and cook, breaking it up with a spoon, until browned and cooked through.",
-            "Season beef with salt, pepper, and taco seasoning mix.",
-            "Drain excess fat from the beef.",
-            "Warm tortillas in a dry skillet or microwave for 30 seconds.",
-            "Dice tomatoes and onions, shred lettuce, and grate cheese.",
-            "Assemble tacos by placing beef in the center of each tortilla.",
-            "Top with cheese, tomatoes, lettuce, and onions.",
-            "Add hot sauce or salsa if desired.",
-            "Serve immediately while warm."
-        ]
-    },
-    "chicken-quesadillas": {
-        name: "Chicken Quesadillas",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Mexican",
-        description: "undefined",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-burritos": {
-        name: "Vegetarian Burritos",
-        ingredients: [
-        { name: "tortillas", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Large tortillas filled with beans and vegetables",
-        instructions: [
-            "Heat tortillas to make them pliable.",
-            "Warm your filling ingredients in a skillet.",
-            "Place filling in the center of each tortilla.",
-            "Add cheese and other toppings.",
-            "Fold the sides in and roll up tightly.",
-            "Optional: Heat in a skillet to crisp the outside.",
-            "Serve immediately."
-        ]
-    },
-    "beef-enchiladas": {
-        name: "Beef Enchiladas",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Mexican",
-        description: "Rolled tortillas with beef and cheese sauce",
-        instructions: [
-            "Preheat oven to 350°F (175°C).",
-            "Warm tortillas to make them pliable.",
-            "Fill tortillas with your filling mixture.",
-            "Roll up and place seam-side down in a baking dish.",
-            "Pour sauce over the enchiladas.",
-            "Top with cheese.",
-            "Bake for 20-25 minutes until bubbly.",
-            "Garnish and serve hot."
-        ]
-    },
-    "chicken-fajitas": {
-        name: "Chicken Fajitas",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "lime", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Sizzling chicken with peppers and onions",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-nachos": {
-        name: "Vegetarian Nachos",
-        ingredients: [
-        { name: "tortilla-chips", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "beans", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "jalapenos", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Mexican",
-        description: "Loaded tortilla chips with cheese and beans",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-chimichangas": {
-        name: "Beef Chimichangas",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "beans", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Mexican",
-        description: "Deep-fried burritos with beef filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-tostadas": {
-        name: "Chicken Tostadas",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Mexican",
-        description: "Crispy tortillas topped with chicken and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-tamales": {
-        name: "Vegetarian Tamales",
-        ingredients: [
-        { name: "corn-husks", quantity: "to taste" },
-        { name: "masa", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Mexican",
-        description: "Steamed corn dough with vegetable filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-burrito-bowl": {
-        name: "Beef Burrito Bowl",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "beans", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "avocado", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Deconstructed burrito in a bowl",
-        instructions: [
-            "Heat tortillas to make them pliable.",
-            "Warm your filling ingredients in a skillet.",
-            "Place filling in the center of each tortilla.",
-            "Add cheese and other toppings.",
-            "Fold the sides in and roll up tightly.",
-            "Optional: Heat in a skillet to crisp the outside.",
-            "Serve immediately."
-        ]
-    },
-    "chicken-posole": {
-        name: "Chicken Posole",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "hominy", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" },
-        { name: "lime", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Mexican",
-        description: "Traditional Mexican soup with chicken and hominy",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-chiles-rellenos": {
-        name: "Vegetarian Chiles Rellenos",
-        ingredients: [
-        { name: "poblano-peppers", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "flour", quantity: "200g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Hard",
-        time: "60 min",
-        cuisine: "Mexican",
-        description: "Stuffed peppers with cheese and tomato sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-carnitas": {
-        name: "Beef Carnitas",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "lime", quantity: "to taste" },
-        { name: "orange", quantity: "to taste" },
-        { name: "cinnamon", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "120 min",
-        cuisine: "Mexican",
-        description: "Slow-cooked beef with citrus and spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-mole": {
-        name: "Chicken Mole",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "chocolate", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "almonds", quantity: "to taste" },
-        { name: "cinnamon", quantity: "to taste" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Mexican",
-        description: "Chicken in rich chocolate and chili sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-huevos-rancheros": {
-        name: "Vegetarian Huevos Rancheros",
-        ingredients: [
-        { name: "eggs", quantity: "3 large" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Mexican",
-        description: "Fried eggs with beans and salsa",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-barbacoa": {
-        name: "Beef Barbacoa",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "lime", quantity: "to taste" },
-        { name: "cinnamon", quantity: "to taste" },
-        { name: "cloves", quantity: "to taste" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Medium",
-        time: "180 min",
-        cuisine: "Mexican",
-        description: "Slow-cooked beef with Mexican spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-sopes": {
-        name: "Chicken Sopes",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "masa", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Mexican",
-        description: "Thick tortillas topped with chicken and beans",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-flautas": {
-        name: "Vegetarian Flautas",
-        ingredients: [
-        { name: "tortillas", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Mexican",
-        description: "Rolled and fried tortillas with bean filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-machaca": {
-        name: "Beef Machaca",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "chili", quantity: "to taste" },
-        { name: "tortillas", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Shredded beef with scrambled eggs",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-cochinita-pibil": {
-        name: "Chicken Cochinita Pibil",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "orange-juice", quantity: "to taste" },
-        { name: "lime", quantity: "to taste" },
-        { name: "achiote", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "tortillas", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "240 min",
-        cuisine: "Mexican",
-        description: "Yucatan-style marinated chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-papusas": {
-        name: "Vegetarian Papusas",
-        ingredients: [
-        { name: "masa", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Mexican",
-        description: "Stuffed corn cakes with beans and cheese",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-torta": {
-        name: "Beef Torta",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "avocado", quantity: "to taste" },
-        { name: "mayo", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Mexican",
-        description: "Mexican sandwich with beef and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-elote": {
-        name: "Chicken Elote",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "corn", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "chili", quantity: "to taste" },
-        { name: "lime", quantity: "to taste" },
-        { name: "mayo", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "tortillas", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Grilled corn with chicken and Mexican spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-guacamole": {
-        name: "Vegetarian Guacamole",
-        ingredients: [
-        { name: "avocado", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "lime", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "chili", quantity: "to taste" },
-        { name: "tortilla-chips", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Mexican",
-        description: "Fresh avocado dip with vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-chorizo": {
-        name: "Beef Chorizo",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "chili", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "vinegar", quantity: "2 tbsp" },
-        { name: "paprika", quantity: "1 tsp" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "onions", quantity: "2 medium" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Mexican",
-        description: "Spicy Mexican sausage with eggs",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-pollo-asado": {
-        name: "Chicken Pollo Asado",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "lime", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "chili", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "35 min",
-        cuisine: "Mexican",
-        description: "Grilled chicken with Mexican marinade",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-frijoles": {
-        name: "Vegetarian Frijoles",
-        ingredients: [
-        { name: "beans", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "lime", quantity: "to taste" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Mexican",
-        description: "Refried beans with Mexican spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-carne-asada": {
-        name: "Beef Carne Asada",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "lime", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "chili", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "tortillas", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Mexican",
-        description: "Grilled beef with Mexican marinade",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-pescado-veracruz": {
-        name: "Chicken Pescado Veracruz",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "olives", quantity: "to taste" },
-        { name: "capers", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "rice", quantity: "300g" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Mexican",
-        description: "Chicken in Veracruz-style sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-salsa-verde": {
-        name: "Vegetarian Salsa Verde",
-        ingredients: [
-        { name: "tomatillos", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "lime", quantity: "to taste" },
-        { name: "tortilla-chips", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Mexican",
-        description: "Green salsa with tomatillos and herbs",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-menudo": {
-        name: "Beef Menudo",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "hominy", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" },
-        { name: "lime", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "tortillas", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "180 min",
-        cuisine: "Mexican",
-        description: "Traditional Mexican tripe soup",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-chiles-en-nogada": {
-        name: "Chicken Chiles en Nogada",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "poblano-peppers", quantity: "to taste" },
-        { name: "walnuts", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "pomegranate", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Hard",
-        time: "120 min",
-        cuisine: "Mexican",
-        description: "Stuffed peppers with walnut sauce",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-mexican-rice": {
-        name: "Vegetarian Mexican Rice",
-        ingredients: [
-        { name: "rice", quantity: "300g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "chili", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Mexican",
-        description: "Flavored rice with tomatoes and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-
-    // INDIAN CUISINE (30 recipes)
-    "vegetable-curry": {
-        name: "Vegetable Curry",
-        ingredients: [
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "coconut-milk", quantity: "to taste" },
-        { name: "curry-powder", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Creamy vegetable curry with aromatic spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-tikka-masala": {
-        name: "Chicken Tikka Masala",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Creamy spiced chicken with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-biryani": {
-        name: "Beef Biryani",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "saffron", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "60 min",
-        cuisine: "Indian",
-        description: "Fragrant spiced rice with beef",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-dal": {
-        name: "Vegetarian Dal",
-        ingredients: [
-        { name: "lentils", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Indian",
-        description: "Spiced lentil curry with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-butter-chicken": {
-        name: "Chicken Butter Chicken",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Creamy tomato-based chicken curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-vindaloo": {
-        name: "Beef Vindaloo",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "vinegar", quantity: "2 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "potatoes", quantity: "1kg" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Indian",
-        description: "Spicy beef curry with potatoes",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-samosa": {
-        name: "Vegetarian Samosa",
-        ingredients: [
-        { name: "potatoes", quantity: "1kg" },
-        { name: "flour", quantity: "200g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "oil", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Fried pastries with spiced vegetable filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-korma": {
-        name: "Chicken Korma",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" },
-        { name: "almonds", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "50 min",
-        cuisine: "Indian",
-        description: "Mild creamy chicken curry with nuts",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-keema": {
-        name: "Beef Keema",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "peas", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Spiced ground beef with peas",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-palak-paneer": {
-        name: "Vegetarian Palak Paneer",
-        ingredients: [
-        { name: "paneer", quantity: "to taste" },
-        { name: "spinach", quantity: "200g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Cottage cheese in spinach curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-rogan-josh": {
-        name: "Chicken Rogan Josh",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" }
-    ],
-        difficulty: "Medium",
-        time: "55 min",
-        cuisine: "Indian",
-        description: "Aromatic chicken curry with yogurt",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-madras": {
-        name: "Beef Madras",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "coconut-milk", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "75 min",
-        cuisine: "Indian",
-        description: "Spicy beef curry from Madras",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-chana-masala": {
-        name: "Vegetarian Chana Masala",
-        ingredients: [
-        { name: "chickpeas", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Indian",
-        description: "Spiced chickpea curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-jalfrezi": {
-        name: "Chicken Jalfrezi",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Stir-fried chicken with vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-dhansak": {
-        name: "Beef Dhansak",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "lentils", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "120 min",
-        cuisine: "Indian",
-        description: "Parsi-style beef with lentils",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-baingan-bharta": {
-        name: "Vegetarian Baingan Bharta",
-        ingredients: [
-        { name: "eggplant", quantity: "1 large" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Smoky roasted eggplant curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-saag": {
-        name: "Chicken Saag",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "spinach", quantity: "200g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Chicken in spiced spinach curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-phall": {
-        name: "Beef Phall",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "60 min",
-        cuisine: "Indian",
-        description: "Extremely spicy beef curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-aloo-gobi": {
-        name: "Vegetarian Aloo Gobi",
-        ingredients: [
-        { name: "potatoes", quantity: "1kg" },
-        { name: "cauliflower", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Indian",
-        description: "Spiced potatoes and cauliflower",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-makhani": {
-        name: "Chicken Makhani",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "butter", quantity: "100g" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Buttery chicken curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-karahi": {
-        name: "Beef Karahi",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "chili", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Spicy beef curry cooked in karahi",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-rajma": {
-        name: "Vegetarian Rajma",
-        ingredients: [
-        { name: "kidney-beans", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Spiced kidney bean curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-chettinad": {
-        name: "Chicken Chettinad",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "coconut", quantity: "to taste" },
-        { name: "curry-leaves", quantity: "to taste" }
-    ],
-        difficulty: "Hard",
-        time: "65 min",
-        cuisine: "Indian",
-        description: "Spicy chicken curry from Chettinad",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-korma": {
-        name: "Beef Korma",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "yogurt", quantity: "200ml" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" },
-        { name: "cashews", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "55 min",
-        cuisine: "Indian",
-        description: "Mild creamy beef curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-matar-paneer": {
-        name: "Vegetarian Matar Paneer",
-        ingredients: [
-        { name: "paneer", quantity: "to taste" },
-        { name: "peas", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "Indian",
-        description: "Cottage cheese and peas curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-dopiaza": {
-        name: "Chicken Dopiaza",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Chicken curry with double onions",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-malai": {
-        name: "Beef Malai",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" },
-        { name: "cashews", quantity: "to taste" },
-        { name: "coconut", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "50 min",
-        cuisine: "Indian",
-        description: "Creamy beef curry with nuts",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-dal-makhani": {
-        name: "Vegetarian Dal Makhani",
-        ingredients: [
-        { name: "black-lentils", quantity: "to taste" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "cream", quantity: "to taste" },
-        { name: "butter", quantity: "100g" }
-    ],
-        difficulty: "Hard",
-        time: "120 min",
-        cuisine: "Indian",
-        description: "Creamy black lentil curry",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-achari": {
-        name: "Chicken Achari",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "pickle-spices", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Chicken curry with pickle spices",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-nihari": {
-        name: "Beef Nihari",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "wheat-flour", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Hard",
-        time: "180 min",
-        cuisine: "Indian",
-        description: "Slow-cooked beef stew",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-kadhi": {
-        name: "Vegetarian Kadhi",
-        ingredients: [
-        { name: "yogurt", quantity: "200ml" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "chickpea-flour", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Indian",
-        description: "Yogurt-based curry with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-methi": {
-        name: "Chicken Methi",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "fenugreek-leaves", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Chicken curry with fenugreek leaves",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-khichdi": {
-        name: "Beef Khichdi",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "lentils", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "One-pot rice and lentil dish with beef",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-rasam": {
-        name: "Vegetarian Rasam",
-        ingredients: [
-        { name: "tomatoes", quantity: "400g" },
-        { name: "rice", quantity: "300g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ginger", quantity: "1 tbsp" },
-        { name: "spices", quantity: "to taste" },
-        { name: "tamarind", quantity: "to taste" },
-        { name: "cilantro", quantity: "1/4 cup" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Indian",
-        description: "Spicy tomato soup with rice",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-
-    // AMERICAN CUISINE (30 recipes)
-    "chicken-salad": {
-        name: "Chicken Salad",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "lemon", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "American",
-        description: "Fresh chicken salad with mixed greens",
-        instructions: [
-            "Wash and dry all vegetables thoroughly.",
-            "Chop vegetables into bite-sized pieces.",
-            "Prepare your protein if using.",
-            "Make dressing by whisking ingredients together.",
-            "Combine all ingredients in a large bowl.",
-            "Toss with dressing just before serving.",
-            "Season with salt and pepper to taste."
-        ]
-    },
-    "beef-burger": {
-        name: "Beef Burger",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "pickles", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "American",
-        description: "Classic beef burger with fresh toppings",
-        instructions: [
-            "Preheat grill or heat a large skillet over medium-high heat.",
-            "Form ground meat into patties and season with salt and pepper.",
-            "Cook patties for 4-5 minutes per side until desired doneness.",
-            "Toast buns if desired.",
-            "Assemble burgers with patties and toppings.",
-            "Serve immediately with your favorite sides."
-        ]
-    },
-    "vegetarian-caesar-salad": {
-        name: "Vegetarian Caesar Salad",
-        ingredients: [
-        { name: "lettuce", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "bread", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "lemon", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "parmesan", quantity: "100g grated" }
-    ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "American",
-        description: "Classic Caesar salad with croutons",
-        instructions: [
-            "Wash and dry all vegetables thoroughly.",
-            "Chop vegetables into bite-sized pieces.",
-            "Prepare your protein if using.",
-            "Make dressing by whisking ingredients together.",
-            "Combine all ingredients in a large bowl.",
-            "Toss with dressing just before serving.",
-            "Season with salt and pepper to taste."
-        ]
-    },
-    "chicken-fried-chicken": {
-        name: "Chicken Fried Chicken",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "flour", quantity: "200g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "bread", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "American",
-        description: "Breaded and fried chicken cutlets",
-        instructions: [
-            "Season chicken pieces with salt and pepper.",
-            "Dredge chicken in flour, then beaten eggs, then breadcrumbs.",
-            "Heat oil in a large skillet over medium-high heat.",
-            "Fry chicken for 6-8 minutes per side until golden and cooked through.",
-            "Drain on paper towels.",
-            "Serve hot with your favorite sides."
-        ]
-    },
-    "beef-meatloaf": {
-        name: "Beef Meatloaf",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "bread", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ketchup", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "60 min",
-        cuisine: "American",
-        description: "Traditional meatloaf with vegetables",
-        instructions: [
-            "Preheat oven to 350°F (175°C).",
-            "Mix ground meat with breadcrumbs, eggs, and seasonings.",
-            "Shape into a loaf and place in a greased baking dish.",
-            "Bake for 45-60 minutes until cooked through.",
-            "Let rest for 10 minutes before slicing.",
-            "Serve with your favorite sauce."
-        ]
-    },
-    "vegetarian-mac-and-cheese": {
-        name: "Vegetarian Mac and Cheese",
-        ingredients: [
-        { name: "pasta", quantity: "400g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "milk", quantity: "300ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "flour", quantity: "200g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "American",
-        description: "Creamy macaroni and cheese",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-pot-pie": {
-        name: "Chicken Pot Pie",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "flour", quantity: "200g" },
-        { name: "butter", quantity: "100g" },
-        { name: "milk", quantity: "300ml" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "75 min",
-        cuisine: "American",
-        description: "Savory pie with chicken and vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-chili": {
-        name: "Beef Chili",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "beans", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "chili", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "bread", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "45 min",
-        cuisine: "American",
-        description: "Hearty beef and bean chili",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-grilled-cheese": {
-        name: "Vegetarian Grilled Cheese",
-        ingredients: [
-        { name: "bread", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "butter", quantity: "100g" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "10 min",
-        cuisine: "American",
-        description: "Classic grilled cheese sandwich",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-wings": {
-        name: "Chicken Wings",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "butter", quantity: "100g" },
-        { name: "hot-sauce", quantity: "to taste" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "blue-cheese", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "40 min",
-        cuisine: "American",
-        description: "Spicy buffalo chicken wings",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-steak": {
-        name: "Beef Steak",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "butter", quantity: "100g" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "potatoes", quantity: "1kg" }
-    ],
-        difficulty: "Medium",
-        time: "25 min",
-        cuisine: "American",
-        description: "Grilled beef steak with sides",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-veggie-burger": {
-        name: "Vegetarian Veggie Burger",
-        ingredients: [
-        { name: "vegetables", quantity: "to taste" },
-        { name: "beans", quantity: "to taste" },
-        { name: "bread", quantity: "to taste" },
-        { name: "lettuce", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "cheese", quantity: "200g grated" }
-    ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "American",
-        description: "Plant-based burger with vegetables",
-        instructions: [
-            "Preheat grill or heat a large skillet over medium-high heat.",
-            "Form ground meat into patties and season with salt and pepper.",
-            "Cook patties for 4-5 minutes per side until desired doneness.",
-            "Toast buns if desired.",
-            "Assemble burgers with patties and toppings.",
-            "Serve immediately with your favorite sides."
-        ]
-    },
-    "chicken-nuggets": {
-        name: "Chicken Nuggets",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "flour", quantity: "200g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "bread", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "American",
-        description: "Breaded chicken nuggets",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-sloppy-joes": {
-        name: "Beef Sloppy Joes",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "ketchup", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "American",
-        description: "Sloppy beef sandwich filling",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-cobb-salad": {
-        name: "Vegetarian Cobb Salad",
-        ingredients: [
-        { name: "lettuce", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "avocado", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "American",
-        description: "Classic Cobb salad without meat",
-        instructions: [
-            "Wash and dry all vegetables thoroughly.",
-            "Chop vegetables into bite-sized pieces.",
-            "Prepare your protein if using.",
-            "Make dressing by whisking ingredients together.",
-            "Combine all ingredients in a large bowl.",
-            "Toss with dressing just before serving.",
-            "Season with salt and pepper to taste."
-        ]
-    },
-    "chicken-biscuits": {
-        name: "Chicken Biscuits",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "flour", quantity: "200g" },
-        { name: "butter", quantity: "100g" },
-        { name: "milk", quantity: "300ml" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "American",
-        description: "Southern-style chicken and biscuits",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-brisket": {
-        name: "Beef Brisket",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "barbecue-sauce", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Hard",
-        time: "240 min",
-        cuisine: "American",
-        description: "Slow-smoked beef brisket",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-fried-green-tomatoes": {
-        name: "Vegetarian Fried Green Tomatoes",
-        ingredients: [
-        { name: "tomatoes", quantity: "400g" },
-        { name: "flour", quantity: "200g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "bread", quantity: "to taste" },
-        { name: "olive-oil", quantity: "3 tbsp" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "American",
-        description: "Southern fried green tomatoes",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-gumbo": {
-        name: "Chicken Gumbo",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "okra", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "flour", quantity: "200g" }
-    ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "American",
-        description: "Louisiana-style chicken gumbo",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-pulled-pork": {
-        name: "Beef Pulled Beef",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "barbecue-sauce", quantity: "to taste" },
-        { name: "bread", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "180 min",
-        cuisine: "American",
-        description: "Slow-cooked pulled beef sandwich",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-cornbread": {
-        name: "Vegetarian Cornbread",
-        ingredients: [
-        { name: "cornmeal", quantity: "to taste" },
-        { name: "flour", quantity: "200g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "milk", quantity: "300ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "American",
-        description: "Southern-style cornbread",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-jambalaya": {
-        name: "Chicken Jambalaya",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "rice", quantity: "300g" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "tomatoes", quantity: "400g" }
-    ],
-        difficulty: "Medium",
-        time: "50 min",
-        cuisine: "American",
-        description: "Louisiana rice dish with chicken",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-philly-cheesesteak": {
-        name: "Beef Philly Cheesesteak",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "bread", quantity: "to taste" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "peppers", quantity: "to taste" },
-        { name: "mushrooms", quantity: "300g" },
-        { name: "olive-oil", quantity: "3 tbsp" }
-    ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "American",
-        description: "Philadelphia-style beef sandwich",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-ranch-dip": {
-        name: "Vegetarian Ranch Dip",
-        ingredients: [
-        { name: "sour-cream", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "vegetables", quantity: "to taste" },
-        { name: "chips", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "10 min",
-        cuisine: "American",
-        description: "Creamy ranch dip with vegetables",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-buffalo-dip": {
-        name: "Chicken Buffalo Dip",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "cheese", quantity: "200g grated" },
-        { name: "hot-sauce", quantity: "to taste" },
-        { name: "cream-cheese", quantity: "to taste" },
-        { name: "bread", quantity: "to taste" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "American",
-        description: "Spicy chicken and cheese dip",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-corned-beef": {
-        name: "Beef Corned Beef",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "cabbage", quantity: "to taste" },
-        { name: "potatoes", quantity: "1kg" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "180 min",
-        cuisine: "American",
-        description: "Traditional corned beef and cabbage",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-deviled-eggs": {
-        name: "Vegetarian Deviled Eggs",
-        ingredients: [
-        { name: "eggs", quantity: "3 large" },
-        { name: "mayo", quantity: "to taste" },
-        { name: "mustard", quantity: "to taste" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "paprika", quantity: "1 tsp" },
-        { name: "vegetables", quantity: "to taste" }
-    ],
-        difficulty: "Easy",
-        time: "30 min",
-        cuisine: "American",
-        description: "Classic deviled eggs appetizer",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "chicken-clam-chowder": {
-        name: "Chicken Clam Chowder",
-        ingredients: [
-        { name: "chicken", quantity: "500g" },
-        { name: "potatoes", quantity: "1kg" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "milk", quantity: "300ml" },
-        { name: "butter", quantity: "100g" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "bread", quantity: "to taste" }
-    ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "American",
-        description: "Creamy chicken chowder soup",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "beef-meatballs": {
-        name: "Beef Meatballs",
-        ingredients: [
-        { name: "beef", quantity: "500g" },
-        { name: "eggs", quantity: "3 large" },
-        { name: "bread", quantity: "to taste" },
-        { name: "onions", quantity: "2 medium" },
-        { name: "garlic", quantity: "3 cloves" },
-        { name: "herbs", quantity: "2 tsp" },
-        { name: "tomatoes", quantity: "400g" },
-        { name: "pasta", quantity: "400g" }
-    ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "American",
-        description: "Italian-style beef meatballs",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-    "vegetarian-sweet-potato-casserole": {
-        name: "Vegetarian Sweet Potato Casserole",
-        ingredients: [
-        { name: "sweet-potatoes", quantity: "to taste" },
-        { name: "marshmallows", quantity: "to taste" },
-        { name: "brown-sugar", quantity: "to taste" },
-        { name: "butter", quantity: "100g" },
-        { name: "nuts", quantity: "100g" },
-        { name: "herbs", quantity: "2 tsp" }
-    ],
-        difficulty: "Easy",
-        time: "60 min",
-        cuisine: "American",
-        description: "Sweet potato casserole with marshmallows",
-        instructions: [
-            "Gather all ingredients and prepare your workspace.",
-            "Follow the recipe steps in order.",
-            "Taste and adjust seasoning as needed.",
-            "Cook until ingredients are properly heated through.",
-            "Serve immediately while hot.",
-            "Garnish with fresh herbs if desired."
-        ]
-    },
-
-    // INDIAN CUISINE (20 recipes)
-    "chicken-curry": {
-        name: "Chicken Curry",
-        ingredients: [
-            { name: "chicken", quantity: "500g" },
-            { name: "onions", quantity: "2 medium" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "ginger", quantity: "2 tbsp" },
-            { name: "tomatoes", quantity: "400g" },
-            { name: "coconut-milk", quantity: "400ml" },
-            { name: "curry-powder", quantity: "2 tbsp" },
-            { name: "rice", quantity: "300g" }
-        ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Indian",
-        description: "Aromatic chicken curry with coconut milk and spices",
-        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Heat oil in a large pot over medium heat.",
-            "Add diced onions and cook until softened, about 5 minutes.",
-            "Add minced garlic and ginger, cook for 1 minute until fragrant.",
-            "Add curry powder and cook for 30 seconds until aromatic.",
-            "Add diced tomatoes and cook until they break down, about 8 minutes.",
-            "Add chicken pieces and cook until browned on all sides.",
-            "Pour in coconut milk and bring to a simmer.",
-            "Reduce heat and simmer for 20-25 minutes until chicken is cooked through.",
-            "Season with salt and pepper to taste.",
-            "Serve over cooked rice with fresh cilantro."
-        ]
-    },
-    "vegetable-biryani": {
-        name: "Vegetable Biryani",
-        ingredients: [
-            { name: "rice", quantity: "400g basmati" },
-            { name: "vegetables", quantity: "500g mixed" },
-            { name: "onions", quantity: "2 large" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "ginger", quantity: "2 tbsp" },
-            { name: "yogurt", quantity: "200ml" },
-            { name: "biryani-spices", quantity: "2 tbsp" },
-            { name: "saffron", quantity: "pinch" }
-        ],
-        difficulty: "Hard",
-        time: "90 min",
-        cuisine: "Indian",
-        description: "Fragrant rice dish with mixed vegetables and aromatic spices",
-        image: "https://images.unsplash.com/photo-1563379091339-03246963d96a?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Soak basmati rice for 30 minutes, then drain.",
-            "Heat oil in a heavy-bottomed pot over medium heat.",
-            "Add sliced onions and fry until golden brown and crispy.",
-            "Remove half the onions and set aside for garnish.",
-            "Add ginger-garlic paste to remaining onions, cook for 2 minutes.",
-            "Add mixed vegetables and cook for 5 minutes.",
-            "Add yogurt and biryani spice mix, cook for 3 minutes.",
-            "Layer the partially cooked rice over the vegetables.",
-            "Sprinkle saffron soaked in warm milk over rice.",
-            "Cover and cook on low heat for 45 minutes.",
-            "Let it rest for 10 minutes before serving.",
-            "Garnish with reserved fried onions and fresh mint."
-        ]
-    },
-    "dal-tadka": {
-        name: "Dal Tadka",
-        ingredients: [
-            { name: "lentils", quantity: "300g" },
-            { name: "onions", quantity: "1 medium" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "ginger", quantity: "1 tbsp" },
-            { name: "tomatoes", quantity: "200g" },
-            { name: "cumin-seeds", quantity: "1 tsp" },
-            { name: "turmeric", quantity: "1/2 tsp" },
-            { name: "ghee", quantity: "2 tbsp" }
-        ],
-        difficulty: "Easy",
-        time: "35 min",
-        cuisine: "Indian",
-        description: "Comforting lentil curry with aromatic tempering",
-        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Rinse lentils and cook with water and turmeric until soft.",
-            "Heat ghee in a pan over medium heat.",
-            "Add cumin seeds and let them splutter.",
-            "Add minced garlic and ginger, cook for 1 minute.",
-            "Add diced onions and cook until golden.",
-            "Add chopped tomatoes and cook until mushy.",
-            "Pour this tempering over the cooked lentils.",
-            "Simmer for 10 minutes, stirring occasionally.",
-            "Season with salt and garnish with cilantro.",
-            "Serve hot with rice or Indian bread."
-        ]
-    },
-
-    // FRENCH CUISINE (20 recipes)
-    "coq-au-vin": {
-        name: "Coq au Vin",
-        ingredients: [
-            { name: "chicken", quantity: "1 whole" },
-            { name: "wine", quantity: "750ml red" },
-            { name: "bacon", quantity: "200g" },
-            { name: "mushrooms", quantity: "300g" },
-            { name: "onions", quantity: "12 pearl" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "herbs", quantity: "bouquet garni" },
-            { name: "butter", quantity: "50g" }
-        ],
-        difficulty: "Hard",
-        time: "120 min",
-        cuisine: "French",
-        description: "Classic French braised chicken in red wine",
-        image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Cut chicken into pieces and season with salt and pepper.",
-            "Cook bacon in a large pot until crispy, remove and set aside.",
-            "Brown chicken pieces in the bacon fat until golden.",
-            "Remove chicken and add pearl onions, cook until browned.",
-            "Add garlic and cook for 1 minute.",
-            "Return chicken and bacon to pot.",
-            "Add red wine and bouquet garni.",
-            "Bring to a boil, then simmer covered for 1 hour.",
-            "Add mushrooms and cook for 30 minutes more.",
-            "Thicken sauce with butter if desired.",
-            "Remove bouquet garni and serve hot.",
-            "Traditionally served with crusty bread or potatoes."
-        ]
-    },
-    "beef-bourguignon": {
-        name: "Beef Bourguignon",
-        ingredients: [
-            { name: "beef", quantity: "1kg chuck" },
-            { name: "wine", quantity: "750ml red" },
-            { name: "bacon", quantity: "200g" },
-            { name: "carrots", quantity: "3 large" },
-            { name: "onions", quantity: "2 medium" },
-            { name: "mushrooms", quantity: "300g" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "flour", quantity: "3 tbsp" }
-        ],
-        difficulty: "Hard",
-        time: "150 min",
-        cuisine: "French",
-        description: "Slow-braised beef in red wine with vegetables",
-        image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Cut beef into large cubes and season with salt and pepper.",
-            "Cook bacon until crispy, remove and set aside.",
-            "Brown beef cubes in batches in the bacon fat.",
-            "Remove beef and add diced onions and carrots.",
-            "Cook vegetables until softened, about 5 minutes.",
-            "Sprinkle flour over vegetables and cook for 2 minutes.",
-            "Add red wine and scrape up browned bits.",
-            "Return beef and bacon to pot with herbs.",
-            "Cover and braise in oven at 325°F for 2 hours.",
-            "Add mushrooms in the last 30 minutes.",
-            "Adjust seasoning and serve with mashed potatoes.",
-            "Garnish with fresh parsley."
-        ]
-    },
-    "tandoori-chicken": {
-        name: "Tandoori Chicken",
-        ingredients: [
-            { name: "chicken", quantity: "1 whole" },
-            { name: "yogurt", quantity: "200ml" },
-            { name: "garlic", quantity: "6 cloves" },
-            { name: "ginger", quantity: "2 tbsp" },
-            { name: "tandoori-spices", quantity: "3 tbsp" },
-            { name: "lemon", quantity: "2 pieces" },
-            { name: "onions", quantity: "1 large" },
-            { name: "cilantro", quantity: "fresh bunch" }
-        ],
-        difficulty: "Medium",
-        time: "60 min",
-        cuisine: "Indian",
-        description: "Marinated chicken roasted with aromatic spices",
-        image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Cut chicken into pieces and make deep cuts.",
-            "Mix yogurt, minced garlic, ginger, and tandoori spices.",
-            "Add lemon juice and salt to the marinade.",
-            "Coat chicken pieces thoroughly with marinade.",
-            "Marinate for at least 2 hours or overnight.",
-            "Preheat oven to 450°F (230°C).",
-            "Place marinated chicken on a baking tray.",
-            "Roast for 25-30 minutes until cooked through.",
-            "Garnish with sliced onions and cilantro.",
-            "Serve hot with naan bread and mint chutney."
-        ]
-    },
-    "palak-paneer": {
-        name: "Palak Paneer",
-        ingredients: [
-            { name: "spinach", quantity: "500g" },
-            { name: "paneer", quantity: "300g" },
-            { name: "onions", quantity: "2 medium" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "ginger", quantity: "1 tbsp" },
-            { name: "tomatoes", quantity: "200g" },
-            { name: "cream", quantity: "100ml" },
-            { name: "spices", quantity: "garam masala" }
-        ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "Indian",
-        description: "Cottage cheese in creamy spinach gravy",
-        image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Blanch spinach in boiling water for 2 minutes.",
-            "Drain and blend spinach to smooth puree.",
-            "Cut paneer into cubes and lightly fry.",
-            "Heat oil and sauté onions until golden.",
-            "Add ginger-garlic paste and cook for 2 minutes.",
-            "Add chopped tomatoes and cook until soft.",
-            "Add spinach puree and simmer for 10 minutes.",
-            "Add fried paneer cubes to the gravy.",
-            "Stir in cream and garam masala.",
-            "Serve hot with rice or Indian bread."
-        ]
-    },
-
-    // THAI CUISINE (5 recipes)
-    "pad-thai": {
-        name: "Pad Thai",
-        ingredients: [
-            { name: "noodles", quantity: "300g rice" },
-            { name: "shrimp", quantity: "300g" },
-            { name: "eggs", quantity: "2 large" },
-            { name: "bean-sprouts", quantity: "200g" },
-            { name: "garlic", quantity: "3 cloves" },
-            { name: "fish-sauce", quantity: "3 tbsp" },
-            { name: "tamarind", quantity: "2 tbsp" },
-            { name: "peanuts", quantity: "100g crushed" }
-        ],
-        difficulty: "Medium",
-        time: "30 min",
-        cuisine: "Thai",
-        description: "Classic Thai stir-fried noodles with shrimp",
-        image: "https://images.unsplash.com/photo-1559314809-0f31657def5e?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Soak rice noodles in warm water until soft.",
-            "Heat oil in a large wok over high heat.",
-            "Add minced garlic and stir-fry for 30 seconds.",
-            "Add shrimp and cook until pink and cooked through.",
-            "Push ingredients to one side of wok.",
-            "Scramble eggs on empty side of wok.",
-            "Add drained noodles and toss everything together.",
-            "Add fish sauce and tamarind paste.",
-            "Add bean sprouts and stir-fry for 2 minutes.",
-            "Garnish with crushed peanuts and serve immediately."
-        ]
-    },
-    "green-curry": {
-        name: "Thai Green Curry",
-        ingredients: [
-            { name: "chicken", quantity: "500g" },
-            { name: "coconut-milk", quantity: "400ml" },
-            { name: "green-curry-paste", quantity: "3 tbsp" },
-            { name: "vegetables", quantity: "300g mixed" },
-            { name: "fish-sauce", quantity: "2 tbsp" },
-            { name: "basil", quantity: "fresh leaves" },
-            { name: "lime", quantity: "1 piece" },
-            { name: "rice", quantity: "300g jasmine" }
-        ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Thai",
-        description: "Creamy coconut curry with green chilies",
-        image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Heat thick coconut milk in a large pot.",
-            "Add green curry paste and fry for 2 minutes.",
-            "Add chicken pieces and cook until sealed.",
-            "Add remaining coconut milk and bring to simmer.",
-            "Add vegetables and cook for 10 minutes.",
-            "Season with fish sauce and palm sugar.",
-            "Add fresh basil leaves and lime juice.",
-            "Simmer for 2 more minutes.",
-            "Taste and adjust seasoning.",
-            "Serve hot over jasmine rice."
-        ]
-    },
-
-    // JAPANESE CUISINE (5 recipes)
-    "chicken-teriyaki": {
-        name: "Chicken Teriyaki",
-        ingredients: [
-            { name: "chicken", quantity: "600g thighs" },
-            { name: "soy-sauce", quantity: "4 tbsp" },
-            { name: "mirin", quantity: "3 tbsp" },
-            { name: "sugar", quantity: "2 tbsp" },
-            { name: "ginger", quantity: "1 tbsp" },
-            { name: "garlic", quantity: "2 cloves" },
-            { name: "rice", quantity: "300g" },
-            { name: "sesame-seeds", quantity: "1 tbsp" }
-        ],
-        difficulty: "Easy",
-        time: "25 min",
-        cuisine: "Japanese",
-        description: "Sweet and savory glazed chicken",
-        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Cut chicken into bite-sized pieces.",
-            "Mix soy sauce, mirin, and sugar for teriyaki sauce.",
-            "Heat oil in a large skillet over medium-high heat.",
-            "Add chicken and cook until golden brown.",
-            "Add minced ginger and garlic, cook for 1 minute.",
-            "Pour teriyaki sauce over chicken.",
-            "Simmer until sauce thickens and glazes chicken.",
-            "Cook until chicken is cooked through.",
-            "Sprinkle with sesame seeds.",
-            "Serve over steamed rice."
-        ]
-    },
-    "salmon-teriyaki": {
-        name: "Salmon Teriyaki",
-        ingredients: [
-            { name: "salmon", quantity: "600g fillets" },
-            { name: "soy-sauce", quantity: "4 tbsp" },
-            { name: "mirin", quantity: "3 tbsp" },
-            { name: "honey", quantity: "2 tbsp" },
-            { name: "ginger", quantity: "1 tbsp" },
-            { name: "garlic", quantity: "2 cloves" },
-            { name: "rice", quantity: "300g" },
-            { name: "scallions", quantity: "2 pieces" }
-        ],
-        difficulty: "Easy",
-        time: "20 min",
-        cuisine: "Japanese",
-        description: "Glazed salmon with sweet teriyaki sauce",
-        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Pat salmon fillets dry and season with salt.",
-            "Mix soy sauce, mirin, and honey for glaze.",
-            "Heat oil in a large skillet over medium-high heat.",
-            "Cook salmon skin-side up for 4 minutes.",
-            "Flip salmon and cook for 3 more minutes.",
-            "Add minced ginger and garlic to pan.",
-            "Pour teriyaki glaze over salmon.",
-            "Cook until glaze thickens, about 2 minutes.",
-            "Garnish with sliced scallions.",
-            "Serve immediately over steamed rice."
-        ]
-    },
-
-    // MIDDLE EASTERN CUISINE (5 recipes)
-    "hummus": {
-        name: "Classic Hummus",
-        ingredients: [
-            { name: "chickpeas", quantity: "400g cooked" },
-            { name: "tahini", quantity: "3 tbsp" },
-            { name: "lemon", quantity: "2 pieces juiced" },
-            { name: "garlic", quantity: "3 cloves" },
-            { name: "olive-oil", quantity: "4 tbsp" },
-            { name: "cumin", quantity: "1 tsp" },
-            { name: "paprika", quantity: "for garnish" },
-            { name: "parsley", quantity: "fresh" }
-        ],
-        difficulty: "Easy",
-        time: "15 min",
-        cuisine: "Middle Eastern",
-        description: "Creamy chickpea dip with tahini and lemon",
-        image: "https://images.unsplash.com/photo-1571197119282-7c4b999c9616?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Drain and rinse cooked chickpeas.",
-            "Add chickpeas to food processor.",
-            "Add tahini, lemon juice, and minced garlic.",
-            "Process until smooth and creamy.",
-            "Add cold water gradually while processing.",
-            "Season with salt and cumin.",
-            "Transfer to serving bowl.",
-            "Drizzle with olive oil.",
-            "Sprinkle with paprika and parsley.",
-            "Serve with pita bread or vegetables."
-        ]
-    },
-    "falafel": {
-        name: "Falafel",
-        ingredients: [
-            { name: "chickpeas", quantity: "400g dried" },
-            { name: "onions", quantity: "1 medium" },
-            { name: "garlic", quantity: "4 cloves" },
-            { name: "parsley", quantity: "1 cup fresh" },
-            { name: "cumin", quantity: "2 tsp" },
-            { name: "coriander", quantity: "1 tsp" },
-            { name: "flour", quantity: "2 tbsp" },
-            { name: "oil", quantity: "for frying" }
-        ],
-        difficulty: "Medium",
-        time: "45 min",
-        cuisine: "Middle Eastern",
-        description: "Deep-fried chickpea balls with herbs and spices",
-        image: "https://images.unsplash.com/photo-1593504049359-74330189a345?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Soak dried chickpeas overnight, then drain.",
-            "Add chickpeas to food processor and pulse.",
-            "Add onion, garlic, and parsley.",
-            "Add cumin, coriander, salt, and pepper.",
-            "Process until mixture is coarse, not smooth.",
-            "Add flour and mix well.",
-            "Refrigerate mixture for 1 hour.",
-            "Form mixture into small balls.",
-            "Heat oil to 350°F and fry falafel until golden.",
-            "Serve hot with tahini sauce and pita."
-        ]
-    },
-
-    // GERMAN CUISINE (5 recipes)
-    "schnitzel": {
-        name: "Wiener Schnitzel",
-        ingredients: [
-            { name: "veal", quantity: "4 cutlets" },
-            { name: "flour", quantity: "100g" },
-            { name: "eggs", quantity: "2 large" },
-            { name: "breadcrumbs", quantity: "200g" },
-            { name: "butter", quantity: "100g" },
-            { name: "lemon", quantity: "2 pieces" },
-            { name: "parsley", quantity: "fresh" },
-            { name: "potatoes", quantity: "600g" }
-        ],
-        difficulty: "Medium",
-        time: "40 min",
-        cuisine: "German",
-        description: "Breaded and pan-fried veal cutlets",
-        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Pound veal cutlets to 1/4 inch thickness.",
-            "Season cutlets with salt and pepper.",
-            "Set up breading station: flour, beaten eggs, breadcrumbs.",
-            "Dredge each cutlet in flour, then egg, then breadcrumbs.",
-            "Heat butter in large skillet over medium-high heat.",
-            "Fry schnitzels for 2-3 minutes per side until golden.",
-            "Remove and drain on paper towels.",
-            "Serve immediately with lemon wedges.",
-            "Garnish with fresh parsley.",
-            "Traditionally served with boiled potatoes."
-        ]
-    },
-    "sauerbraten": {
-        name: "Sauerbraten",
-        ingredients: [
-            { name: "beef", quantity: "1.5kg roast" },
-            { name: "vinegar", quantity: "500ml" },
-            { name: "wine", quantity: "250ml red" },
-            { name: "onions", quantity: "2 large" },
-            { name: "carrots", quantity: "2 medium" },
-            { name: "bay-leaves", quantity: "3 pieces" },
-            { name: "juniper-berries", quantity: "10 pieces" },
-            { name: "gingersnaps", quantity: "6 cookies" }
-        ],
-        difficulty: "Hard",
-        time: "240 min",
-        cuisine: "German",
-        description: "Traditional German pot roast in sweet-sour sauce",
-        image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Marinate beef in vinegar, wine, and spices for 3 days.",
-            "Remove beef from marinade and pat dry.",
-            "Strain and reserve marinade.",
-            "Brown beef on all sides in a heavy pot.",
-            "Add strained marinade to pot.",
-            "Cover and braise in oven at 325°F for 3 hours.",
-            "Remove beef and strain cooking liquid.",
-            "Crush gingersnaps and add to liquid.",
-            "Simmer until sauce thickens.",
-            "Slice beef and serve with sauce.",
-            "Traditionally served with red cabbage and dumplings."
-        ]
-    },
-
-    // RUSSIAN CUISINE (5 recipes)
-    "beef-stroganoff": {
-        name: "Beef Stroganoff",
-        ingredients: [
-            { name: "beef", quantity: "600g strips" },
-            { name: "mushrooms", quantity: "300g" },
-            { name: "onions", quantity: "1 large" },
-            { name: "sour-cream", quantity: "200ml" },
-            { name: "flour", quantity: "2 tbsp" },
-            { name: "butter", quantity: "50g" },
-            { name: "beef-stock", quantity: "300ml" },
-            { name: "noodles", quantity: "400g egg" }
-        ],
-        difficulty: "Medium",
-        time: "35 min",
-        cuisine: "Russian",
-        description: "Tender beef in creamy mushroom sauce",
-        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Cut beef into thin strips and season with salt and pepper.",
-            "Heat butter in a large skillet over high heat.",
-            "Brown beef strips quickly and remove from pan.",
-            "Add sliced onions and mushrooms to same pan.",
-            "Cook until vegetables are softened.",
-            "Sprinkle flour over vegetables and stir.",
-            "Gradually add beef stock, stirring constantly.",
-            "Return beef to pan and simmer for 10 minutes.",
-            "Stir in sour cream and heat through.",
-            "Serve over cooked egg noodles."
-        ]
-    },
-    "borscht": {
-        name: "Borscht",
-        ingredients: [
-            { name: "beets", quantity: "4 large" },
-            { name: "cabbage", quantity: "300g" },
-            { name: "carrots", quantity: "2 medium" },
-            { name: "onions", quantity: "1 large" },
-            { name: "garlic", quantity: "3 cloves" },
-            { name: "beef-stock", quantity: "1.5L" },
-            { name: "sour-cream", quantity: "200ml" },
-            { name: "dill", quantity: "fresh" }
-        ],
-        difficulty: "Medium",
-        time: "90 min",
-        cuisine: "Russian",
-        description: "Traditional beetroot soup with sour cream",
-        image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&crop=center",
-        instructions: [
-            "Peel and grate fresh beets.",
-            "Dice onions, carrots, and cabbage.",
-            "Heat oil in a large pot over medium heat.",
-            "Sauté onions until translucent.",
-            "Add carrots and cook for 5 minutes.",
-            "Add grated beets and cook for 10 minutes.",
-            "Add beef stock and bring to boil.",
-            "Add cabbage and simmer for 30 minutes.",
-            "Season with salt, pepper, and minced garlic.",
-            "Serve hot with a dollop of sour cream and fresh dill."
-        ]
-    }
+const MAIN_INGREDIENT_CATEGORIES = {
+    proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'beans', 'veal', 'paneer'],
+    carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
+    vegetables: ['potatoes', 'tomatoes', 'onions', 'garlic', 'carrots', 'bell-peppers', 'mushrooms', 'spinach', 'broccoli', 'lettuce', 'avocado', 'vegetables', 'eggplant', 'beets', 'cabbage']
 };
+
+const PRIMARY_MAIN_INGREDIENTS = [
+    ...MAIN_INGREDIENT_CATEGORIES.proteins,
+    ...MAIN_INGREDIENT_CATEGORIES.carbs
+];
+
+// Recipe Database - 210+ recipes across 14+ cuisines
+// This will be replaced with API calls
+const RECIPE_DATABASE = {};
+
+async function fetchMealDbSuggestions(availableIngredients) {
+    const matchingContext = createIngredientMatchingContext(availableIngredients);
+    const { activeMainSet, normalizedAvailable } = matchingContext;
+
+    const fetchTargets = activeMainSet.size > 0
+        ? Array.from(activeMainSet)
+        : normalizedAvailable.slice(0, 5);
+
+    const uniqueTargets = Array.from(new Set(fetchTargets)).filter(Boolean);
+    if (uniqueTargets.length === 0) {
+        return [];
+    }
+
+    const mealSummaries = new Map();
+
+    for (const target of uniqueTargets) {
+        try {
+            const meals = await fetchMealDbByIngredient(target);
+            meals.forEach(meal => {
+                if (meal?.idMeal && !mealSummaries.has(meal.idMeal)) {
+                    mealSummaries.set(meal.idMeal, meal);
+                }
+            });
+        } catch (error) {
+            console.warn(`Failed to fetch meals for ${target}:`, error);
+        }
+    }
+
+    const mealIds = Array.from(mealSummaries.keys()).slice(0, 40);
+    if (mealIds.length === 0) {
+        return [];
+    }
+
+    const detailedMeals = await Promise.all(mealIds.map(async (mealId) => {
+        try {
+            const mealDetails = await fetchMealDbDetails(mealId);
+            return convertMealDbRecipe(mealDetails);
+        } catch (error) {
+            console.warn(`Failed to fetch details for meal ${mealId}:`, error);
+            return null;
+        }
+    }));
+
+    return detailedMeals.filter(Boolean);
+}
+
+function createIngredientMatchingContext(availableIngredients) {
+    const normalizedAvailable = availableIngredients.map(ingredient => ingredient.toLowerCase());
+    const availableIngredientSet = new Set(normalizedAvailable);
+
+    const mainIngredientSet = new Set(PRIMARY_MAIN_INGREDIENTS);
+    const mainIngredientAliasMap = new Map();
+
+    PRIMARY_MAIN_INGREDIENTS.forEach(mainIngredient => {
+        const variations = getIngredientVariations(mainIngredient);
+        variations.forEach(variation => {
+            if (!mainIngredientSet.has(variation) && !mainIngredientAliasMap.has(variation)) {
+                mainIngredientAliasMap.set(variation, mainIngredient);
+            }
+        });
+    });
+
+    const resolveToMainIngredient = (ingredient) => {
+        const normalized = ingredient.toLowerCase();
+        if (mainIngredientSet.has(normalized)) {
+            return normalized;
+        }
+        return mainIngredientAliasMap.get(normalized) || null;
+    };
+
+    const hasIngredient = (ingredientName) => {
+        const normalized = ingredientName.toLowerCase();
+        if (availableIngredientSet.has(normalized)) {
+            return true;
+        }
+        const variations = getIngredientVariations(normalized);
+        return variations.some(variation => availableIngredientSet.has(variation));
+    };
+
+    const userProteinCanonicalSet = new Set();
+    const userCarbCanonicalSet = new Set();
+
+    normalizedAvailable.forEach(ingredient => {
+        const canonical = resolveToMainIngredient(ingredient);
+        if (!canonical) {
+            return;
+        }
+        if (MAIN_INGREDIENT_CATEGORIES.proteins.includes(canonical)) {
+            userProteinCanonicalSet.add(canonical);
+        } else if (MAIN_INGREDIENT_CATEGORIES.carbs.includes(canonical)) {
+            userCarbCanonicalSet.add(canonical);
+        }
+    });
+
+    const activeMainSet = userProteinCanonicalSet.size > 0
+        ? userProteinCanonicalSet
+        : userCarbCanonicalSet;
+
+    return {
+        normalizedAvailable,
+        availableIngredientSet,
+        resolveToMainIngredient,
+        hasIngredient,
+        userProteinCanonicalSet,
+        userCarbCanonicalSet,
+        activeMainSet,
+        activeMainSize: activeMainSet.size
+    };
+}
 
 // Meal suggestion functionality
 async function suggestMeals() {
@@ -4761,40 +393,19 @@ async function suggestMeals() {
     `;
     
     try {
-        // Search for recipes using Spoonacular API
-        const spoonacularRecipes = await searchRecipesByIngredients(savedIngredients, '', '', 10);
-        
-        if (spoonacularRecipes.length === 0) {
-            // Fallback to static database if API fails
-            const suggestedMeals = findMatchingMeals(savedIngredients);
-            displaySuggestedMeals(suggestedMeals);
+        const mealDbRecipes = await fetchMealDbSuggestions(savedIngredients);
+        const suggestedMeals = findMatchingMeals(savedIngredients, mealDbRecipes);
+
+        if (suggestedMeals.length === 0) {
+            displaySuggestedMeals([]);
             return;
         }
-        
-        // Convert Spoonacular recipes to our format
-        const suggestedMeals = spoonacularRecipes.map(convertSpoonacularRecipe);
-        
-        // Calculate match percentages
-        suggestedMeals.forEach(meal => {
-            const availableCount = meal.ingredients.length;
-            const totalCount = availableCount + meal.missingIngredients.length;
-            meal.matchPercentage = Math.round((availableCount / totalCount) * 100);
-        });
-        
-        // Sort by match percentage
-        suggestedMeals.sort((a, b) => b.matchPercentage - a.matchPercentage);
-        
+
         displaySuggestedMeals(suggestedMeals);
-        
     } catch (error) {
         console.error('Error fetching recipes from API:', error);
-        
-        // Fallback to static database
-        const suggestedMeals = findMatchingMeals(savedIngredients);
-        displaySuggestedMeals(suggestedMeals);
-        
-        // Show error message
-        showErrorMessage('Unable to fetch fresh recipes. Showing local recipes instead.');
+        displaySuggestedMeals([]);
+        showErrorMessage('Unable to fetch recipes right now. Please try again later.');
     }
 }
 
@@ -4807,6 +418,7 @@ function getIngredientVariations(ingredient) {
         'beef': ['beef', 'steak'],
         'chicken': ['chicken', 'poultry'],
         'fish': ['fish', 'salmon', 'tuna', 'cod'],
+        'salmon': ['salmon', 'fish'],
         'shrimp': ['shrimp', 'prawns'],
         'pasta': ['pasta', 'spaghetti', 'penne', 'linguine', 'fettuccine'],
         'rice': ['rice', 'risotto', 'pilaf'],
@@ -4817,7 +429,10 @@ function getIngredientVariations(ingredient) {
         'bell-peppers': ['pepper', 'peppers'],
         'noodles': ['noodle', 'noodles', 'ramen', 'udon'],
         'bread': ['bread', 'toast', 'sandwich'],
-        'eggs': ['egg', 'eggs', 'omelette', 'frittata']
+        'eggs': ['egg', 'eggs', 'omelette', 'frittata'],
+        'beans': ['bean', 'beans', 'legumes', 'chickpeas'],
+        'chickpeas': ['chickpea', 'chickpeas', 'garbanzo', 'garbanzo-beans', 'beans', 'legumes'],
+        'lentils': ['lentil', 'lentils', 'dal']
     };
     
     if (variationMap[ingredient]) {
@@ -4827,31 +442,28 @@ function getIngredientVariations(ingredient) {
     return variations;
 }
 
-function findMatchingMeals(availableIngredients) {
+function findMatchingMeals(availableIngredients, recipes = []) {
     const suggestions = [];
-    
-    // MAIN INGREDIENT CATEGORIES - recipes only shown if user has at least one from these categories
-    const MAIN_INGREDIENT_CATEGORIES = {
-        // Proteins
-        proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'veal', 'paneer'],
-        
-        // Carbs & Grains
-        carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
-        
-        // Vegetables
-        vegetables: ['potatoes', 'tomatoes', 'onions', 'garlic', 'carrots', 'bell-peppers', 'mushrooms', 'spinach', 'broccoli', 'lettuce', 'avocado', 'vegetables', 'eggplant', 'beets', 'cabbage']
-    };
-    
-    // Flatten all main ingredients into one array
-    const allMainIngredients = [
-        ...MAIN_INGREDIENT_CATEGORIES.proteins,
-        ...MAIN_INGREDIENT_CATEGORIES.carbs,
-        ...MAIN_INGREDIENT_CATEGORIES.vegetables
-    ];
-    
-    Object.keys(RECIPE_DATABASE).forEach(recipeId => {
-        const recipe = RECIPE_DATABASE[recipeId];
-        
+    const matchingContext = createIngredientMatchingContext(availableIngredients);
+    const {
+        resolveToMainIngredient,
+        hasIngredient,
+        activeMainSet,
+        activeMainSize,
+        normalizedAvailable
+    } = matchingContext;
+
+    const userMainIngredientsAll = normalizedAvailable.filter(ingredient => resolveToMainIngredient(ingredient));
+
+    const recipeEntries = (Array.isArray(recipes) && recipes.length > 0)
+        ? recipes.map(recipe => [recipe.id ? recipe.id.toString() : recipe.name, recipe])
+        : Object.entries(RECIPE_DATABASE);
+
+    recipeEntries.forEach(([recipeId, recipe]) => {
+        if (!recipe) {
+            return;
+        }
+
         // Extract ingredient names from the new object structure
         const recipeIngredientNames = recipe.ingredients.map(ingredient => {
             if (typeof ingredient === 'object' && ingredient.name) {
@@ -4860,60 +472,69 @@ function findMatchingMeals(availableIngredients) {
             return ingredient; // fallback for old string format
         });
         
+        const recipeMainComponents = recipeIngredientNames
+            .map(name => ({ original: name, canonical: resolveToMainIngredient(name) }))
+            .filter(component => component.canonical);
+
+        if (recipeMainComponents.length === 0 && activeMainSize > 0) {
+            return; // Skip recipes without required main ingredients when mains are selected
+        }
+
+        const recipeActiveComponents = recipeMainComponents.filter(component => activeMainSet.has(component.canonical));
+        const recipeActiveCoverageSet = new Set();
+
+        recipeActiveComponents.forEach(component => {
+            if (hasIngredient(component.original)) {
+                recipeActiveCoverageSet.add(component.canonical);
+            }
+        });
+
+        if (activeMainSize > 0) {
+            if (recipeActiveComponents.length === 0) {
+                return; // Recipe doesn't include the selected primary mains
+            }
+
+            if (recipeActiveCoverageSet.size === 0) {
+                return; // Recipe includes selected mains but user is missing them
+            }
+        }
+
+        const hasAnyUserMain = recipeMainComponents.some(component => hasIngredient(component.original));
+        if (!hasAnyUserMain) {
+            return; // Skip recipes where user has none of the mains
+        }
+
+        const mainCoverageCount = activeMainSize > 0
+            ? recipeActiveCoverageSet.size
+            : 0;
+        const coversAllUserMains = activeMainSize > 0 && mainCoverageCount === activeMainSize;
+
         // DOMINANT INGREDIENT PRIORITY SYSTEM
-        // Check if recipe contains any main ingredients (proteins, carbs, or vegetables)
-        const recipeMainIngredients = recipeIngredientNames.filter(ingredient => 
-            allMainIngredients.includes(ingredient)
-        );
+        // Check if recipe name or ID contains ANY of the user's main ingredients
         
-        // Find which main ingredients the user has that match this recipe
-        const userMainIngredients = recipeMainIngredients.filter(ingredient => 
-            availableIngredients.includes(ingredient)
-        );
-        
-        // Only proceed if user has at least one main ingredient from this recipe
-        if (userMainIngredients.length === 0) {
-            return; // Skip this recipe - user doesn't have any main ingredients needed
-        }
-        
-        // NEW: DOMINANT INGREDIENT MATCHING
-        // Prioritize recipes where the user's selected ingredient is the PRIMARY ingredient
-        // The first ingredient in a recipe is typically the main/dominant ingredient
-        const recipePrimaryIngredient = recipeIngredientNames[0]; // First ingredient = primary
-        const userHasPrimaryIngredient = availableIngredients.includes(recipePrimaryIngredient);
-        
-        // EXPANDED: Check if user has ANY main ingredient that matches recipe name/ID (not just proteins)
-        let isDominantMatch = userHasPrimaryIngredient;
-        
-        if (!isDominantMatch) {
-            // Check if recipe name or ID contains ANY of the user's main ingredients
-            const userMainIngredientsAll = availableIngredients.filter(ingredient => 
-                allMainIngredients.includes(ingredient)
-            );
+        const isDominantMatch = userMainIngredientsAll.some(ingredient => {
+            const recipeName = (recipe.name || '').toLowerCase();
+            const recipeKey = recipeId.toLowerCase();
+            const ingredientName = ingredient.toLowerCase();
             
-            isDominantMatch = userMainIngredientsAll.some(ingredient => {
-                const recipeName = recipe.name.toLowerCase();
-                const recipeKey = recipeId.toLowerCase();
-                const ingredientName = ingredient.toLowerCase();
-                
-                // Direct name matching
-                if (recipeName.includes(ingredientName) || recipeKey.includes(ingredientName)) {
-                    return true;
-                }
-                
-                // Handle special cases and variations
-                const ingredientVariations = getIngredientVariations(ingredient);
-                return ingredientVariations.some(variation => 
-                    recipeName.includes(variation) || recipeKey.includes(variation)
-                );
-            });
-        }
+            // Direct name matching
+            if (recipeName.includes(ingredientName) || recipeKey.includes(ingredientName)) {
+                return true;
+            }
+            
+            // Handle special cases and variations
+            const ingredientVariations = getIngredientVariations(ingredient);
+            return ingredientVariations.some(variation => 
+                recipeName.includes(variation) || recipeKey.includes(variation)
+            );
+        });
         
+        // Find the primary ingredient (first ingredient that's a protein, carb, or vegetable)
+        const recipePrimaryIngredientEntry = recipeMainComponents.find(() => true);
+        const recipePrimaryIngredient = recipePrimaryIngredientEntry ? recipePrimaryIngredientEntry.original : null;
         
         // Calculate overall ingredient matching
-        const matchingIngredients = recipeIngredientNames.filter(ingredientName => 
-            availableIngredients.includes(ingredientName)
-        );
+        const matchingIngredients = recipeIngredientNames.filter(ingredientName => hasIngredient(ingredientName));
         
         let matchPercentage = (matchingIngredients.length / recipeIngredientNames.length) * 100;
         
@@ -4922,26 +543,35 @@ function findMatchingMeals(availableIngredients) {
             matchPercentage += 15; // Give 15% bonus for dominant ingredient match
         }
         
-        // Suggest if at least 50% of ingredients match AND user has main ingredient
-        if (matchPercentage >= 50) {
+        const meetsIngredientThreshold = matchPercentage >= 50
+            || (activeMainSize > 0 && mainCoverageCount > 0);
+
+        if (meetsIngredientThreshold) {
+            const uniqueRecipeMainIngredients = Array.from(new Set(recipeMainComponents.map(component => component.original)));
             suggestions.push({
                 id: recipeId,
                 ...recipe,
                 matchPercentage: Math.round(Math.min(matchPercentage, 100)), // Cap at 100%
                 isDominantMatch: isDominantMatch,
                 primaryIngredient: recipePrimaryIngredient,
-                mainIngredientsAvailable: recipeMainIngredients.filter(ingredient => 
-                    availableIngredients.includes(ingredient)
-                ),
-                missingIngredients: recipeIngredientNames.filter(ingredientName => 
-                    !availableIngredients.includes(ingredientName)
-                )
+                mainIngredientsAvailable: uniqueRecipeMainIngredients.filter(ingredient => hasIngredient(ingredient)),
+                missingIngredients: recipeIngredientNames.filter(ingredientName => !hasIngredient(ingredientName)),
+                coversAllUserMains,
+                mainCoverageCount
             });
         }
     });
     
     // Sort by dominant match first, then by match percentage
     return suggestions.sort((a, b) => {
+        if (activeMainSize > 0) {
+            if (a.coversAllUserMains && !b.coversAllUserMains) return -1;
+            if (!a.coversAllUserMains && b.coversAllUserMains) return 1;
+
+            if (b.mainCoverageCount !== a.mainCoverageCount) {
+                return b.mainCoverageCount - a.mainCoverageCount;
+            }
+        }
         // First priority: dominant ingredient matches
         if (a.isDominantMatch && !b.isDominantMatch) return -1;
         if (!a.isDominantMatch && b.isDominantMatch) return 1;
@@ -4951,11 +581,6 @@ function findMatchingMeals(availableIngredients) {
     });
 }
 
-// Global variable to store all meals for pagination
-let allSuggestedMeals = [];
-let currentlyDisplayedCount = 0;
-const INITIAL_DISPLAY_COUNT = 7;
-
 function displaySuggestedMeals(meals) {
     const suggestionsContainer = document.getElementById('mealSuggestions');
     
@@ -4963,13 +588,12 @@ function displaySuggestedMeals(meals) {
         suggestionsContainer.innerHTML = `
             <div class="no-suggestions">
                 <h3>No meal suggestions available</h3>
-                <p>To get recipe suggestions, you need at least one <strong>main ingredient</strong>:</p>
+                <p>Start with at least one <strong>protein</strong>. If you don’t have any proteins checked, we’ll look for checked <strong>carbs</strong> and match recipes around those.</p>
                 <ul style="text-align: left; margin: 10px 0;">
-                    <li><strong>Proteins:</strong> Chicken, Beef, Fish, Tofu, etc.</li>
-                    <li><strong>Carbs:</strong> Rice, Pasta, Bread, Noodles, etc.</li>
-                    <li><strong>Vegetables:</strong> Potatoes, Tomatoes, Onions, etc.</li>
+                    <li><strong>Proteins:</strong> Chicken, Beef, Fish, Salmon, Beans, Tofu, etc.</li>
+                    <li><strong>Carbs:</strong> Rice, Pasta, Bread, Noodles, Tortillas, Quinoa, etc.</li>
                 </ul>
-                <p>Plus at least 50% of the recipe's total ingredients!</p>
+                <p>Once a main is covered, try to have roughly half of a recipe’s remaining ingredients available so it clears the 50% match threshold.</p>
             </div>
         `;
         return;
@@ -4978,6 +602,7 @@ function displaySuggestedMeals(meals) {
     // Store all meals for pagination
     allSuggestedMeals = meals;
     currentlyDisplayedCount = 0;
+    usedMealImages = new Set();
     
     // Display initial set of meals
     displayMealBatch(INITIAL_DISPLAY_COUNT);
@@ -4993,7 +618,14 @@ function displayMealBatch(count) {
             <div class="meal-content">
                 <div class="meal-header">
                     <div class="meal-name-container">
-                        ${meal.image ? `<img src="${meal.image}" alt="${meal.name}" class="meal-image" onerror="this.style.display='none'">` : ''}
+                        ${(() => {
+                            const imageUrl = meal.image;
+                            if (!imageUrl || usedMealImages.has(imageUrl)) {
+                                return '';
+                            }
+                            usedMealImages.add(imageUrl);
+                            return `<img src="${imageUrl}" alt="${meal.name}" class="meal-image" onerror="this.style.display='none'>`;
+                        })()}
                         <h3 class="meal-name">${meal.name}</h3>
                     </div>
                     <div class="meal-match">${meal.matchPercentage}% match</div>
@@ -5024,7 +656,7 @@ function displayMealBatch(count) {
                     ` : ''}
                 </div>
                 <div class="meal-actions">
-                    <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Select This Meal</button>
+                    <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Find Similar Recipes</button>
                     <button class="view-details-btn" onclick="viewMealDetails('${meal.id}')">View Details</button>
                 </div>
             </div>
@@ -5050,161 +682,482 @@ function displayMealBatch(count) {
     `;
 }
 
+function escapeHtml(text) {
+    if (text === undefined || text === null) {
+        return '';
+    }
+    return text
+        .toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatIngredientDisplay(ingredient) {
+    if (!ingredient) {
+        return '';
+    }
+
+    if (typeof ingredient === 'string') {
+        return ingredient.replace(/-/g, ' ');
+    }
+
+    const name = (ingredient.displayName || ingredient.name || '')
+        .toString()
+        .replace(/-/g, ' ')
+        .trim();
+    const quantity = (ingredient.quantity || ingredient.original || '')
+        .toString()
+        .trim();
+
+    if (name && quantity) {
+        return `${name} – ${quantity}`;
+    }
+
+    return name || quantity;
+}
+
+function normalizeInstructions(instructions) {
+    if (!instructions) {
+        return [];
+    }
+
+    if (Array.isArray(instructions)) {
+        return instructions.filter(Boolean);
+    }
+
+    if (typeof instructions === 'string') {
+        return instructions.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    }
+
+    return [];
+}
+
+function escapeSelector(value) {
+    if (window.CSS && typeof window.CSS.escape === 'function') {
+        return CSS.escape(value);
+    }
+    return value.replace(/([\0-\x1F\x7F\s!"#$%&'()*+,./:;<=>?@[\]`{|}~])/g, '\\$1');
+}
+
+function findMealCandidate(mealId) {
+    const idString = mealId != null ? mealId.toString() : '';
+
+    if (Array.isArray(allSuggestedMeals) && allSuggestedMeals.length > 0) {
+        const matchedMeal = allSuggestedMeals.find(meal => (meal.id != null && meal.id.toString() === idString));
+        if (matchedMeal) {
+            return { ...matchedMeal, id: idString };
+        }
+    }
+
+    return null;
+}
+
+async function hydrateMealWithDetails(meal, forceDetails = false) {
+    if (!meal || !meal.id) {
+        return meal;
+    }
+
+    const isNumericId = /^\d+$/.test(meal.id);
+    if (!isNumericId) {
+        return meal;
+    }
+
+    const needsDetails = forceDetails
+        || !meal.sourceUrl
+        || !meal.image
+        || !Array.isArray(meal.ingredients) || meal.ingredients.length === 0
+        || normalizeInstructions(meal.instructions).length === 0;
+
+    if (!needsDetails) {
+        return meal;
+    }
+
+    try {
+        const detailedRecipe = await fetchMealDbDetails(meal.id);
+        if (detailedRecipe) {
+            const converted = convertMealDbRecipe(detailedRecipe);
+            if (converted) {
+                return { ...meal, ...converted, id: meal.id.toString() };
+            }
+        }
+    } catch (error) {
+        console.error('Error hydrating recipe details:', error);
+    }
+
+    return meal;
+}
+
+function buildRecipeDocument(meal) {
+    const title = escapeHtml(meal.name || 'Delicious Recipe');
+    const description = escapeHtml(meal.description || 'A tasty dish prepared with love.');
+    const cuisine = escapeHtml(meal.cuisine || 'Unknown');
+    const difficulty = escapeHtml(meal.difficulty || 'Unknown');
+    const time = escapeHtml(meal.time || 'Unknown');
+    const imageSection = meal.image ? `<img src="${escapeHtml(meal.image)}" alt="${title}" class="recipe-image">` : '';
+
+    const ingredientItems = (meal.ingredients || []).map(ingredient => {
+        const formatted = escapeHtml(formatIngredientDisplay(ingredient));
+        return formatted ? `<li>${formatted}</li>` : '';
+    }).filter(Boolean).join('');
+
+    const instructions = normalizeInstructions(meal.instructions || meal.steps);
+    const instructionItems = instructions.length > 0
+        ? instructions.map((step, index) => `<li><span class="step-number">Step ${index + 1}:</span> ${escapeHtml(step)}</li>`).join('')
+        : '<li>No instructions available for this recipe.</li>';
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} – Dinner Helper</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+            margin: 0;
+            padding: 0;
+        }
+        .recipe-container {
+            max-width: 760px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 45px rgba(64, 72, 82, 0.15);
+            overflow: hidden;
+        }
+        .recipe-header {
+            padding: 32px 32px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+        }
+        .recipe-header h1 {
+            margin: 0 0 12px;
+            font-size: 32px;
+            line-height: 1.2;
+        }
+        .recipe-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .recipe-meta span {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+        .recipe-body {
+            padding: 32px;
+        }
+        .recipe-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .recipe-section {
+            margin-bottom: 32px;
+        }
+        .recipe-section h2 {
+            margin: 0 0 16px;
+            font-size: 22px;
+            color: #2c5282;
+        }
+        .recipe-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .recipe-section li {
+            background: #edf2f7;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .recipe-section li:last-child {
+            margin-bottom: 0;
+        }
+        .step-number {
+            display: inline-block;
+            font-weight: 600;
+            margin-right: 8px;
+            color: #2c5282;
+        }
+        .recipe-description {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 600px) {
+            .recipe-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            .recipe-body {
+                padding: 24px;
+            }
+            .recipe-header {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="recipe-container">
+        <div class="recipe-header">
+            <h1>${title}</h1>
+            <div class="recipe-meta">
+                <span>⏱️ ${time}</span>
+                <span>🥣 ${difficulty}</span>
+                <span>🌎 ${cuisine}</span>
+            </div>
+        </div>
+        <div class="recipe-body">
+            ${imageSection}
+            <p class="recipe-description">${description}</p>
+            <div class="recipe-section">
+                <h2>Ingredients</h2>
+                <ul>
+                    ${ingredientItems || '<li>No ingredient information available.</li>'}
+                </ul>
+            </div>
+            <div class="recipe-section">
+                <h2>Instructions</h2>
+                <ul>
+                    ${instructionItems}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+function openHtmlDocumentInNewTab(htmlString) {
+    if (!htmlString) {
+        return false;
+    }
+
+    const newWindow = window.open('', '_blank', 'noopener');
+
+    if (newWindow && newWindow.document) {
+        newWindow.document.open();
+        newWindow.document.write(htmlString);
+        newWindow.document.close();
+        return true;
+    }
+
+    try {
+        const blob = new Blob([htmlString], { type: 'text/html;charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+        anchor.target = '_blank';
+        anchor.rel = 'noopener';
+        anchor.style.display = 'none';
+
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+        return true;
+    } catch (error) {
+        console.error('Failed to open HTML document in new tab:', error);
+    }
+
+    return false;
+}
+
+function openUrlInNewTab(url) {
+    if (!url) {
+        return false;
+    }
+
+    const openedWindow = window.open(url, '_blank', 'noopener');
+    if (openedWindow) {
+        return true;
+    }
+
+    try {
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.target = '_blank';
+        anchor.rel = 'noopener';
+        anchor.style.display = 'none';
+
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        return true;
+    } catch (error) {
+        console.error('Failed to open URL in new tab:', error);
+    }
+
+    return false;
+}
+
+function openRecipeInNewTab(meal, preferSourceUrl = false) {
+    if (!meal) {
+        return;
+    }
+
+    const externalUrl = preferSourceUrl && meal.sourceUrl ? meal.sourceUrl : null;
+    if (externalUrl) {
+        if (openUrlInNewTab(externalUrl)) {
+            return;
+        }
+        window.location.assign(externalUrl);
+        return;
+    }
+
+    const recipeDocument = buildRecipeDocument(meal);
+
+    if (openHtmlDocumentInNewTab(recipeDocument)) {
+        return;
+    }
+
+    const dataUrl = 'data:text/html;charset=UTF-8,' + encodeURIComponent(recipeDocument);
+    window.location.assign(dataUrl);
+}
+
+async function viewMealDetails(mealId) {
+    try {
+        const mealIdString = mealId != null ? mealId.toString() : '';
+        const mealCard = document.querySelector(`.meal-card[data-meal-id="${escapeSelector(mealIdString)}"]`);
+
+        if (!mealCard) {
+            window.alert('We could not locate that recipe card.');
+            return;
+        }
+
+        const existingInstructions = mealCard.querySelector('.meal-instructions');
+        if (existingInstructions && existingInstructions.getAttribute('data-meal-id') === mealIdString) {
+            existingInstructions.remove();
+            return;
+        }
+
+        if (existingInstructions) {
+            existingInstructions.remove();
+        }
+
+        const instructionContainer = document.createElement('div');
+        instructionContainer.className = 'meal-instructions';
+        instructionContainer.setAttribute('data-meal-id', mealIdString);
+        instructionContainer.innerHTML = '<p>Loading instructions...</p>';
+        mealCard.appendChild(instructionContainer);
+
+        const baseMeal = findMealCandidate(mealIdString);
+        if (!baseMeal) {
+            instructionContainer.remove();
+            window.alert('Recipe details could not be found.');
+            return;
+        }
+
+        const hydratedMeal = await hydrateMealWithDetails(baseMeal, true);
+        const instructions = normalizeInstructions(hydratedMeal.instructions);
+
+        const instructionItems = instructions.map((step, index) => {
+            return `<li><span class="step-number">Step ${index + 1}:</span> ${escapeHtml(step)}</li>`;
+        }).join('');
+
+        const instructionsHTML = instructions.length > 0
+            ? `<ol class="instructions-list">${instructionItems}</ol>`
+            : '<p>No cooking instructions available for this recipe.</p>';
+
+        const sourceLink = hydratedMeal.sourceUrl
+            ? `<p class="instructions-source"><a href="${escapeHtml(hydratedMeal.sourceUrl)}" target="_blank" rel="noopener">View original recipe</a></p>`
+            : '';
+
+        instructionContainer.innerHTML = `
+            <div class="instructions-content">
+                <h4>Cooking Instructions</h4>
+                ${instructionsHTML}
+                ${sourceLink}
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error opening meal details:', error);
+        window.alert('Sorry, we could not load those instructions. Please try again later.');
+    }
+}
+
+function buildRecipeSearchUrl(meal) {
+    const mealName = meal?.name ? meal.name.toString().trim() : '';
+    if (!mealName) {
+        return null;
+    }
+
+    const cuisine = meal?.cuisine ? meal.cuisine.toString().trim() : '';
+    const mains = Array.isArray(meal?.mainIngredientsAvailable) ? meal.mainIngredientsAvailable.join(' ') : '';
+    const queryParts = [mealName, 'recipe'];
+
+    if (cuisine) {
+        queryParts.push(cuisine);
+    }
+
+    if (mains) {
+        queryParts.push(mains);
+    }
+
+    const query = queryParts
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    if (!query) {
+        return null;
+    }
+
+    return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+}
+
+function openRecipeSearchInNewTab(meal) {
+    const searchUrl = buildRecipeSearchUrl(meal);
+
+    if (searchUrl) {
+        if (openUrlInNewTab(searchUrl)) {
+            return;
+        }
+        window.location.assign(searchUrl);
+    } else {
+        window.alert('We could not determine a recipe name to search for.');
+    }
+}
+
+async function selectMeal(mealId) {
+    try {
+        const baseMeal = findMealCandidate(mealId);
+        if (!baseMeal) {
+            window.alert('Recipe details could not be found.');
+            return;
+        }
+
+        const hydratedMeal = await hydrateMealWithDetails(baseMeal, false);
+        openRecipeSearchInNewTab(hydratedMeal || baseMeal);
+    } catch (error) {
+        console.error('Error selecting meal:', error);
+        window.alert('Sorry, we could not open that recipe search.');
+    }
+}
+
 // Function to show more recipes
 function showMoreRecipes() {
     displayMealBatch(7); // Show 7 more recipes
-}
-
-function showNoIngredientsMessage() {
-    const suggestionsContainer = document.getElementById('mealSuggestions');
-    suggestionsContainer.innerHTML = `
-        <div class="no-suggestions">
-            <h3>Save your ingredients first!</h3>
-            <p>Select the ingredients you have and click "Save My Ingredients" to get meal suggestions.</p>
-        </div>
-    `;
-}
-
-function selectMeal(mealId) {
-    console.log('selectMeal called with ID:', mealId);
-    let mealName = '';
-    
-    // Check if it's an API recipe (numeric ID) or static recipe (string ID)
-    if (!isNaN(mealId)) {
-        console.log('Processing API recipe');
-        // API recipe - get name from converted recipe
-        // We need to find the meal name from the displayed meals
-        const mealCards = document.querySelectorAll('.meal-card');
-        console.log('Found meal cards:', mealCards.length);
-        for (let card of mealCards) {
-            if (card.getAttribute('data-meal-id') === mealId.toString()) {
-                const nameElement = card.querySelector('.meal-name');
-                if (nameElement) {
-                    mealName = nameElement.textContent;
-                    console.log('Found meal name from card:', mealName);
-                    break;
-                }
-            }
-        }
-    } else {
-        console.log('Processing static recipe');
-        // Static recipe - get name from database
-        const meal = RECIPE_DATABASE[mealId];
-        if (meal) {
-            mealName = meal.name;
-            console.log('Found meal name from database:', mealName);
-        } else {
-            console.log('Recipe not found in database for ID:', mealId);
-            showErrorMessage('Recipe not found.');
-            return;
-        }
-    }
-    
-    if (mealName) {
-        // Create Google search URL with recipe name + "recipe"
-        const searchQuery = encodeURIComponent(`${mealName} recipe`);
-        const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
-        console.log('Opening URL:', googleSearchUrl);
-        window.open(googleSearchUrl, '_blank');
-    } else {
-        console.log('No meal name found');
-        showErrorMessage('Unable to get recipe name.');
-    }
-}
-
-
-async function viewMealDetails(mealId) {
-    // Check if it's an API recipe (numeric ID) or static recipe (string ID)
-    if (!isNaN(mealId)) {
-        // API recipe - fetch full details
-        try {
-            const recipeDetails = await getRecipeDetails(mealId);
-            if (recipeDetails) {
-                const convertedRecipe = convertSpoonacularRecipe(recipeDetails);
-                showRecipeModal(convertedRecipe);
-            } else {
-                showErrorMessage('Unable to load recipe details.');
-            }
-        } catch (error) {
-            console.error('Error fetching recipe details:', error);
-            showErrorMessage('Unable to load recipe details.');
-        }
-    } else {
-        // Static recipe
-        const meal = RECIPE_DATABASE[mealId];
-        if (meal) {
-            showRecipeModal(meal);
-        }
-    }
-}
-
-function showRecipeModal(meal) {
-    // Create modal overlay
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'recipe-modal-overlay';
-    modalOverlay.innerHTML = `
-        <div class="recipe-modal">
-            <div class="recipe-modal-header">
-                <div class="recipe-title-container">
-                    ${meal.image ? `<img src="${meal.image}" alt="${meal.name}" class="recipe-image" onerror="this.style.display='none'">` : ''}
-                    <h2>${meal.name}</h2>
-                </div>
-                <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
-            </div>
-            <div class="recipe-modal-content">
-                
-                <div class="recipe-info">
-                    <div class="recipe-badge ${meal.cuisine.toLowerCase()}">${meal.cuisine}</div>
-                    <div class="recipe-badge difficulty-${meal.difficulty.toLowerCase()}">${meal.difficulty}</div>
-                    <div class="recipe-badge time">${meal.time}</div>
-                </div>
-                
-                <div class="recipe-description">
-                    <p>${meal.description}</p>
-                </div>
-                
-                <div class="recipe-section">
-                    <h3>Ingredients</h3>
-                    <ul class="ingredients-list">
-                        ${meal.ingredients.map(ingredient => {
-                            if (typeof ingredient === 'object' && ingredient.name && ingredient.quantity) {
-                                return `<li><span class="ingredient-quantity">${ingredient.quantity}</span> <span class="ingredient-name">${ingredient.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></li>`;
-                            } else {
-                                return `<li><span class="ingredient-name">${ingredient.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span></li>`;
-                            }
-                        }).join('')}
-                    </ul>
-                </div>
-                
-                <div class="recipe-section">
-                    <h3>Instructions</h3>
-                    <ol class="instructions-list">
-                        ${meal.instructions ? meal.instructions.map(instruction => `<li>${instruction}</li>`).join('') : '<li>No instructions available</li>'}
-                    </ol>
-                </div>
-                
-                <div class="recipe-actions">
-                    <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Select This Meal</button>
-                    <button class="close-modal-btn" onclick="closeRecipeModal()">Close</button>
-                </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modalOverlay);
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-}
-
-function closeRecipeModal() {
-    const modal = document.querySelector('.recipe-modal-overlay');
-    if (modal) {
-        modal.remove();
-        document.body.style.overflow = 'auto'; // Restore scrolling
-    }
 }
 
 // Make utility functions available globally for debugging
 window.clearSavedIngredients = clearSavedIngredients;
 window.getAllIngredients = getAllIngredients;
 window.suggestMeals = suggestMeals;
+window.selectMeal = selectMeal;
+window.viewMealDetails = viewMealDetails;
