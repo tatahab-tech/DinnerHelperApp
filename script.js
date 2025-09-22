@@ -174,6 +174,34 @@ function showNoIngredientsMessage() {
     }
 }
 
+// Show message when no suggestions are found from any source
+function showNoSuggestionsMessage(dataSource) {
+    const suggestionsContainer = document.getElementById('mealSuggestions');
+    if (suggestionsContainer) {
+        let message = '';
+        if (dataSource === 'Both failed') {
+            message = 'We tried both our external recipe database and local recipes, but couldn\'t find any matches.';
+        } else if (dataSource === 'API failed') {
+            message = 'Our external recipe database is temporarily unavailable, and no local recipes matched your ingredients.';
+        } else {
+            message = 'No recipes matched your ingredients. Try selecting different ingredients or more ingredients.';
+        }
+        
+        suggestionsContainer.innerHTML = `
+            <div class="no-suggestions" style="text-align: center; color: #6c757d; padding: 20px;">
+                <h3>No meal suggestions available</h3>
+                <p>${message}</p>
+                <p><strong>Tips:</strong></p>
+                <ul style="text-align: left; margin: 10px 0; display: inline-block;">
+                    <li>Try selecting more ingredients</li>
+                    <li>Include at least one protein (chicken, beef, fish, etc.)</li>
+                    <li>Add some carbs (rice, pasta, bread, etc.)</li>
+                </ul>
+            </div>
+        `;
+    }
+}
+
 // Utility function to get all available ingredients (for future use)
 function getAllIngredients() {
     const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -196,6 +224,7 @@ const INITIAL_DISPLAY_COUNT = 3;
 let allSuggestedMeals = [];
 let currentlyDisplayedCount = 0;
 let usedMealImages = new Set();
+let currentDataSource = '';
 
 async function fetchMealDbByIngredient(ingredient) {
     const formattedIngredient = ingredient.replace(/-/g, ' ');
@@ -287,9 +316,168 @@ const PRIMARY_MAIN_INGREDIENTS = [
     ...MAIN_INGREDIENT_CATEGORIES.carbs
 ];
 
-// Recipe Database - 210+ recipes across 14+ cuisines
-// This will be replaced with API calls
-const RECIPE_DATABASE = {};
+// Recipe Database - Local backup recipes (used when API fails)
+const RECIPE_DATABASE = {
+    // ITALIAN CUISINE
+    "pasta-carbonara": {
+        name: "Pasta Carbonara",
+        ingredients: ["pasta", "eggs", "cheese", "bacon", "garlic", "olive-oil"],
+        difficulty: "Medium",
+        time: "25 min",
+        cuisine: "Italian",
+        description: "Classic Italian pasta with eggs, cheese, and bacon",
+        image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Bring a large pot of salted water to boil and cook pasta according to package directions until al dente.",
+            "While pasta cooks, cut bacon into small pieces and cook in a large skillet over medium heat until crispy.",
+            "Remove bacon from skillet and set aside, leaving the fat in the pan.",
+            "Add minced garlic to the bacon fat and cook for 1 minute until fragrant.",
+            "In a bowl, whisk together eggs and grated cheese until well combined.",
+            "Drain pasta, reserving 1 cup of pasta water.",
+            "Add hot pasta to the skillet with garlic and bacon fat, tossing to combine.",
+            "Remove skillet from heat and quickly add the egg-cheese mixture, tossing constantly.",
+            "Add reserved pasta water gradually while tossing until sauce is creamy.",
+            "Add cooked bacon back to the pasta and toss to combine.",
+            "Season with salt and black pepper to taste.",
+            "Serve immediately with extra grated cheese on top."
+        ]
+    },
+    "chicken-parmesan": {
+        name: "Chicken Parmesan",
+        ingredients: ["chicken", "cheese", "tomatoes", "pasta", "garlic", "olive-oil", "breadcrumbs", "eggs"],
+        difficulty: "Medium",
+        time: "45 min",
+        cuisine: "Italian",
+        description: "Breaded chicken breast with marinara sauce and melted cheese",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat oven to 400°F (200°C).",
+            "Pound chicken breasts to even thickness.",
+            "Season with salt and pepper.",
+            "Set up breading station: flour, beaten eggs, breadcrumbs mixed with parmesan.",
+            "Dredge chicken in flour, then egg, then breadcrumb mixture.",
+            "Heat olive oil in large skillet over medium-high heat.",
+            "Cook chicken until golden brown, about 3-4 minutes per side.",
+            "Transfer to baking dish and top with marinara sauce and mozzarella.",
+            "Bake for 15-20 minutes until cheese is melted and bubbly.",
+            "Serve over pasta with extra marinara sauce."
+        ]
+    },
+    
+    // CHINESE CUISINE
+    "beef-stir-fry": {
+        name: "Beef Stir Fry",
+        ingredients: ["beef", "vegetables", "soy-sauce", "garlic", "ginger", "rice", "sesame-oil", "onions"],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "Chinese",
+        description: "Quick and flavorful beef with mixed vegetables",
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Slice beef into thin strips and marinate with soy sauce and cornstarch.",
+            "Heat oil in a large wok or skillet over high heat.",
+            "Add beef and stir-fry for 2-3 minutes until browned.",
+            "Remove beef and set aside.",
+            "Add vegetables to wok and stir-fry for 3-4 minutes.",
+            "Add minced garlic and ginger, cook for 30 seconds.",
+            "Return beef to wok.",
+            "Add soy sauce, sesame oil, and any other seasonings.",
+            "Toss everything together for 1-2 minutes.",
+            "Serve immediately over steamed rice."
+        ]
+    },
+    "shrimp-fried-rice": {
+        name: "Shrimp Fried Rice",
+        ingredients: ["shrimps", "rice", "eggs", "vegetables", "soy-sauce", "garlic", "ginger", "sesame-oil"],
+        difficulty: "Easy",
+        time: "15 min",
+        cuisine: "Chinese",
+        description: "Classic fried rice with shrimp and vegetables",
+        image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Heat oil in a large wok over high heat.",
+            "Add shrimp and stir-fry for 2 minutes until pink.",
+            "Remove shrimp and set aside.",
+            "Scramble eggs in same wok.",
+            "Add cold cooked rice and break up clumps.",
+            "Add vegetables and stir-fry for 2 minutes.",
+            "Add garlic, ginger, and soy sauce.",
+            "Return shrimp to wok and toss.",
+            "Drizzle with sesame oil.",
+            "Serve immediately while hot."
+        ]
+    },
+    
+    // MEXICAN CUISINE
+    "chicken-tacos": {
+        name: "Chicken Tacos",
+        ingredients: ["chicken", "tortillas", "onions", "garlic", "lime", "cilantro", "chili", "cumin", "tomatoes"],
+        difficulty: "Easy",
+        time: "25 min",
+        cuisine: "Mexican",
+        description: "Seasoned chicken tacos with fresh toppings",
+        image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut chicken into small cubes.",
+            "Season with salt, pepper, cumin, and chili powder.",
+            "Heat oil in a large skillet over medium-high heat.",
+            "Cook chicken until browned and cooked through.",
+            "Add minced garlic and cook for 1 minute.",
+            "Warm tortillas in a dry skillet.",
+            "Fill tortillas with cooked chicken.",
+            "Top with diced onions, tomatoes, and cilantro.",
+            "Add lime juice and hot sauce if desired.",
+            "Serve immediately."
+        ]
+    },
+    
+    // AMERICAN CUISINE
+    "grilled-salmon": {
+        name: "Grilled Salmon",
+        ingredients: ["salmon", "lemon", "garlic", "herbs", "olive-oil", "vegetables", "butter"],
+        difficulty: "Easy",
+        time: "20 min",
+        cuisine: "American",
+        description: "Perfectly grilled salmon with herbs and lemon",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Preheat grill to medium-high heat.",
+            "Season salmon with salt, pepper, and herbs.",
+            "Brush with olive oil and lemon juice.",
+            "Place salmon on grill, skin-side down.",
+            "Grill for 4-5 minutes per side.",
+            "Check for doneness - fish should flake easily.",
+            "Remove from grill and let rest for 2 minutes.",
+            "Serve with lemon wedges and grilled vegetables.",
+            "Garnish with fresh herbs."
+        ]
+    },
+    
+    // INDIAN CUISINE
+    "chicken-curry": {
+        name: "Chicken Curry",
+        ingredients: ["chicken", "onions", "garlic", "ginger", "curry-powder", "coconut-milk", "tomatoes", "rice"],
+        difficulty: "Medium",
+        time: "40 min",
+        cuisine: "Indian",
+        description: "Spicy chicken curry with coconut milk",
+        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
+        instructions: [
+            "Cut chicken into bite-sized pieces.",
+            "Heat oil in a large pot over medium-high heat.",
+            "Brown chicken pieces on all sides.",
+            "Remove chicken and set aside.",
+            "Add diced onions and cook until golden.",
+            "Add ginger-garlic paste and curry powder.",
+            "Cook for 2 minutes until fragrant.",
+            "Add chopped tomatoes and cook until soft.",
+            "Return chicken to pot with coconut milk.",
+            "Simmer for 20-25 minutes until chicken is tender.",
+            "Season with salt and garnish with cilantro.",
+            "Serve hot over basmati rice."
+        ]
+    }
+};
 
 async function fetchMealDbSuggestions(availableIngredients) {
     const matchingContext = createIngredientMatchingContext(availableIngredients);
@@ -401,7 +589,7 @@ function createIngredientMatchingContext(availableIngredients) {
     };
 }
 
-// Meal suggestion functionality
+// Meal suggestion functionality - Hybrid system: API first, local database as backup
 async function suggestMeals() {
     const savedIngredients = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     
@@ -419,20 +607,50 @@ async function suggestMeals() {
         </div>
     `;
     
+    let suggestedMeals = [];
+    let dataSource = '';
+    
     try {
+        // STEP 1: Try external API first
+        console.log('🔍 Trying external API (TheMealDB)...');
         const mealDbRecipes = await fetchMealDbSuggestions(savedIngredients);
-        const suggestedMeals = findMatchingMeals(savedIngredients, mealDbRecipes);
-
-        if (suggestedMeals.length === 0) {
-            displaySuggestedMeals([]);
-            return;
+        suggestedMeals = findMatchingMeals(savedIngredients, mealDbRecipes);
+        dataSource = 'API';
+        
+        if (suggestedMeals.length > 0) {
+            console.log(`✅ Found ${suggestedMeals.length} recipes from API`);
+        } else {
+            console.log('⚠️ No recipes found from API, trying local database...');
         }
-
-        displaySuggestedMeals(suggestedMeals);
     } catch (error) {
-        console.error('Error fetching recipes from API:', error);
+        console.warn('❌ API failed, falling back to local database:', error);
+        dataSource = 'API failed';
+    }
+    
+    // STEP 2: If API failed or returned no results, use local database
+    if (suggestedMeals.length === 0) {
+        try {
+            console.log('🏠 Searching local recipe database...');
+            suggestedMeals = findMatchingMeals(savedIngredients, []); // Empty array forces local database
+            dataSource = 'Local Database';
+            
+            if (suggestedMeals.length > 0) {
+                console.log(`✅ Found ${suggestedMeals.length} recipes from local database`);
+            } else {
+                console.log('⚠️ No recipes found in local database either');
+            }
+        } catch (error) {
+            console.error('❌ Local database search failed:', error);
+            dataSource = 'Both failed';
+        }
+    }
+    
+    // STEP 3: Display results
+    if (suggestedMeals.length === 0) {
         displaySuggestedMeals([]);
-        showErrorMessage('Unable to fetch recipes right now. Please try again later.');
+        showNoSuggestionsMessage(dataSource);
+    } else {
+        displaySuggestedMeals(suggestedMeals, dataSource);
     }
 }
 
@@ -608,28 +826,37 @@ function findMatchingMeals(availableIngredients, recipes = []) {
     });
 }
 
-function displaySuggestedMeals(meals) {
+function displaySuggestedMeals(meals, dataSource = '') {
     const suggestionsContainer = document.getElementById('mealSuggestions');
     
     if (meals.length === 0) {
         suggestionsContainer.innerHTML = `
             <div class="no-suggestions">
                 <h3>No meal suggestions available</h3>
-                <p>Start with at least one <strong>protein</strong>. If you don’t have any proteins checked, we’ll look for checked <strong>carbs</strong> and match recipes around those.</p>
+                <p>Start with at least one <strong>protein</strong>. If you don't have any proteins checked, we'll look for checked <strong>carbs</strong> and match recipes around those.</p>
                 <ul style="text-align: left; margin: 10px 0;">
                     <li><strong>Proteins:</strong> Chicken, Beef, Fish, Salmon, Beans, Tofu, etc.</li>
                     <li><strong>Carbs:</strong> Rice, Pasta, Bread, Noodles, Tortillas, Quinoa, etc.</li>
                 </ul>
-                <p>Once a main is covered, try to have roughly half of a recipe’s remaining ingredients available so it clears the 50% match threshold.</p>
+                <p>Once a main is covered, try to have roughly half of a recipe's remaining ingredients available so it clears the 50% match threshold.</p>
             </div>
         `;
         return;
+    }
+    
+    // Add data source indicator
+    let sourceIndicator = '';
+    if (dataSource === 'API') {
+        sourceIndicator = '<div style="background: #e7f3ff; color: #0066cc; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;"><strong>🌐 Source:</strong> External Recipe Database (TheMealDB)</div>';
+    } else if (dataSource === 'Local Database') {
+        sourceIndicator = '<div style="background: #f0f8e7; color: #2d5016; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;"><strong>🏠 Source:</strong> Local Recipe Database (Backup)</div>';
     }
     
     // Store all meals for pagination
     allSuggestedMeals = meals;
     currentlyDisplayedCount = 0;
     usedMealImages = new Set();
+    currentDataSource = dataSource; // Store data source for display
     
     // Display initial set of meals
     displayMealBatch(INITIAL_DISPLAY_COUNT);
@@ -639,6 +866,14 @@ function displayMealBatch(count) {
     const suggestionsContainer = document.getElementById('mealSuggestions');
     const mealsToShow = allSuggestedMeals.slice(0, currentlyDisplayedCount + count);
     currentlyDisplayedCount = mealsToShow.length;
+    
+    // Generate source indicator
+    let sourceIndicator = '';
+    if (currentDataSource === 'API') {
+        sourceIndicator = '<div style="background: #e7f3ff; color: #0066cc; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;"><strong>🌐 Source:</strong> External Recipe Database (TheMealDB)</div>';
+    } else if (currentDataSource === 'Local Database') {
+        sourceIndicator = '<div style="background: #f0f8e7; color: #2d5016; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;"><strong>🏠 Source:</strong> Local Recipe Database (Backup)</div>';
+    }
     
     const mealsHTML = mealsToShow.map(meal => `
         <div class="meal-card" data-meal-id="${meal.id}">
@@ -700,6 +935,7 @@ function displayMealBatch(count) {
     ` : '';
     
     suggestionsContainer.innerHTML = `
+        ${sourceIndicator}
         <div class="suggestions-header">
             <h3>Top ${currentlyDisplayedCount} Recipe${currentlyDisplayedCount > 1 ? 's' : ''} for You</h3>
             <p>Showing ${currentlyDisplayedCount} of ${allSuggestedMeals.length} matching recipes</p>
