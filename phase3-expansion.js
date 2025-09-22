@@ -1,4 +1,4 @@
-// Phase 3: Continue protein expansion - focus on Shrimp, Tofu, and Bacon
+// Phase 3: Continue protein expansion - focus on Shrimps, Tofu, and Bacon
 
 const fs = require('fs');
 
@@ -8,7 +8,7 @@ let scriptContent = fs.readFileSync('script.js', 'utf8');
 // Find the closing brace of RECIPE_DATABASE
 const closingBraceIndex = scriptContent.lastIndexOf('};');
 
-// Phase 3 recipes - Shrimp, Tofu, Bacon expansion
+// Phase 3 recipes - Shrimps, Tofu, Bacon expansion
 const phase3Recipes = `
     // MORE FISH RECIPES (9 more to reach 20)
     "fish-ceviche": {
@@ -72,11 +72,11 @@ const phase3Recipes = `
         ]
     },
 
-    // SHRIMP RECIPES (12 more to reach 20 total)
-    "shrimp-scampi": {
-        name: "Shrimp Scampi",
+    // SHRIMPS RECIPES (12 more to reach 20 total)
+    "shrimps-scampi": {
+        name: "Shrimps Scampi",
         ingredients: [
-            { name: "shrimp", quantity: "600g large" },
+            { name: "shrimps", quantity: "600g large" },
             { name: "pasta", quantity: "400g linguine" },
             { name: "garlic", quantity: "6 cloves" },
             { name: "butter", quantity: "100g" },
@@ -88,25 +88,25 @@ const phase3Recipes = `
         difficulty: "Easy",
         time: "20 min",
         cuisine: "Italian",
-        description: "Garlic butter shrimp with pasta",
+        description: "Garlic butter shrimps with pasta",
         image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Cook pasta according to package directions.",
-            "Peel and devein shrimp, season with salt and pepper.",
+            "Peel and devein shrimps, season with salt and pepper.",
             "Heat olive oil and butter in large skillet.",
             "Add minced garlic and cook for 1 minute.",
-            "Add shrimp and cook for 2 minutes per side.",
+            "Add shrimps and cook for 2 minutes per side.",
             "Add white wine and lemon juice.",
-            "Simmer for 2 minutes until shrimp are pink.",
+            "Simmer for 2 minutes until shrimps are pink.",
             "Add drained pasta and toss to combine.",
             "Add fresh parsley and toss again.",
             "Serve immediately with lemon wedges."
         ]
     },
-    "shrimp-curry": {
-        name: "Shrimp Curry",
+    "shrimps-curry": {
+        name: "Shrimps Curry",
         ingredients: [
-            { name: "shrimp", quantity: "600g large" },
+            { name: "shrimps", quantity: "600g large" },
             { name: "coconut-milk", quantity: "400ml" },
             { name: "onions", quantity: "2 medium" },
             { name: "garlic", quantity: "4 cloves" },
@@ -118,17 +118,17 @@ const phase3Recipes = `
         difficulty: "Medium",
         time: "30 min",
         cuisine: "Indian",
-        description: "Spicy shrimp curry with coconut milk",
+        description: "Spicy shrimps curry with coconut milk",
         image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop&crop=center",
         instructions: [
-            "Peel and devein shrimp, season with salt.",
+            "Peel and devein shrimps, season with salt.",
             "Heat oil in a large pan over medium heat.",
             "Add diced onions and cook until golden.",
             "Add ginger-garlic paste and curry powder.",
             "Cook for 2 minutes until fragrant.",
             "Add chopped tomatoes and cook until soft.",
             "Pour in coconut milk and bring to simmer.",
-            "Add shrimp and cook for 5-6 minutes.",
+            "Add shrimps and cook for 5-6 minutes.",
             "Season with salt and garnish with cilantro.",
             "Serve hot over basmati rice."
         ]
@@ -270,13 +270,13 @@ fs.writeFileSync('script.js', newContent, 'utf8');
 console.log('Phase 3 of protein expansion completed!');
 console.log('Added:');
 console.log('- 2 more Fish recipes (Fish Ceviche, Fish Paella)');
-console.log('- 2 more Shrimp recipes (Shrimp Scampi, Shrimp Curry)');
+console.log('- 2 more Shrimps recipes (Shrimps Scampi, Shrimps Curry)');
 console.log('- 2 more Tofu recipes (Tofu Stir Fry, Tofu Curry)');
 console.log('- 2 more Bacon recipes (Bacon Carbonara, Bacon Quiche)');
 console.log('');
 console.log('Updated progress:');
 console.log('- Fish: 13/20 recipes (65% complete)');
-console.log('- Shrimp: 10/20 recipes (50% complete)');
+console.log('- Shrimps: 10/20 recipes (50% complete)');
 console.log('- Tofu: 7/20 recipes (35% complete)');
 console.log('- Bacon: 10/20 recipes (50% complete)');
 console.log('');

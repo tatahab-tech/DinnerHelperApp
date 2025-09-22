@@ -194,11 +194,11 @@ const finalRecipes = `
         ]
     },
 
-    // COMPLETE SHRIMP RECIPES (10 more to reach 20)
-    "shrimp-tempura": {
-        name: "Shrimp Tempura",
+    // COMPLETE SHRIMPS RECIPES (10 more to reach 20)
+    "shrimps-tempura": {
+        name: "Shrimps Tempura",
         ingredients: [
-            { name: "shrimp", quantity: "500g large" },
+            { name: "shrimps", quantity: "500g large" },
             { name: "flour", quantity: "200g" },
             { name: "ice-water", quantity: "250ml" },
             { name: "eggs", quantity: "1 large" },
@@ -210,25 +210,25 @@ const finalRecipes = `
         difficulty: "Medium",
         time: "25 min",
         cuisine: "Japanese",
-        description: "Light and crispy battered shrimp",
+        description: "Light and crispy battered shrimps",
         image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
         instructions: [
-            "Peel shrimp, leaving tails on.",
-            "Make small cuts on shrimp belly to prevent curling.",
+            "Peel shrimps, leaving tails on.",
+            "Make small cuts on shrimps belly to prevent curling.",
             "Heat oil to 340°F (170°C) for frying.",
             "Make tempura batter with flour, egg, and ice water.",
             "Keep batter lumpy - don't overmix.",
-            "Dip shrimp in batter, holding by tail.",
+            "Dip shrimps in batter, holding by tail.",
             "Fry for 2-3 minutes until light golden.",
             "Remove and drain on paper towels.",
             "Serve immediately with dipping sauce.",
             "Accompany with steamed rice."
         ]
     },
-    "shrimp-paella": {
-        name: "Shrimp Paella",
+    "shrimps-paella": {
+        name: "Shrimps Paella",
         ingredients: [
-            { name: "shrimp", quantity: "600g large" },
+            { name: "shrimps", quantity: "600g large" },
             { name: "rice", quantity: "300g bomba" },
             { name: "saffron", quantity: "pinch" },
             { name: "garlic", quantity: "4 cloves" },
@@ -240,7 +240,7 @@ const finalRecipes = `
         difficulty: "Hard",
         time: "40 min",
         cuisine: "Spanish",
-        description: "Traditional Spanish shrimp paella",
+        description: "Traditional Spanish shrimps paella",
         image: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Heat olive oil in a large paella pan.",
@@ -250,7 +250,7 @@ const finalRecipes = `
             "Add rice and stir to coat with sofrito.",
             "Add hot seafood stock infused with saffron.",
             "Simmer without stirring for 10 minutes.",
-            "Add shrimp and cook for 6-8 minutes.",
+            "Add shrimps and cook for 6-8 minutes.",
             "Let rest for 5 minutes before serving.",
             "Garnish with lemon wedges and parsley."
         ]
@@ -394,7 +394,7 @@ console.log('');
 console.log('📊 FINAL PROGRESS:');
 console.log('- Fish: 16/20 recipes (80% complete) ⬆️');
 console.log('- Pork: 10/20 recipes (50% complete) ⬆️');
-console.log('- Shrimp: 12/20 recipes (60% complete) ⬆️');
+console.log('- Shrimps: 12/20 recipes (60% complete) ⬆️');
 console.log('- Tofu: 9/20 recipes (45% complete) ⬆️');
 console.log('- Bacon: 12/20 recipes (60% complete) ⬆️');
 console.log('- Salmon: 11/20 recipes (55% complete)');

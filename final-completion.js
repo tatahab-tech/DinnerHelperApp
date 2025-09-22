@@ -256,11 +256,11 @@ const completionRecipes = `
         ]
     },
 
-    // COMPLETE SHRIMP RECIPES (8 more to reach exactly 20)
-    "shrimp-fried-rice": {
-        name: "Shrimp Fried Rice",
+    // COMPLETE SHRIMPS RECIPES (8 more to reach exactly 20)
+    "shrimps-fried-rice": {
+        name: "Shrimps Fried Rice",
         ingredients: [
-            { name: "shrimp", quantity: "400g medium" },
+            { name: "shrimps", quantity: "400g medium" },
             { name: "rice", quantity: "400g cooked" },
             { name: "eggs", quantity: "3 large" },
             { name: "vegetables", quantity: "200g mixed" },
@@ -272,25 +272,25 @@ const completionRecipes = `
         difficulty: "Easy",
         time: "15 min",
         cuisine: "Chinese",
-        description: "Classic fried rice with shrimp",
+        description: "Classic fried rice with shrimps",
         image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Heat oil in a large wok over high heat.",
-            "Add shrimp and stir-fry for 2 minutes.",
-            "Remove shrimp and set aside.",
+            "Add shrimps and stir-fry for 2 minutes.",
+            "Remove shrimps and set aside.",
             "Scramble eggs in same wok.",
             "Add cold cooked rice and break up clumps.",
             "Add vegetables and stir-fry for 2 minutes.",
             "Add garlic, ginger, and soy sauce.",
-            "Return shrimp to wok and toss.",
+            "Return shrimps to wok and toss.",
             "Drizzle with sesame oil.",
             "Serve immediately while hot."
         ]
     },
-    "shrimp-cocktail": {
-        name: "Shrimp Cocktail",
+    "shrimps-cocktail": {
+        name: "Shrimps Cocktail",
         ingredients: [
-            { name: "shrimp", quantity: "600g large" },
+            { name: "shrimps", quantity: "600g large" },
             { name: "lemon", quantity: "3 pieces" },
             { name: "cocktail-sauce", quantity: "200ml" },
             { name: "horseradish", quantity: "2 tbsp" },
@@ -302,14 +302,14 @@ const completionRecipes = `
         difficulty: "Easy",
         time: "20 min",
         cuisine: "American",
-        description: "Classic chilled shrimp with cocktail sauce",
+        description: "Classic chilled shrimps with cocktail sauce",
         image: "https://images.unsplash.com/photo-1633504581786-316c8002b1b5?w=400&h=300&fit=crop&crop=center",
         instructions: [
             "Bring large pot of salted water to boil.",
             "Add Old Bay seasoning and lemon juice.",
-            "Add shrimp and cook for 2-3 minutes until pink.",
+            "Add shrimps and cook for 2-3 minutes until pink.",
             "Immediately transfer to ice bath.",
-            "Peel shrimp, leaving tails on.",
+            "Peel shrimps, leaving tails on.",
             "Arrange on lettuce-lined serving platter.",
             "Mix cocktail sauce with horseradish.",
             "Serve chilled with cocktail sauce.",

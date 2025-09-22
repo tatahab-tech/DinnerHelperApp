@@ -250,7 +250,7 @@ function convertMealDbRecipe(meal) {
 }
 
 const MAIN_INGREDIENT_CATEGORIES = {
-    proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'salmon', 'bacon', 'tofu', 'beans', 'veal', 'paneer'],
+    proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimps', 'salmon', 'bacon', 'tofu', 'beans', 'veal', 'paneer'],
     carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
     vegetables: ['potatoes', 'tomatoes', 'onions', 'garlic', 'carrots', 'bell-peppers', 'mushrooms', 'spinach', 'broccoli', 'lettuce', 'avocado', 'vegetables', 'eggplant', 'beets', 'cabbage']
 };
@@ -419,7 +419,7 @@ function getIngredientVariations(ingredient) {
         'chicken': ['chicken', 'poultry'],
         'fish': ['fish', 'salmon', 'tuna', 'cod'],
         'salmon': ['salmon', 'fish'],
-        'shrimp': ['shrimp', 'prawns'],
+        'shrimps': ['shrimps', 'prawns'],
         'pasta': ['pasta', 'spaghetti', 'penne', 'linguine', 'fettuccine'],
         'rice': ['rice', 'risotto', 'pilaf'],
         'potatoes': ['potato', 'potatoes'],
