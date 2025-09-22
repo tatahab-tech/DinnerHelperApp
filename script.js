@@ -136,15 +136,42 @@ function showSuccessMessage() {
 }
 
 // Show error message if saving fails
-function showErrorMessage() {
-    const originalText = saveButton.textContent;
-    saveButton.textContent = 'Error! Try again';
-    saveButton.style.background = 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)';
+function showErrorMessage(message = 'Error! Try again') {
+    if (saveButton) {
+        const originalText = saveButton.textContent;
+        saveButton.textContent = message;
+        saveButton.style.background = 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)';
+        
+        setTimeout(() => {
+            saveButton.textContent = originalText;
+            saveButton.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+        }, 3000);
+    }
     
-    setTimeout(() => {
-        saveButton.textContent = originalText;
-        saveButton.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
-    }, 3000);
+    // Also show error in meal suggestions area if it's a meal-related error
+    const suggestionsContainer = document.getElementById('mealSuggestions');
+    if (suggestionsContainer && message.includes('fetch recipes')) {
+        suggestionsContainer.innerHTML = `
+            <div class="error-message" style="text-align: center; color: #e53e3e; padding: 20px;">
+                <h3>Oops! Something went wrong</h3>
+                <p>${message}</p>
+                <button onclick="suggestMeals()" style="padding: 10px 20px; margin-top: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Try Again</button>
+            </div>
+        `;
+    }
+}
+
+// Show message when no ingredients are saved
+function showNoIngredientsMessage() {
+    const suggestionsContainer = document.getElementById('mealSuggestions');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = `
+            <div class="no-ingredients-message" style="text-align: center; color: #6c757d; padding: 20px;">
+                <h3>Save your ingredients first!</h3>
+                <p>Select the ingredients you have and click "Save My Ingredients" to get meal suggestions.</p>
+            </div>
+        `;
+    }
 }
 
 // Utility function to get all available ingredients (for future use)
