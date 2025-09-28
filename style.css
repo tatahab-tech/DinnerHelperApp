@@ -245,8 +245,8 @@ input[type="checkbox"]:checked {
     
     /* Mobile-specific meal image styles */
     .meal-image {
-        max-width: 240px;
-        max-height: 180px;
+        max-width: 320px;
+        max-height: 240px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -263,6 +263,19 @@ input[type="checkbox"]:checked {
     
     .meal-name {
         font-size: 1.1rem;
+    }
+}
+
+/* Extra mobile optimization for very small screens */
+@media (max-width: 360px) {
+    .meal-image {
+        max-width: 280px;
+        max-height: 210px;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 4px;
+        margin: 0 auto 8px auto;
     }
 }
 
@@ -527,8 +540,8 @@ input[type="checkbox"]:checked {
     }
     
     .meal-image {
-        max-width: 280px;
-        max-height: 220px;
+        max-width: 350px;
+        max-height: 280px;
         width: 100%;
         height: auto;
         object-fit: cover;
