@@ -245,8 +245,8 @@ input[type="checkbox"]:checked {
     
     /* Mobile-specific meal image styles */
     .meal-image {
-        max-width: 120px;
-        max-height: 90px;
+        max-width: 240px;
+        max-height: 180px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -527,8 +527,8 @@ input[type="checkbox"]:checked {
     }
     
     .meal-image {
-        max-width: 140px;
-        max-height: 110px;
+        max-width: 280px;
+        max-height: 220px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -1037,8 +1037,8 @@ input[type="checkbox"]:checked {
 .meal-image {
     width: 100%;
     height: auto;
-    max-width: 200px;
-    max-height: 150px;
+    max-width: 400px;
+    max-height: 300px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 10px;
@@ -1095,8 +1095,8 @@ input[type="checkbox"]:checked {
     }
     
     .meal-image {
-        max-width: 150px;
-        max-height: 120px;
+        max-width: 300px;
+        max-height: 240px;
         width: 100%;
         height: auto;
         object-fit: cover;
