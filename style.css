@@ -245,8 +245,8 @@ input[type="checkbox"]:checked {
     
     /* Mobile-specific meal image styles */
     .meal-image {
-        max-width: 420px;
-        max-height: 315px;
+        max-width: 550px;
+        max-height: 412px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -269,8 +269,8 @@ input[type="checkbox"]:checked {
 /* Extra mobile optimization for very small screens */
 @media (max-width: 360px) {
     .meal-image {
-        max-width: 380px;
-        max-height: 285px;
+        max-width: 500px;
+        max-height: 375px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -282,8 +282,8 @@ input[type="checkbox"]:checked {
 /* iPhone 12 specific optimization */
 @media (max-width: 428px) and (min-width: 390px) {
     .meal-image {
-        max-width: 400px;
-        max-height: 300px;
+        max-width: 520px;
+        max-height: 390px;
         width: 100%;
         height: auto;
         object-fit: cover;
@@ -553,8 +553,8 @@ input[type="checkbox"]:checked {
     }
     
     .meal-image {
-        max-width: 450px;
-        max-height: 360px;
+        max-width: 600px;
+        max-height: 480px;
         width: 100%;
         height: auto;
         object-fit: cover;
