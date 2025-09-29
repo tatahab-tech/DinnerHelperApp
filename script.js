@@ -875,19 +875,22 @@ function displayMealBatch(count) {
         sourceIndicator = '<div style="background: #f0f8e7; color: #2d5016; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;"><strong>🏠 Source:</strong> Local Recipe Database (Backup)</div>';
     }
     
-    const mealsHTML = mealsToShow.map(meal => `
+    const mealsHTML = mealsToShow.map(meal => {
+        const imageHtml = (() => {
+            const imageUrl = meal.image;
+            if (!imageUrl || usedMealImages.has(imageUrl)) {
+                return '';
+            }
+            usedMealImages.add(imageUrl);
+            return `<img src="${imageUrl}" alt="${meal.name}" class="meal-image" onerror="this.style.display='none'>`;
+        })();
+
+        return `
         <div class="meal-card" data-meal-id="${meal.id}">
+            ${imageHtml ? `<div class="meal-image-container">${imageHtml}</div>` : ''}
             <div class="meal-content">
                 <div class="meal-header">
                     <div class="meal-name-container">
-                        ${(() => {
-                            const imageUrl = meal.image;
-                            if (!imageUrl || usedMealImages.has(imageUrl)) {
-                                return '';
-                            }
-                            usedMealImages.add(imageUrl);
-                            return `<img src="${imageUrl}" alt="${meal.name}" class="meal-image" onerror="this.style.display='none'>`;
-                        })()}
                         <h3 class="meal-name">${meal.name}</h3>
                     </div>
                     <div class="meal-match">${meal.matchPercentage}% match</div>
@@ -910,12 +913,6 @@ function displayMealBatch(count) {
                             }).join('')}
                         </div>
                     </div>
-                    ${meal.missingIngredients.length > 0 ? `
-                        <div class="missing-ingredients">
-                            <h4>Missing ingredients:</h4>
-                            <p>${meal.missingIngredients.map(ing => ing.replace('-', ' ')).join(', ')}</p>
-                        </div>
-                    ` : ''}
                 </div>
                 <div class="meal-actions">
                     <button class="select-meal-btn" onclick="selectMeal('${meal.id}')">Find Similar Recipes</button>
@@ -923,7 +920,8 @@ function displayMealBatch(count) {
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
     
     // Add "Show More" button if there are more recipes to show
     const showMoreButton = currentlyDisplayedCount < allSuggestedMeals.length ? `
