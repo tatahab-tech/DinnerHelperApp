@@ -7,6 +7,9 @@ let suggestMealsButton;
 
 // Storage key for localStorage
 const STORAGE_KEY = 'dinnerHelperIngredients';
+const APP_CONFIG = window.APP_CONFIG || {};
+const SPOONACULAR_API_KEY = (APP_CONFIG.spoonacularApiKey || '').trim();
+const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com';
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -305,6 +308,65 @@ function convertMealDbRecipe(meal) {
     };
 }
 
+function convertSpoonacularRecipe(recipe) {
+    if (!recipe) {
+        return null;
+    }
+
+    const toSlug = (value) => value
+        ? value.toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+        : '';
+
+    const ingredients = Array.isArray(recipe.extendedIngredients)
+        ? recipe.extendedIngredients.map(ing => ({
+            name: toSlug(ing.name || ing.originalName || ''),
+            quantity: (ing.original || '').trim(),
+            displayName: (ing.name || ing.originalName || '').trim()
+        })).filter(ing => ing.name)
+        : [];
+
+    const instructions = [];
+
+    if (Array.isArray(recipe.analyzedInstructions) && recipe.analyzedInstructions.length > 0) {
+        recipe.analyzedInstructions.forEach(block => {
+            if (Array.isArray(block?.steps)) {
+                block.steps.forEach(step => {
+                    if (step?.step) {
+                        instructions.push(step.step.toString().trim());
+                    }
+                });
+            }
+        });
+    }
+
+    if (instructions.length === 0 && recipe.instructions) {
+        recipe.instructions
+            .toString()
+            .split(/\r?\n+/)
+            .map(line => line.trim())
+            .filter(Boolean)
+            .forEach(line => instructions.push(line));
+    }
+
+    const cuisine = Array.isArray(recipe.cuisines) && recipe.cuisines.length > 0
+        ? recipe.cuisines[0]
+        : 'Unknown';
+
+    return {
+        id: recipe.id ? recipe.id.toString() : '',
+        name: recipe.title || 'Delicious Recipe',
+        cuisine,
+        difficulty: 'Medium',
+        time: recipe.readyInMinutes ? `${recipe.readyInMinutes} min` : 'Unknown',
+        description: recipe.summary ? recipe.summary.replace(/<[^>]+>/g, '').trim() : (instructions[0] || 'Tasty recipe from Spoonacular.'),
+        ingredients,
+        missingIngredients: [],
+        instructions,
+        image: recipe.image || '',
+        sourceUrl: recipe.sourceUrl || null
+    };
+}
+
 const MAIN_INGREDIENT_CATEGORIES = {
     proteins: ['chicken', 'beef', 'pork', 'fish', 'shrimps', 'salmon', 'bacon', 'tofu', 'beans', 'veal', 'paneer'],
     carbs: ['rice', 'pasta', 'bread', 'noodles', 'tortillas', 'flour', 'quinoa', 'oats', 'barley', 'couscous', 'wonton-wrappers', 'hominy', 'lentils'],
@@ -525,6 +587,57 @@ async function fetchMealDbSuggestions(availableIngredients) {
     return detailedMeals.filter(Boolean);
 }
 
+async function fetchSpoonacularSuggestions(availableIngredients) {
+    if (!SPOONACULAR_API_KEY) {
+        console.warn('Spoonacular API key not configured. Skipping Spoonacular fallback.');
+        return [];
+    }
+
+    const matchingContext = createIngredientMatchingContext(availableIngredients);
+    const { activeMainSet, normalizedAvailable } = matchingContext;
+
+    const fetchTargets = activeMainSet.size > 0
+        ? Array.from(activeMainSet)
+        : normalizedAvailable.slice(0, 5);
+
+    const uniqueTargets = Array.from(new Set(fetchTargets)).filter(Boolean);
+    if (uniqueTargets.length === 0) {
+        return [];
+    }
+
+    const includeIngredients = uniqueTargets
+        .map(target => target.replace(/-/g, ' '))
+        .join(',');
+
+    const params = new URLSearchParams({
+        apiKey: SPOONACULAR_API_KEY,
+        includeIngredients,
+        number: '20',
+        addRecipeInformation: 'true',
+        fillIngredients: 'true',
+        instructionsRequired: 'true',
+        sort: 'popularity'
+    });
+
+    const url = `${SPOONACULAR_BASE_URL}/recipes/complexSearch?${params.toString()}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Spoonacular request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const results = Array.isArray(data?.results) ? data.results : [];
+        return results
+            .map(convertSpoonacularRecipe)
+            .filter(Boolean);
+    } catch (error) {
+        console.warn('Failed to fetch recipes from Spoonacular:', error);
+        return [];
+    }
+}
+
 function createIngredientMatchingContext(availableIngredients) {
     const normalizedAvailable = availableIngredients.map(ingredient => ingredient.toLowerCase());
     const availableIngredientSet = new Set(normalizedAvailable);
@@ -620,14 +733,31 @@ async function suggestMeals() {
         if (suggestedMeals.length > 0) {
             console.log(`✅ Found ${suggestedMeals.length} recipes from API`);
         } else {
-            console.log('⚠️ No recipes found from API, trying local database...');
+            console.log('⚠️ No recipes found from TheMealDB, trying Spoonacular...');
         }
     } catch (error) {
-        console.warn('❌ API failed, falling back to local database:', error);
+        console.warn('❌ TheMealDB request failed:', error);
         dataSource = 'API failed';
     }
+
+    // STEP 2: Try Spoonacular as a secondary API if needed
+    if (suggestedMeals.length === 0) {
+        try {
+            console.log('🔄 Attempting Spoonacular fallback...');
+            const spoonacularRecipes = await fetchSpoonacularSuggestions(savedIngredients);
+            suggestedMeals = findMatchingMeals(savedIngredients, spoonacularRecipes);
+            if (suggestedMeals.length > 0) {
+                dataSource = 'Spoonacular API';
+                console.log(`✅ Found ${suggestedMeals.length} recipes from Spoonacular`);
+            } else {
+                console.log('⚠️ No recipes found from Spoonacular.');
+            }
+        } catch (error) {
+            console.warn('❌ Spoonacular request failed:', error);
+        }
+    }
     
-    // STEP 2: If API failed or returned no results, use local database
+    // STEP 3: If external APIs failed or returned no results, use local database
     if (suggestedMeals.length === 0) {
         try {
             console.log('🏠 Searching local recipe database...');
@@ -645,7 +775,7 @@ async function suggestMeals() {
         }
     }
     
-    // STEP 3: Display results
+    // STEP 4: Display results
     if (suggestedMeals.length === 0) {
         displaySuggestedMeals([]);
         showNoSuggestionsMessage(dataSource);
